@@ -3,44 +3,74 @@
 **Your terminal. Your network.** A Go social CLI and PostgreSQL API prototype.
 The executable remains `project-name` as specified in the supplied contracts.
 
-## Current evidence (20 October 2026)
+## Working prototype
 
-Implemented and tested against PostgreSQL: email OTP with one-use/expiry/attempt limits,
-revocable hashed sessions, atomic normalized handles, public JSON/HTML profiles,
-private agent identity, directory, lobby membership/messages, reports and blocks,
-private persistent notes, settings, idempotent writes, account export/deletion.
+- Guided CLI sign-in and keyboard dashboard; scriptable JSON commands on Linux/macOS/Windows.
+- Actual development email OTP through Mailpit, private sessions and atomic unique handles.
+- Public profiles/share cards/web link previews, directory and membership-protected lobby.
+- Reports/blocks, private persistent notes/editor, settings, paginated export and deletion.
+- Reviewed connector catalog, schema-validated publishing queue, pinned installation,
+  explicit grants/revocation, safe echo through the personal agent, one-use consent and audit.
+- Optional OpenAI-compatible chat with explicit data disclosure, honest no-model mode,
+  account quotas, privacy-preserving counters and operator moderation/retention commands.
 
-Seven PostgreSQL integration tests pass, including the echo connector hero loop,
-review-only submissions, version-pinned installs, grants/revocation, one-use input-bound
-consent, private agent history, explicit model disclosure and daily quotas. Manifest and
-SSRF/connected-IP/redirect unit tests pass. Tests use capturing mail and model adapters;
-actual Mailpit delivery and the full CLI journey are pending. CLI and Docker API
-packaging are under construction.
-This is not a production release. See [implementation evidence](docs/IMPLEMENTATION.md).
+This is a production-oriented **prototype**, not a public-launch release. Validation has
+passed PostgreSQL integration/race tests, the real CLI/SMTP journey and a POSIX PTY journey.
+See [evidence and limits](docs/IMPLEMENTATION.md) and [operating instructions](docs/OPERATIONS.md).
+A live model and real remote connector have not been provisioned. The vulnerability database
+lookup is blocked by this environment's network policy and is not counted as passed.
 
-## Development
+## Start locally
 
-Requires Go 1.25+ and Docker Compose. The database and Mailpit bind only to loopback.
-
-```sh
-docker compose up -d db mailpit
-go run ./cmd/server migrate
-go run ./cmd/server
-```
-
-The server reads environment variables, not `.env` automatically. Defaults match the local
-Compose stack. Health: `curl http://127.0.0.1:8080/healthz`. Mailpit: http://127.0.0.1:8025.
+Requires a current patched Go compiler (validation target **Go 1.27.2**) and Docker Compose.
 
 ```sh
-TEST_DATABASE_URL='postgres://projectname:local-development-only@127.0.0.1:5432/projectname?sslmode=disable' go test ./internal/api -v
+docker compose up -d --build
+make build
+./bin/project-name health
+./bin/project-name
 ```
 
-The test suite creates and drops isolated schemas in the test database. Omit
-`TEST_DATABASE_URL` to skip database tests explicitly; a skipped suite is not acceptance.
+Read OTPs in Mailpit at http://127.0.0.1:8025. The API is http://127.0.0.1:8080.
+For native API development: `docker compose up -d db mailpit`, then `./bin/server`.
+All published development ports bind to loopback. The server applies versioned,
+checksum-protected migrations automatically. Environment variables configure the native
+server; it does not automatically source `.env`. See `.env.example`.
+Proxy-intercepted cloud builds need the documented [CA mount](docs/OPERATIONS.md).
 
-No deployed email domain, hosted model credentials or live remote connector have been
-provisioned. No host shell, USB access, uploaded-code execution or inbox is provided.
-SMTP failures return an explicit unavailable error. Production setup is a separate gate.
+```sh
+./bin/project-name login request you@example.test
+./bin/project-name login verify you@example.test  # reads the code from stdin
+./bin/project-name claim your_handle
+./bin/project-name room lobby join
+./bin/project-name plug info echo 1.0.0
+./bin/project-name plug install echo 1.0.0
+./bin/project-name plug grant echo 1.0.0 repeat --approve
+./bin/project-name agent call echo 1.0.0 repeat '{"text":"Hello SINet"}'
+./bin/project-name plug revoke echo repeat
+./bin/project-name share
+```
+
+`project-name help` lists every command. Separate sessions use `PROJECT_NAME_CONFIG`.
+Echo is a deterministic tool. No model configuration means “AI unavailable”, not invented
+AI output. No shell, USB access, uploaded-code execution, live inbox or wallet is shipped.
+
+## Validate
+
+```sh
+make check
+make integration       # PostgreSQL on localhost:5432; TEST_DATABASE_URL overrides
+make smoke             # running API + PostgreSQL + Mailpit required
+make smoke-tui         # POSIX PTY guided onboarding and note editor
+make cross             # Linux amd64, macOS arm64, Windows amd64 CLI binaries
+```
+
+Integration tests create/drop isolated schemas. `make test` without TEST_DATABASE_URL
+explicitly skips PostgreSQL tests and does not prove acceptance. The [CI workflow](.github/workflows/ci.yml)
+runs real database/race tests, cross-builds, Mailpit/CLI/TUI journeys and govulncheck.
+Live production SMTP/model tests, sustained-load testing and an independent security review
+remain release gates. Connector ownership review is an explicit operator attestation;
+no real remote service is approved by this repository.
 
 ## Contracts and provenance
 

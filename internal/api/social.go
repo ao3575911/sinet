@@ -1,8 +1,7 @@
 package api
 
 import (
-	"database/sql"
-	"strconv"
+	"encoding/json"
 	"strings"
 	"unicode/utf8"
 )
@@ -170,7 +169,7 @@ func (c *call) saveNote() (any, error) {
 	if err := decode(c.r, &in); err != nil {
 		return nil, err
 	}
-	if utf8.RuneCountInString(in.Title) > 120 || utf8.RuneCountInString(in.Body) > 65536 {
+	if utf8.RuneCountInString(in.Title) > 120 || len(in.Body) > 65536 {
 		return nil, bad("note_too_long")
 	}
 	if c.r.Method == "POST" {
@@ -197,6 +196,14 @@ func (c *call) deleteNote() (any, error) {
 	return map[string]string{"deleted": id}, err
 }
 func (c *call) export() (any, error) {
+	limit, _, err := page(c.r)
+	if err != nil {
+		return nil, err
+	}
+	off, err := offset(c.r)
+	if err != nil {
+		return nil, err
+	}
 	result := map[string]any{}
 	me, err := c.me()
 	if err != nil {
@@ -204,22 +211,31 @@ func (c *call) export() (any, error) {
 	}
 	result["account"] = me
 	queries := map[string]string{
-		"notes":          `SELECT row_to_json(x) FROM (SELECT id,title,body,updated_at FROM notes WHERE account_id=$1 ORDER BY id) x`,
-		"messages":       `SELECT row_to_json(x) FROM (SELECT id,room,content,created_at FROM messages WHERE account_id=$1 ORDER BY id) x`,
-		"blocks":         `SELECT json_build_object('handle',p.handle) FROM blocks b JOIN profiles p ON p.account_id=b.blocked_id WHERE b.account_id=$1`,
-		"reports":        `SELECT row_to_json(x) FROM (SELECT id,target_id,message_id,reason,status FROM reports WHERE account_id=$1) x`,
-		"installs":       `SELECT json_build_object('connector_id',connector_id,'version',version) FROM installs WHERE account_id=$1`,
-		"grants":         `SELECT json_build_object('connector_id',connector_id,'operation',operation) FROM grants WHERE account_id=$1`,
+		"notes":          `SELECT row_to_json(x) FROM (SELECT id,title,body,updated_at FROM notes WHERE account_id=$1 ORDER BY id) x ORDER BY x.id`,
+		"messages":       `SELECT row_to_json(x) FROM (SELECT id,room,content,created_at FROM messages WHERE account_id=$1 ORDER BY id) x ORDER BY x.id`,
+		"blocks":         `SELECT json_build_object('handle',p.handle) FROM blocks b JOIN profiles p ON p.account_id=b.blocked_id WHERE b.account_id=$1 ORDER BY p.handle`,
+		"reports":        `SELECT row_to_json(x) FROM (SELECT id,target_id,message_id,reason,status FROM reports WHERE account_id=$1) x ORDER BY x.id`,
+		"installs":       `SELECT json_build_object('connector_id',connector_id,'version',version) FROM installs WHERE account_id=$1 ORDER BY connector_id`,
+		"grants":         `SELECT json_build_object('connector_id',connector_id,'operation',operation) FROM grants WHERE account_id=$1 ORDER BY connector_id,operation`,
 		"agent_messages": `SELECT json_build_object('id',id,'role',role,'content',content,'created_at',created_at) FROM agent_messages WHERE account_id=$1 ORDER BY id`,
 		"tool_audit":     `SELECT json_build_object('id',id,'connector_id',connector_id,'version',version,'operation',operation,'allowed',allowed,'outcome',outcome) FROM tool_audit WHERE account_id=$1 ORDER BY id`,
 	}
+	hasMore := false
 	for name, q := range queries {
-		value, e := c.many(q, c.user)
+		value, e := c.many(q+" LIMIT $2 OFFSET $3", c.user, limit, off)
 		if e != nil {
 			return nil, e
 		}
 		result[name] = value
+		if len(value.(map[string]any)["items"].([]json.RawMessage)) == limit {
+			hasMore = true
+		}
 	}
+	var next any
+	if hasMore {
+		next = off + limit
+	}
+	result["pagination"] = map[string]any{"limit": limit, "offset": off, "next_offset": next}
 	return result, nil
 }
 func (c *call) deleteAccount() (any, error) {
@@ -246,12 +262,3 @@ func (c *call) deleteAccount() (any, error) {
 	}
 	return map[string]bool{"deleted": true}, nil
 }
-func parseMessageID(raw string) (int64, error) {
-	id, err := strconv.ParseInt(raw, 10, 64)
-	if err != nil || id < 1 {
-		return 0, bad("invalid_message_id")
-	}
-	return id, nil
-}
-
-var _ = sql.ErrNoRows

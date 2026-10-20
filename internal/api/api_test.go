@@ -267,6 +267,20 @@ func TestSocialNotesSettingsAndIdempotency(t *testing.T) {
 	if out["notes"] == nil {
 		t.Fatal("export missing notes")
 	}
+	status, out = f.request("POST", "/v1/notes", a, map[string]string{"title": "second", "body": "export page"}, "")
+	expect(t, 200, status, out)
+	status, out = f.request("GET", "/v1/me/export?limit=1", a, nil, "")
+	expect(t, 200, status, out)
+	if out["pagination"].(map[string]any)["next_offset"] != float64(1) {
+		t.Fatal("export page cursor missing")
+	}
+	first := out["notes"].(map[string]any)["items"].([]any)[0].(map[string]any)["id"]
+	status, out = f.request("GET", "/v1/me/export?limit=1&offset=1", a, nil, "")
+	expect(t, 200, status, out)
+	if first == out["notes"].(map[string]any)["items"].([]any)[0].(map[string]any)["id"] {
+		t.Fatal("export page repeated")
+	}
+
 	status, out = f.request("POST", "/v1/me/delete", a, map[string]string{"confirm": "delete my account"}, "")
 	expect(t, 200, status, out)
 	status, out = f.request("GET", "/v1/me", a, nil, "")
@@ -295,4 +309,42 @@ func TestRequestBoundaries(t *testing.T) {
 	if w.Code != 413 {
 		t.Fatalf("oversized body status %d", w.Code)
 	}
+}
+
+func TestConcurrentOTPRedemptionAndSessionExpiry(t *testing.T) {
+	f := setup(t)
+	email := "race@example.test"
+	status, out := f.request("POST", "/v1/auth/request-otp", "", map[string]string{"email": email}, "")
+	expect(t, 200, status, out)
+	var wg sync.WaitGroup
+	statuses := make(chan int, 2)
+	for range 2 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			status, _ := f.request("POST", "/v1/auth/verify-otp", "", map[string]string{"email": email, "code": f.mail.code(email)}, "")
+			statuses <- status
+		}()
+	}
+	wg.Wait()
+	close(statuses)
+	successful, denied := 0, 0
+	for status := range statuses {
+		if status == 200 {
+			successful++
+		} else if status == 401 {
+			denied++
+		} else {
+			t.Fatalf("concurrent verification status %d", status)
+		}
+	}
+	if successful != 1 || denied != 1 {
+		t.Fatal("OTP was not one use under concurrency")
+	}
+	token := f.login(t, "expiry@example.test")
+	if _, err := f.db.Exec(`UPDATE sessions SET expires_at=now()-interval '1 second' WHERE token_hash=$1`, hash(token)); err != nil {
+		t.Fatal(err)
+	}
+	status, out = f.request("GET", "/v1/me", token, nil, "")
+	expect(t, 401, status, out)
 }

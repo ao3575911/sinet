@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -40,7 +41,7 @@ func New() (*Client, error) {
 		if info.Mode()&os.ModeSymlink != 0 {
 			return nil, errors.New("session file must not be a symlink")
 		}
-		if info.Mode().Perm()&0077 != 0 {
+		if runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0 {
 			return nil, errors.New("session file permissions must be 0600")
 		}
 		raw, err := os.ReadFile(path)
@@ -138,8 +139,8 @@ func (c *Client) Do(method, path string, body any) (map[string]any, error) {
 		return nil, errors.New("API unavailable; check PROJECT_NAME_API and server health")
 	}
 	defer resp.Body.Close()
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 16*1024*1024+1))
-	if err != nil || len(data) > 16*1024*1024 {
+	data, err := io.ReadAll(io.LimitReader(resp.Body, 32*1024*1024+1))
+	if err != nil || len(data) > 32*1024*1024 {
 		return nil, errors.New("API response exceeds client budget")
 	}
 	var out map[string]any

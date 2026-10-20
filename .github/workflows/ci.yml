@@ -1,0 +1,40 @@
+name: validate
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6-alpine
+        env:
+          POSTGRES_USER: projectname
+          POSTGRES_PASSWORD: local-development-only
+          POSTGRES_DB: projectname
+        ports: [5432:5432]
+        options: >-
+          --health-cmd 'pg_isready -U projectname' --health-interval 2s
+          --health-timeout 2s --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgres://projectname:local-development-only@127.0.0.1:5432/projectname?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.2'
+          cache: true
+      - run: make check integration cross
+      - name: Real CLI, SMTP and TUI journey
+        run: |
+          docker compose up -d mailpit
+          make build
+          mkdir -p work
+          ./bin/server >work/api.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/healthz; then break; fi
+            sleep 1
+          done
+          python3 tests/smoke.py
+          python3 tests/tui_smoke.py
+      - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...

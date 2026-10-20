@@ -120,6 +120,7 @@ func (s *Server) route(pattern string, auth bool, fn func(*call) (any, error)) {
 			}
 			if mutation {
 				if _, err = tx.ExecContext(ctx, `SELECT pg_advisory_xact_lock(hashtextextended($1,0))`, c.user); err != nil {
+					output(w, 503, map[string]string{"error": "request_timeout"})
 					return
 				}
 				var exists bool
@@ -178,8 +179,9 @@ func (s *Server) route(pattern string, auth bool, fn func(*call) (any, error)) {
 				status = f.Status
 				body = map[string]string{"error": f.Code}
 			} else if errors.As(err, &pe) && pe.Code == "23505" {
-				status = 409
-				body = map[string]string{"error": "conflict"}
+				_ = tx.Rollback()
+				output(w, 409, map[string]string{"error": "conflict"})
+				return
 			} else if errors.Is(err, sql.ErrNoRows) {
 				status = 404
 				body = map[string]string{"error": "not_found"}
@@ -270,7 +272,7 @@ func offset(r *http.Request) (int, error) {
 	if v := r.URL.Query().Get("offset"); v != "" {
 		n, err = strconv.Atoi(v)
 	}
-	if err != nil || n < 0 || n > 10000 {
+	if err != nil || n < 0 || n > 100000 {
 		return 0, bad("invalid_offset")
 	}
 	return n, nil
