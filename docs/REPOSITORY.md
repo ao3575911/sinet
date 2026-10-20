@@ -17,8 +17,8 @@ untrusted PR source. The label configuration is .github/labeler.yml.
 | Workflow | Trigger | Purpose |
 |---|---|---|
 | validate | push and PR | Two automation tests; workflow lint; fmt/vet/module checks; real PostgreSQL race tests; cross-build; Mailpit CLI/PTY journeys; govulncheck |
-| dependency-security | weekly and manual | Current vulnerability database scan without requiring live application credentials |
-| portable-binaries | version tags and manual | Linux/macOS/Windows CLI artifacts and SHA256SUMS, retained 14 days; not an automatically signed production release |
+| dependency-security | weekly, manual and scanner configuration changes | Current vulnerability database scan without requiring live application credentials |
+| portable-binaries | main client changes, version tags and manual | Linux/macOS/Windows CLI artifacts and SHA256SUMS, retained 14 days; not an automatically signed production release |
 | label-pull-requests | PR metadata events | Add area labels using trusted-base configuration; no PR code execution |
 | community-setup | main configuration changes and manual | Create custom labels, apply issue/PR labels, create discussion starters once and label them |
 | documentation-pages | main documentation changes and manual | Build Jekyll documentation and deploy GitHub Pages through the configured environment |

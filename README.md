@@ -18,7 +18,7 @@ This is a production-oriented **prototype**, not a public-launch release. Valida
 passed PostgreSQL integration/race tests, the real CLI/SMTP journey and a POSIX PTY journey.
 See [evidence and limits](docs/IMPLEMENTATION.md) and [operating instructions](docs/OPERATIONS.md).
 A live model and real remote connector have not been provisioned.
-[GitHub CI](https://github.com/ao3575911/sinet/actions/runs/39351660041) passes the full
+[GitHub CI](https://github.com/ao3575911/sinet/actions/runs/39352937595) passes the full
 journey and govulncheck v1.9.0 reports **no vulnerabilities found** on the updated dependencies.
 
 ## Start locally

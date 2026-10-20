@@ -79,3 +79,12 @@ checks confirmed 4 migrations, publisher SINet and zero accounts after cleanup. 
 The wiki guides were actually published at https://github.com/ao3575911/sinet/wiki with
 signed commit e6ea1759fe54c0a3de241cb036a117492f210cb8 and exact remote-SHA verification.
 Two repository-automation tests also pass; actionlint v1.7.12 validates the workflows.
+
+## Repository checks and main delivery
+
+[Validation run 39352937595](https://github.com/ao3575911/sinet/actions/runs/39352937595)
+passed at commit 1a5926fc13d8d712818e96091b6ff74788a28954: both automation tests, actionlint
+including ShellCheck, 17 race-enabled Go tests, real SMTP/CLI/PTY journeys, portable builds
+and vulnerability scanning. The previously failing unused-variable ShellCheck warning is
+fixed. Pages and community publishing are activated by the authorized main push; their
+actual results are recorded after the workflows complete.

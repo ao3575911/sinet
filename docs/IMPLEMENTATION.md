@@ -121,3 +121,7 @@ caught an unused retry-loop variable that the local environment's absent ShellCh
 not inspect; changed it to the conventional ignored variable. Automation tests, actionlint
 and Python compilation pass locally. New workflows use narrow permissions and run community
 writes only from trusted main/manual configuration; PR labelling never executes PR source.
+
+Workflow check fix verified remotely: run 39352937595 is green for automation tests,
+workflow/ShellCheck lint, the full Go validation, cross-build, real Mailpit/PTY journeys
+and vulnerability scan. Owner explicitly requested finalization and main delivery.

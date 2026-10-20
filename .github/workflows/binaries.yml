@@ -2,7 +2,9 @@ name: portable-binaries
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     tags: ['v*']
+    paths: ['cmd/SINet/**', 'internal/cli/**', 'internal/client/**', 'go.mod', 'go.sum', 'Makefile', '.github/workflows/binaries.yml']
 permissions:
   contents: read
 jobs:
