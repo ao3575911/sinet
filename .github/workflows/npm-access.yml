@@ -61,14 +61,27 @@ jobs:
                   print('Cannot uniquely identify active token policy; owner must inspect token settings')
               else:
                   record = active[0]
+                  print('Token policy field names:', ', '.join(sorted(record)))
                   for name in ['readonly', 'packages_all', 'bypass_2fa']:
                       if isinstance(record.get(name), bool):
                           print('Token policy', name + ':', record[name])
                   permission = record.get('packages_and_scopes_permission')
                   if permission in ['read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write']:
                       print('Token package permission:', permission)
+                  allowed = {'read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write', 'readonly', 'readwrite', 'all', 'selected', 'all_packages', 'selected_packages', 'read and write'}
+                  def policy_flags(data, prefix=''):
+                      for key, value in data.items():
+                          if not re.fullmatch(r'[A-Za-z_]+', key):
+                              continue
+                          label = prefix + key
+                          if isinstance(value, dict) and re.search(r'permission|access|package|scope', key, re.I):
+                              policy_flags(value, label + '.')
+                          elif re.search(r'permission|access|read|write|all', key, re.I):
+                              if isinstance(value, bool) or isinstance(value, str) and value.lower() in allowed:
+                                  print('Token permission flag', label + ':', value)
+                  policy_flags(record)
                   print('Token IP restriction configured:', bool(record.get('cidr_whitelist')))
-                  scopes = record.get('scopes', [])
+                  scopes = record.get('scopes') or []
                   print('Selected scope explicitly granted:', scope in scopes or '@' + scope in scopes)
-                  print('Existing-package grants count:', len(record.get('packages', [])))
+                  print('Existing-package grants count:', len(record.get('packages') or []))
           PY
