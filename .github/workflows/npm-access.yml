@@ -68,8 +68,8 @@ jobs:
                   permission = record.get('packages_and_scopes_permission')
                   if permission in ['read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write']:
                       print('Token package permission:', permission)
-                  allowed = {'read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write', 'readonly', 'readwrite', 'all', 'selected', 'all_packages', 'selected_packages', 'read and write', 'publish', 'admin', '*'}
-                  fields = {'packages', 'package', 'scopes', 'scope', 'orgs', 'organizations', 'org', 'permission', 'permissions', 'access', 'role', 'roles', 'all', 'all_packages', 'all_scopes', 'selection', 'resources', 'actions', 'operations', 'read', 'write', 'publish'}
+                  allowed = {'read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write', 'readonly', 'readwrite', 'all', 'selected', 'all_packages', 'selected_packages', 'read and write', 'publish', 'admin', '*', 'package', 'packages', 'scope', 'scopes', 'org', 'orgs', 'organization', 'organizations', 'packages-and-scopes', 'packages_and_scopes', 'user', 'users', 'account'}
+                  fields = {'packages', 'package', 'scopes', 'scope', 'orgs', 'organizations', 'org', 'permission', 'permissions', 'access', 'role', 'roles', 'all', 'all_packages', 'all_scopes', 'selection', 'resources', 'actions', 'operations', 'read', 'write', 'publish', 'resource', 'resource_type', 'type', 'level', 'access_level', 'permission_type'}
                   def permission_flags(value, prefix='permissions'):
                       if isinstance(value, dict):
                           for key, item in value.items():
