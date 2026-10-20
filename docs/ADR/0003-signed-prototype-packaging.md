@@ -12,3 +12,9 @@ verify that provenance before publishing a draft. Check every uploaded asset's G
 SHA-256 digest before making the prerelease public. Never overwrite a published release.
 No private maintainer signing key is stored in Actions. This does not replace platform
 notarization, native platform tests, independent security review or production release gates.
+
+
+Implementation outcome: v0.1.1 was the first published prerelease. A separately signed
+main publication intent permits finalizing already-attested draft assets without rebuilding
+or replacing them. This accommodates GitHub's published-only release-by-tag lookup while
+retaining exact-source provenance, trusted signatures and pre-publication digest checks.

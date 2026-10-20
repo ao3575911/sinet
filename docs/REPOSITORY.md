@@ -53,3 +53,13 @@ transports signed commits over authenticated HTTPS; it does not support push cer
 Keep the dedicated signing key outside source and securely manage its lifecycle after
 this environment ends. No production private keys or signing credentials belong in
 Actions artifacts, Pages, wiki, issue bodies or Discussions.
+
+
+## Distribution status
+
+Published GitHub prototype: https://github.com/ao3575911/sinet/releases/tag/v0.1.1 .
+Three CLI targets and Linux server archives have verified build provenance and checksums.
+The source tag and release/main commits are signed. npm/npx and PyPI/pip packages and a
+Marketplace Action are not listed. Issue #14 records registry ownership/authentication,
+installer validation and Action listing prerequisites. The Go application is not published
+as a JavaScript or Python library. Marketplace lists Actions/apps; no listing is claimed.

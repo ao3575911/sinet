@@ -130,3 +130,21 @@ The publisher now uses the authenticated draft-inclusive listing. Two regression
 verify successful draft finalization and rejection of mismatched digests; all five Python
 tests and actionlint pass. A signed publication intent requests recovery of those exact
 already-attested assets, with no asset replacement.
+
+
+## Published prototype verification
+
+GitHub prerelease **v0.1.1** is public, not draft, with six assets. Its annotated tag object
+is 9b7dd66712492e36085d480df50de1baff827144, pointing at signed release commit
+0ef98b111f445bd6ed95874ba630577d0a0d500f; GitHub reports the tag signature verified/valid.
+Finalization run [39364975856](https://github.com/ao3575911/sinet/actions/runs/39364975856)
+passed intent/tag/commit verification, exact-source provenance, checksums and all remote
+asset digests before publishing. The release source's full CLI/SMTP/PTY validation passed
+in run [39364592136](https://github.com/ao3575911/sinet/actions/runs/39364592136).
+
+An independent public HTTPS download of SINet-0.1.1-linux-amd64.tar.gz matched SHA-256
+`a3d1de8c480abe462389df94fbb51f2e750e3702ea854d492a287301fe62cdbb`.
+The extracted binary reported 0.1.1, and the archive included dependency license notices.
+macOS/Windows have cross-build evidence only. No npm/PyPI/Marketplace publication is claimed.
+Those channels need owner-controlled registry projects/authentication and tested installers
+or an appropriate Action listing; see issue #14. No registry credentials were supplied.

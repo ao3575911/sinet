@@ -10,7 +10,11 @@ supported. Do not move a published tag; issue a new version.
 The semantic-version Action checks syntax, changelog and compiled CLI agreement. A tag
 must be annotated and signed, match VERSION, point to a signed commit reachable from main,
 and verify against the public trust list from main. Private signing keys never enter CI.
-Portable builds and checksums are artifacts, not automatically signed production binaries.
+[Prototype release v0.1.1](https://github.com/ao3575911/sinet/releases/tag/v0.1.1) includes
+three CLI archives, a Linux server archive, BUILDINFO.json and SHA256SUMS. Every asset has
+verified GitHub OIDC/Sigstore build provenance; the annotated source tag is SSH-signed.
+See [installation and verification](https://github.com/ao3575911/sinet/blob/main/docs/RELEASE.md).
+npm/npx, PyPI/pip and Marketplace publication remain [tracked in issue #14](https://github.com/ao3575911/sinet/issues/14).
 
 See [full versioning/release procedure](https://github.com/ao3575911/sinet/blob/main/docs/VERSIONING.md)
 and [changelog](https://github.com/ao3575911/sinet/blob/main/CHANGELOG.md).
