@@ -93,5 +93,11 @@ versions can be verified again without uploading. After publication, the workflo
 public registry metadata with candidate hashes, audits npm signatures/provenance, and runs
 fresh npm/npx or pip installations before merging the signed branch to main.
 
+If an intent fails before publication and needs a code fix, retain its immutable signed
+tag and create a new signed intent such as `npm-v0.1.1-retry.1`. Retry counters are positive
+integers; the channel and package version remain exact. This changes the publication
+attempt, never an existing package version. The publisher uses an explicit `./packages/`
+archive path so npm cannot interpret it as a GitHub repository shorthand.
+
 Marketplace is deferred until after npm/PyPI. It needs a useful tested Setup SINet Action
 and the owner's Marketplace listing step; the backend repository itself is not a listing.

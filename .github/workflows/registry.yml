@@ -3,7 +3,7 @@ on:
   push:
     branches: [main, codex/next-slice-distribution]
     tags: ['npm-v*', 'pypi-v*']
-    paths: ['packaging/**', 'scripts/package_registries.py', 'scripts/registry_preflight.py', 'tests/registry_install.py', '.github/workflows/registry.yml']
+    paths: ['packaging/**', 'scripts/package_registries.py', 'scripts/registry_preflight.py', 'scripts/check_version.py', 'tests/registry_install.py', '.github/workflows/registry.yml']
   workflow_dispatch:
     inputs:
       publish_npm:
@@ -49,7 +49,7 @@ jobs:
           git verify-commit HEAD
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             publication_tag=${GITHUB_REF#refs/tags/}
-            test "$publication_tag" = "npm-$release_tag" || test "$publication_tag" = "pypi-$release_tag"
+            python3 scripts/check_version.py --publication-tag "$publication_tag"
             git fetch --force origin "refs/tags/$publication_tag:refs/tags/$publication_tag"
             git verify-tag "$publication_tag"
             test "$(git rev-parse "$publication_tag^{commit}")" = "$(git rev-parse HEAD)"
@@ -129,7 +129,7 @@ jobs:
       - name: Check immutable npm version
         id: preflight
         run: python3 scripts/registry_preflight.py --channel npm --packages packages
-      - run: npm publish packages/*.tgz --access public --provenance
+      - run: npm publish ./packages/*.tgz --access public --provenance
         if: steps.preflight.outputs.published != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

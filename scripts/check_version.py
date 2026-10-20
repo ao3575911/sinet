@@ -16,7 +16,7 @@ def valid(value):
     return len(value) <= 128 and PATTERN.fullmatch(value) is not None
 
 
-def check(tag=None, binary=None):
+def check(tag=None, binary=None, publication_tag=None):
     raw = (ROOT / 'VERSION').read_text()
     version = raw.strip()
     if raw != version + '\n' or not valid(version):
@@ -25,6 +25,10 @@ def check(tag=None, binary=None):
         raise ValueError('CHANGELOG.md must contain a dated entry for VERSION')
     if tag is not None and tag != 'v' + version:
         raise ValueError('Release tag must equal v + VERSION')
+    if publication_tag is not None:
+        pattern = rf'(?:npm|pypi)-v{re.escape(version)}(?:-retry\.[1-9][0-9]*)?'
+        if len(publication_tag) > 256 or re.fullmatch(pattern, publication_tag) is None:
+            raise ValueError('Publication tag must match channel, VERSION and optional retry.N')
     if binary:
         output = subprocess.check_output([binary, 'version'], text=True)
         data = json.loads(output)
@@ -37,5 +41,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--tag')
     parser.add_argument('--binary')
+    parser.add_argument('--publication-tag')
     args = parser.parse_args()
-    print('PASS SemVer:', check(args.tag, args.binary))
+    print('PASS SemVer:', check(args.tag, args.binary, args.publication_tag))
