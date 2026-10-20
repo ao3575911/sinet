@@ -1,0 +1,47 @@
+2. Build Plan / PRD
+Project: project-name
+Version: 0.1.0
+Architecture: CLI-first, modular, extensible
+Primary objective: Build a social network people actually want to access through their terminal.
+Core Modules
+Module	Function
+Identity	Email authentication, unique usernames, public profiles
+Social	User discovery, chat rooms, messaging, reputation
+Agent	Personal cloud AI agent with permissioned tools
+Connectors	Plugin marketplace, publishing, installation, MCP expansion
+Workspace	Notes, lightweight editor, settings
+Terminal	Native CLI, with optional isolated cloud sessions later
+Growth	Username claims, referrals, achievements, shareable profiles
+Business	Business identities, agents, branded email, commerce
+Web3	Optional wallets, ENS identities, DID integration
+
+
+Recommended Technical Stack
+Component	Technology
+CLI	Go + Bubble Tea
+API	Go
+Database	PostgreSQL
+Authentication	Email OTP
+AI	Provider-independent model adapter
+Connectors	JSON manifests, permission grants, MCP adapters
+Virtualization	Isolated containers / microVMs in later releases
+Desktop	Linux, macOS, Windows
+Mobile	Responsive companion interface later
+
+
+Development Priorities
+Phase 1: Identity
+Build the CLI, authentication, username registry, and profiles.
+
+Phase 2: Social
+Introduce discovery, chat rooms, messaging, and personal notes.
+
+Phase 3: Hero Feature
+Develop the connector marketplace, publishing workflow, permissions, and agent tool integration.
+
+Phase 4: Expansion
+Introduce business accounts, local USB integration, secure cloud computing, Web3, and mobile access.
+
+Success criterion: A new user can register, claim a handle, meet another user, install a connector, and perform a useful action through their agent.
+
+Technical distinction: ENS .eth names can associate wallet addresses and conventional email contact records, but don't automatically provide working email inboxes. Email provisioning requires a separate service. W3C DIDs are another identity mechanism.

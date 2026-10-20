@@ -1,0 +1,15 @@
+/* SINet brand tokens. Safe for browser UI. */
+:root {
+  --sinet-midnight: #080F19;
+  --sinet-deep: #060A12;
+  --sinet-surface: #101928;
+  --sinet-cyan: #00D1FF;
+  --sinet-blue: #1E5AB8;
+  --sinet-violet: #885CF6;
+  --sinet-ice: #F8FAFC;
+  --sinet-secondary: #B8C6D8;
+  --sinet-muted: #64748B;
+  --sinet-gradient: linear-gradient(120deg, #22E9FC 0%, #198AFF 30%, #7755FF 65%, #BE5CFC 88%, #00D9FF 100%);
+  --sinet-font-ui: Inter, system-ui, sans-serif;
+  --sinet-font-cli: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

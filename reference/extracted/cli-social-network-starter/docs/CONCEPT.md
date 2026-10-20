@@ -1,0 +1,9 @@
+# Project concept
+
+A Unix-inspired social computing platform designed to bring the next generation of internet users into the terminal. By entering `project-name`, users enter an interactive network that combines social discovery, digital identity, AI agents, and extensible computing within a single command-line environment. Onboarding is frictionless: verify an email address, claim a unique username, and receive a public profile, personal cloud AI agent, and platform email address. Users can discover people, communicate, build communities, edit notes and code, launch terminal sessions, and personalize their workspace. The platform’s defining feature is its **plug-and-play connector ecosystem**, enabling users to discover, develop, publish, and install integrations through a public marketplace. Inspired by Unix modularity and the Model Context Protocol (MCP), these connectors extend both the user's environment and their AI agent's capabilities. Optional business accounts introduce branded identities, dedicated agents, professional email addresses, and commerce integrations. Cryptocurrency wallets, ENS identity integration, portable storage, and isolated cloud computing environments provide additional expansion opportunities. Initially targeting Linux, macOS, and Windows, the platform should eventually offer mobile access where practical. Its growth strategy centers on desirable usernames, shareable identities, social interaction, community-driven creation, and gamified participation. The ambition is to transform the terminal from a developer utility into an accessible, engaging social computing experience for everyone.
+
+**Positioning:** Your username. Your agent. Your terminal. Your network.
+
+**North star:** Make the username desirable, the terminal approachable, and the connectors indispensable.
+
+The concept describes the intended product, not features already available. Release priorities and exclusions are in `docs/PRD.md`.

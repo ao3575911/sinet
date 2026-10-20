@@ -1,0 +1,32 @@
+{
+  "brand": "SINet",
+  "version": "1.0",
+  "palette": {
+    "midnight": "#080F19",
+    "deep": "#060A12",
+    "surface": "#101928",
+    "signalCyan": "#00D1FF",
+    "signalBlue": "#1E5AB8",
+    "agentViolet": "#885CF6",
+    "ice": "#F8FAFC",
+    "secondary": "#B8C6D8",
+    "muted": "#64748B"
+  },
+  "gradient": {
+    "signal": [
+      "#22E9FC",
+      "#198AFF",
+      "#7755FF",
+      "#BE5CFC",
+      "#00D9FF"
+    ]
+  },
+  "typography": {
+    "display": "Inter Display / Inter, sans-serif",
+    "terminal": "monospace"
+  },
+  "radius": {
+    "icon": "22%",
+    "card": "16px"
+  }
+}

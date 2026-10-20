@@ -1,0 +1,93 @@
+          SINet / BRAND SYSTEM                                                      THE IDENTITY
+
+
+
+
+  A network you can enter.
+  One command. People, agents and everything you plug in.
+
+
+
+
+   > sinet_
+
+   Positioning: Terminal-native social computing. Friendly, powerful, extensible.
+
+
+
+SINet · INTERNAL BRAND KIT · VERSION 1.0                                                      01
+          SINet / BRAND SYSTEM                                                                      LOGO SYSTEM
+
+
+
+
+ A symbol that can stand alone.
+ The S ribbon is the network. The cursor is the invitation to act.
+
+
+
+
+      SYMBOL                                     PRIMARY LOCKUP
+      Minimum clearspace: 15% of mark height.    Use dark on midnight and light on pale surfaces.
+
+
+
+
+SINet · INTERNAL BRAND KIT · VERSION 1.0                                                                     02
+            SINet / BRAND SYSTEM                                                                       COLOR AND TYPE
+
+
+
+
+ Built for contrast.
+
+
+
+
+  MIDNIGHT                    DEEP BLUE              SIGNAL CYAN              AGENT VIOLET   ICE       SLATE
+
+  #080F19                     #1E5AB8                #00D1FF                  #885CF6        #F8FAFC   #64748B
+
+
+
+
+  Inter Display / Inter
+
+  sinet login              sinet agents          sinet plugins
+
+  Bold sans headings. Monospace only for terminal interaction, labels and commands.
+
+
+
+
+SINet · INTERNAL BRAND KIT · VERSION 1.0                                                                           03
+          SINet / BRAND SYSTEM                                           USAGE AND VOICE
+
+
+
+
+  The rules are simple.
+  01 CONSISTENCY
+  Maintain symbol proportions. Avoid distortion or decorative effects.
+
+
+  02 ACCESSIBILITY
+  Preserve contrast. Provide readable flat/monochrome alternatives.
+
+
+  03 HUMAN FIRST
+  Talk about people and capability, not exclusivity or hacker status.
+
+
+  04 MODULAR BY DESIGN
+  The product is social; plugins are its superpower.
+
+
+  05 COPY
+  Your terminal. Your network. / People. Agents. Plugins. Together_
+
+
+
+
+SINet · INTERNAL BRAND KIT · VERSION 1.0                                              04
+

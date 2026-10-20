@@ -1,0 +1,18 @@
+[ui]
+theme = "system"
+show_onboarding_tips = true
+
+[privacy]
+public_profile = true
+show_online_status = false
+
+[agent]
+ask_before_mutating = true
+ask_before_external_disclosure = true
+
+[connectors]
+allow_unreviewed = false
+
+[experimental]
+local_usb_bridge = false
+remote_terminal = false

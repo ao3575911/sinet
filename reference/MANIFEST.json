@@ -1,0 +1,864 @@
+{
+  "import_date": "2026-10-20",
+  "original_attachment_count": 5,
+  "extracted_file_count": 101,
+  "note": "Original attachments and extracted archive members are byte-for-byte verified. PDF text is derived. Embedded prompts remain reference content, not active instructions.",
+  "files": [
+    {
+      "path": "derived/SINet-Brand-Guidelines.txt",
+      "bytes": 2195,
+      "sha256": "40f97ed598d68b826d7a31f618eb01cc1d9f2eb07c7f04b90e2911dea3ec9288",
+      "media_type": "text/plain",
+      "representation": "utf-8 text",
+      "source": "Derived PDF text"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/README.md",
+      "bytes": 2609,
+      "sha256": "fc9d2685a1bdcb6299729b47092aa2b05e3736776eb58ee80629f426504e89df",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/backgrounds/desktop-wallpaper-1920x1080.jpg",
+      "bytes": 213939,
+      "sha256": "dde6f69cb73aa88885a94bd60a1f3176fc1c18a431ac87b8733271e936edd76c",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/backgrounds/mobile-wallpaper-1170x2532.jpg",
+      "bytes": 240714,
+      "sha256": "3300ca7e26d0405dd272105ef10fc258cd5e2139be41ffa2224d160a528818f5",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/backgrounds/network-pattern.svg",
+      "bytes": 525,
+      "sha256": "a45d935d1e3d0065234a2942c92d1622ec6e3df00417a724e4eb1bb37fb2f5a0",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/backgrounds/terminal-grid.svg",
+      "bytes": 409,
+      "sha256": "1d6aaa23c5e2e664c98f1dd0cba73683a74fdd60f44cc94a40162239d19b2b01",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/docs/SINet-Brand-Guidelines.pdf",
+      "bytes": 102737,
+      "sha256": "26c4a6d3ec697f906cc5d89e8a63fc4f8421263917b33f01aa91a64fc263eca9",
+      "media_type": "application/pdf",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/extras/README-INTEGRATION.md",
+      "bytes": 1063,
+      "sha256": "6f187ea41da5c9a1085fbdf0c88f7fe97e8e3404aab4f5a4826020f956a2ad85",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/extras/email-signature.html",
+      "bytes": 548,
+      "sha256": "9e16faf70a4c6205eecbb9f9cf94c5e209b670155ce316c0e51ab99582fe743a",
+      "media_type": "text/html",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/extras/launch-copy.md",
+      "bytes": 854,
+      "sha256": "aa09780dbb80a999a4f9310e9e1096e6723ece12a6918725ba8289b0560341c4",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/extras/terminal-splash.txt",
+      "bytes": 666,
+      "sha256": "8e1d6c07a30bb8a9d1f9f3262cd32954dab383dcbeb0c2bb6ebb1c3f386f88df",
+      "media_type": "text/plain",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/android-chrome-192.png",
+      "bytes": 10155,
+      "sha256": "7c8c326118bddf8d70f60fa44210f8c3759b6c21f43842406573edd70e5f629d",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/android-chrome-512.png",
+      "bytes": 38892,
+      "sha256": "d03e9f8f0c91baebc16d8ea333c8da13b092cc0a5c4ebda5696c3169efc3e8c8",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-dark-1024.png",
+      "bytes": 105011,
+      "sha256": "867d02c0f06050fac522c75d6df5927617bfab6fe9c62a5e2ce17431d87abb39",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-dark-128.png",
+      "bytes": 5898,
+      "sha256": "e209aefec4cd5256bd136e56580ffa6417061a9727b3230f21796b641f6ac6f4",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-dark-256.png",
+      "bytes": 14309,
+      "sha256": "b65fc34fbb34b174112746a38f20206a76291e371db7011e61e462b1c81dae94",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-dark-512.png",
+      "bytes": 38892,
+      "sha256": "d03e9f8f0c91baebc16d8ea333c8da13b092cc0a5c4ebda5696c3169efc3e8c8",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-dark-64.png",
+      "bytes": 2597,
+      "sha256": "13abc68979d915e7ae2f64f30901a0b0f7ba2a5dff086dded02aadad42243406",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-dark.svg",
+      "bytes": 1412,
+      "sha256": "6191ba8d1a9e386d9ffa63b27633d9b4ce5f7f345f80d3f14417f4d8b1a3af31",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-light-1024.png",
+      "bytes": 63243,
+      "sha256": "71a4f579f89cdcbe15a8638a4ee3d5dd5d9db9969d33a0283f4b34ab4ff31b83",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-light-128.png",
+      "bytes": 4507,
+      "sha256": "205dd928ebb86eddd645b1460688edfe706975cfc0e340cf9123cd7d935fe5ca",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-light-256.png",
+      "bytes": 10393,
+      "sha256": "4874792050c0547d80e66dad96e2553f8bebab7f222379d14413ecddbdd6d4ea",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-light-512.png",
+      "bytes": 25803,
+      "sha256": "6ba2f35d5bb0ca87ced0115a9d766c335c5aeabc893d4c4c3874466ce8e7d9b0",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-light-64.png",
+      "bytes": 2054,
+      "sha256": "e3c7c84be6bd775c1ca6bc17d130cf96416a645577c92d8d23dfc9e32b6cce5b",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-light.svg",
+      "bytes": 1408,
+      "sha256": "2ab277d486e582991c3d812f7f26d2492fc77b130e42539d7294e8911cd22518",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-mono-1024.png",
+      "bytes": 32818,
+      "sha256": "7bc5f99c73e532082533244a4a8197f8e30155b08fc767ded5f769f4fd10c6a4",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-mono-128.png",
+      "bytes": 3363,
+      "sha256": "5d50f18389457c606d0f423c5fb1667e2643afdaa55d27b39e38b95751d280ec",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-mono-256.png",
+      "bytes": 6810,
+      "sha256": "4ec3fdcc6ef4ffb1b16af12ce92824e03a7419e94e978e6e5bb55f33f9712ef6",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-mono-512.png",
+      "bytes": 14667,
+      "sha256": "dfbc94a2a0ee9a351d7ea506b6fda36f56821c445b31ac5dd736fb21ca8fbaa6",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-mono-64.png",
+      "bytes": 1715,
+      "sha256": "f42269ed3ee1df40dd30fd2a5904a4429467b06bdd1e6c128c883969d623e30a",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/app-icon-mono.svg",
+      "bytes": 1302,
+      "sha256": "c70a5465e545211afe3436269d2da1008231b8f2fb00a0b52fa198ec1883d528",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/apple-touch-icon.png",
+      "bytes": 9189,
+      "sha256": "d716e301de6f5720bcd4ee92def996b63f84b2449c3d6e72e4f12819b8b0dcba",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-16.png",
+      "bytes": 580,
+      "sha256": "6d42c17d78031bd8f6acaf804442ef879e6315fbb66901e3c4fddc62ad2901d2",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-180.png",
+      "bytes": 9189,
+      "sha256": "d716e301de6f5720bcd4ee92def996b63f84b2449c3d6e72e4f12819b8b0dcba",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-192.png",
+      "bytes": 10155,
+      "sha256": "7c8c326118bddf8d70f60fa44210f8c3759b6c21f43842406573edd70e5f629d",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-32.png",
+      "bytes": 1203,
+      "sha256": "07f327629e2a25977be7e190bfb8a57c526e1162732ea16a3205ef6739ca60ba",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-48.png",
+      "bytes": 1886,
+      "sha256": "164e6e2605aaccb495bc9ffa493615d3cc6d0ba03de6fba2ea74e1df1b966145",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-512.png",
+      "bytes": 38892,
+      "sha256": "d03e9f8f0c91baebc16d8ea333c8da13b092cc0a5c4ebda5696c3169efc3e8c8",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-64.png",
+      "bytes": 2597,
+      "sha256": "13abc68979d915e7ae2f64f30901a0b0f7ba2a5dff086dded02aadad42243406",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon-96.png",
+      "bytes": 4295,
+      "sha256": "8b11c8e069ddb070a2b8dd2cc43314cff02f01df6e9d891352f3d6896e9c0970",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/favicon.ico",
+      "bytes": 9473,
+      "sha256": "70f26dd09114f93ab4acd557ce04c9516991146189982c44c0e9ad6641686e75",
+      "media_type": "image/vnd.microsoft.icon",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/pwa-maskable-512.png",
+      "bytes": 37423,
+      "sha256": "0859f6b2ca8ed3bbeec9bc8150a9db77a4074590ef0817102d2fe5b36e4a3de0",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/icons/site.webmanifest",
+      "bytes": 610,
+      "sha256": "5d47f468ee991b32a728818c42d553b7c069d0c3b5a906f0e68fc35d04bce262",
+      "media_type": "application/manifest+json",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/lockup-dark-1600.png",
+      "bytes": 64423,
+      "sha256": "642cc7bc6c550aa32abc1ea48c0134fe2600c39b78702c37a3229f248b1548f7",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/lockup-light-1600.png",
+      "bytes": 53742,
+      "sha256": "ddaf18fa29154dc854ae644fba56d6a91352daf17f55630ac650de1c038304e4",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/primary-dark-1600.png",
+      "bytes": 51810,
+      "sha256": "e8e641d9fc47a46a8cdee043fbd5e8c1de1ac2b8432051a0b203eb916a3a7435",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/primary-light-1600.png",
+      "bytes": 40835,
+      "sha256": "4be8f05fd5c80ae422faaf61a95f6bc05a08ef7bc8df7abb4af3edc7bfe395f0",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/stacked-dark-1200.png",
+      "bytes": 51048,
+      "sha256": "806d88ed1ca854cbd18501f9d08d589e2e557af470d4ab82b1df3adb221e2d89",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/stacked-light-1200.png",
+      "bytes": 43814,
+      "sha256": "03533636b4d42cbc2cae48adb709fe5c32a5cbbe5ee518dbf57c3749a747b0d2",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-black-1024.png",
+      "bytes": 26410,
+      "sha256": "bef31873b6fcd32fb29c7817231e34267fdb49bd67ac7bfb4f984116585f082f",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-black-256.png",
+      "bytes": 5562,
+      "sha256": "5a2d6a27d8328095f39133ed94fefabdbfb38e2577d447bb86d1779a40b59095",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-gradient-1024.png",
+      "bytes": 69194,
+      "sha256": "691d44ca29a9bad75d9e41079a722ca6c8f702cbe3f7ef14337db579b604440e",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-gradient-256.png",
+      "bytes": 11716,
+      "sha256": "a7e95c8a374363f0a5c78b6f78f96649030a38256e001b2cc34fbfbc63ceeac1",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-gradient-512.png",
+      "bytes": 28443,
+      "sha256": "22fea5093d27e3a87d6420efc1d69eef9417f3c4192c5c34435435001614f632",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-white-1024.png",
+      "bytes": 25384,
+      "sha256": "f504041b362dcf2f6e93ccd64847db4eee58ecc6e61f88e090b16ea2d48d49db",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/symbol-white-256.png",
+      "bytes": 5337,
+      "sha256": "c152a88ce778d0787618f30f0b5b64b9d6031cdb0edb559dc2687123f0447d03",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/wordmark-dark-1200.png",
+      "bytes": 33863,
+      "sha256": "1b47a2fde236b12b2115c002f056e5c8a670b8e44afa6faf98aa288ebc2e7286",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/png/wordmark-light-1200.png",
+      "bytes": 21730,
+      "sha256": "ff8c8c45b14788b6baec0ad38f399194adabdc1b0d174281064a0a5775f69392",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/lockup-dark.svg",
+      "bytes": 4241,
+      "sha256": "2a5b7b9fddc1757a77758539b603b9e803525e56a4558cbfa1243d0b0c32d707",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/lockup-light.svg",
+      "bytes": 4226,
+      "sha256": "f8ec5c2c2a458793e5fdf6dd5b7c5b4c8c5f45aebb3f6ae4023115a2b023fb1d",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/primary-dark.svg",
+      "bytes": 4051,
+      "sha256": "32f593643ddc8b200cffcb74db2866b48404cd71654ff91a5e6136f490644c2d",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/primary-light.svg",
+      "bytes": 4036,
+      "sha256": "8b7e83d9c53483de50f3b58680c17e7d3ce7053749f993f7c13888b872a16f28",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/primary-mono-black.svg",
+      "bytes": 4101,
+      "sha256": "74c3291154d5bc58f2c76b070fd061e6a8120f8967df42f32581f591250bcf09",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/primary-mono-white.svg",
+      "bytes": 4116,
+      "sha256": "8b6b59fdaee2a15e7869554345b7506d40548a01330bd90f0db84438bf53e771",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/stacked-dark.svg",
+      "bytes": 4086,
+      "sha256": "c2abbd0f861d6344dc695b4252a333d490186c6a89d2a64b6d158fd34ddd5def",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/stacked-light.svg",
+      "bytes": 4071,
+      "sha256": "5f2fc620b0d8d4baa74f4696777b96a41796fab6a38b4fd113ac855cff3aa4bb",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/symbol-black.svg",
+      "bytes": 1219,
+      "sha256": "54c54da05a0f20a3149d071a2f2048ffee2a0f4a8d4278856cca711511f8dbac",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/symbol-gradient.svg",
+      "bytes": 1224,
+      "sha256": "1c6f5f20f38e5d8bb2d13d3dff02aebd743b6f17e29b1117ff8e976f3f92186d",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/symbol-white.svg",
+      "bytes": 1219,
+      "sha256": "6fbf2db723aaac27a3cbed0afd5c7f2503ccaf7dc768e49660ab2ce31fa27434",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/wordmark-dark.svg",
+      "bytes": 3713,
+      "sha256": "7d07abece3485683ac4ddf31b3b85ef98768cab00d4bce6f33ebe4f93fad9b69",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/logos/svg/wordmark-light.svg",
+      "bytes": 3698,
+      "sha256": "7f134fcc5654b7ae71ad0a3915c5bd2a57c35064937648b5b8d6a768570db72d",
+      "media_type": "image/svg+xml",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/previews/brand-overview.jpg",
+      "bytes": 181542,
+      "sha256": "d721948617530c1a1010803249b6980f0a4af9cbe3c5a371f5614cab5544ea82",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/previews/creative-direction-moodboard.png",
+      "bytes": 1651620,
+      "sha256": "af79c465d24bfc370a035fb34a2e1a8bee528b86c949a2461654cac3cd340308",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/github-preview-1280x640.jpg",
+      "bytes": 88042,
+      "sha256": "48327ce2b60454b0ea1153514312a0a08aaf43f054be44bf85d42328d0b916f9",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/linkedin-cover-1584x396.jpg",
+      "bytes": 56248,
+      "sha256": "fc8fd57835e9bc87a306aa6e3b48c1fd2a3a5d337511834b4ae3103c22849a7d",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/opengraph-1200x630.jpg",
+      "bytes": 115120,
+      "sha256": "b16437a78fb336ad6eebc23e625a9f86adffeaee515429e054fc643f8a232dff",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/profile-avatar-512.png",
+      "bytes": 38892,
+      "sha256": "d03e9f8f0c91baebc16d8ea333c8da13b092cc0a5c4ebda5696c3169efc3e8c8",
+      "media_type": "image/png",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/square-post-1080x1080.jpg",
+      "bytes": 151646,
+      "sha256": "675d44f72b8fd0b09de0ca09a08b9a8cd49f7caad23ab9998d21099d005c87a7",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/story-1080x1920.jpg",
+      "bytes": 192402,
+      "sha256": "8f2ca72d94cde4370e090d249e0ff8119923257677f9a1c04bc45c1f5a753497",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/x-header-1500x500.jpg",
+      "bytes": 115132,
+      "sha256": "33c83d40c35b212c3a35597ea9a7bdef1f24cdc208ba3f103f807e72f4326c15",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/social/youtube-banner-2560x1440.jpg",
+      "bytes": 268560,
+      "sha256": "95e5da17b8a0383d1c4ded55bcf4060b537f5acef2e7c180850829842a3b3a08",
+      "media_type": "image/jpeg",
+      "representation": "binary",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/tokens/colors.json",
+      "bytes": 586,
+      "sha256": "611250552398c14372d7f39e2c8071b313e3830ed47c4eb79c14fa0dd9e2d7de",
+      "media_type": "application/json",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/SINet-Brand-Kit/tokens/sinet.css",
+      "bytes": 533,
+      "sha256": "768a5090a8146cab5a37a3a41d6537c21d3ce9299b5799dd65d44800c925e1fc",
+      "media_type": "text/css",
+      "representation": "utf-8 text",
+      "source": "SINet-Brand-Kit.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/.env.example",
+      "bytes": 492,
+      "sha256": "cbeaa8d429a443862c371f37df297da4c7bfbaaed9a066421d4f837531089349",
+      "media_type": "application/octet-stream",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/AGENTS.md",
+      "bytes": 2165,
+      "sha256": "f1f97b76a092a10654105c45a2ebdee06e358c2c0016d99e92a84ca3a6040b4f",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/README.md",
+      "bytes": 2513,
+      "sha256": "b45bcc72cbf8df708d2ac1fb37eab7abaf1cab655aacffd31cd4a70eace97025",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/config/defaults.toml",
+      "bytes": 288,
+      "sha256": "e260ae30b13ba4558776652a598c0acd0339d1f8c986b2f98a91869bb946a098",
+      "media_type": "application/toml",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/connectors/examples/echo.json",
+      "bytes": 591,
+      "sha256": "128bbbae75eb3c9520bac24708d85f97bd1cc00821fcfff7e698c875f8104f85",
+      "media_type": "application/json",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/contracts/connector.schema.json",
+      "bytes": 2104,
+      "sha256": "f8106ae959f6e239e6b847c788ec8f9cb719b78dffc8c450a4dcf539b3ef70d6",
+      "media_type": "application/json",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/db/schema.sql",
+      "bytes": 4795,
+      "sha256": "c162c59b95be476c76492f8dcaa1d20ddb0d47ee8b066cd0cec95aca4009deca",
+      "media_type": "application/sql",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/ADR/0001-runtime-and-scope.md",
+      "bytes": 1326,
+      "sha256": "4192cc7f1fa840d45f5f65d3f29d6a3231768f62e9a058eca888d314cfff234d",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/API.md",
+      "bytes": 1996,
+      "sha256": "6a70f8332aeb8ef4adc7e11f19a8be9405c923202919d5134dea5374b3163397",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/ARCHITECTURE.md",
+      "bytes": 4535,
+      "sha256": "c550a2e5a41febca48507a9e5de4ae24211053b18ca3be00a4492bda16f4ad2b",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/CONCEPT.md",
+      "bytes": 1963,
+      "sha256": "d7209d71b9396a1a0070f2b6880623f9971eec1dd44a3765578136c280aff309",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/PERSONAS.md",
+      "bytes": 1508,
+      "sha256": "56423c6d8a3353c16f8cf35006072feb221bb950dab92707f3434898ab0db4d8",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/PRD.md",
+      "bytes": 4754,
+      "sha256": "95217f91aa76c6e0e3ab53eacb95edbaa9d54e5f53310b4fe5f9feaefd4751c2",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/ROADMAP.md",
+      "bytes": 1804,
+      "sha256": "16b2622e85ec7cbd55a2aa8e8aac38dad356b366dc9d2c4fb4e0fe96069fc68a",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/SECURITY.md",
+      "bytes": 3034,
+      "sha256": "28150f3500e4ccfb0fdb02c8c8295cb517840c85030ccddb5c944fe3e7cc2464",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/TESTS.md",
+      "bytes": 1455,
+      "sha256": "066c6926e3ec936a037e9608324be6906b10e74d66e4be990731c9f606d21ba7",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/docs/UX.md",
+      "bytes": 1956,
+      "sha256": "550b12aff6481176b10f8eac46f18657b660d4a6c2c2121b7512c4c14cbebec4",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/prompts/CLOUD_AGENT_SYSTEM.md",
+      "bytes": 1620,
+      "sha256": "cf1296fea38b6694264fa8f2e4213ee45a14bdc445b437315f759e56932c5189",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "extracted/cli-social-network-starter/prompts/CODEX_BUILD.md",
+      "bytes": 2533,
+      "sha256": "4390b04a6ab693c6bede2b8162841c182baf35f959340d2bc34d69c36e21b0c6",
+      "media_type": "text/markdown",
+      "representation": "utf-8 text",
+      "source": "cli-social-network-starter.zip"
+    },
+    {
+      "path": "originals/SINet-Brand-Kit.zip",
+      "bytes": 3849890,
+      "sha256": "7fc3ed48c45dcc371e3f613effd07567768fbbb42095fc570fb4b8bd0dec1c21",
+      "media_type": "application/zip",
+      "representation": "binary",
+      "source": "Uploaded attachment"
+    },
+    {
+      "path": "originals/SINet-Build-Plan-PRD.txt",
+      "bytes": 1962,
+      "sha256": "ec883a969c6f10a4485be96595a04061ec38ab89091d974fc915d1cd1a8c1ea8",
+      "media_type": "text/plain",
+      "representation": "utf-8 text",
+      "source": "Uploaded attachment"
+    },
+    {
+      "path": "originals/SINet-Concept.txt",
+      "bytes": 1919,
+      "sha256": "8e23ce77303a51c895ae7566f47a566769afd5ea3a5b2001dbb4aa20a9a45062",
+      "media_type": "text/plain",
+      "representation": "utf-8 text",
+      "source": "Uploaded attachment"
+    },
+    {
+      "path": "originals/SINet-OG-Build-Prompt.txt",
+      "bytes": 1767,
+      "sha256": "c1807f71825e2d5efa4ddd880ec7b989554409ac9ac567096717332a1ce69fa1",
+      "media_type": "text/plain",
+      "representation": "utf-8 text",
+      "source": "Uploaded attachment"
+    },
+    {
+      "path": "originals/cli-social-network-starter.zip",
+      "bytes": 22537,
+      "sha256": "7e76327331931bd33b21b643f450b13f3c8c18fc964d425ac4af1c553b484a4b",
+      "media_type": "application/zip",
+      "representation": "binary",
+      "source": "Uploaded attachment"
+    }
+  ]
+}

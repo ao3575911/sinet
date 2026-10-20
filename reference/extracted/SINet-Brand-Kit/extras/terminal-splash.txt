@@ -1,0 +1,14 @@
+
+  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+  ┃                                            ┃
+  ┃  SINet                                     ┃
+  ┃  YOUR TERMINAL. YOUR NETWORK.             ┃
+  ┃                                            ┃
+  ┃  PEOPLE   AGENTS   PLUGINS   TOGETHER_     ┃
+  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+  $ sinet login
+  $ sinet profile
+  $ sinet discover
+  $ sinet plugins search
+  $ sinet agent ask "What's new?"
