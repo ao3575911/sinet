@@ -1,0 +1,42 @@
+name: npm-publishing-access
+on:
+  push:
+    branches: [codex/next-slice-distribution]
+    paths: ['.github/workflows/npm-access.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Identify account and scope ownership without exposing credentials
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json, subprocess
+          result = subprocess.run(['npm', 'whoami', '--json'], capture_output=True, text=True)
+          if result.returncode:
+              raise SystemExit('npm token cannot authenticate; check NPM_TOKEN in the npm environment/repository')
+          account = json.loads(result.stdout)
+          print('Authenticated npm username:', account)
+          scope = 'ao3575911'
+          if account == scope:
+              print('Selected scope is the authenticated personal namespace')
+          else:
+              membership = subprocess.run(['npm', 'org', 'ls', scope, '--json'], capture_output=True, text=True)
+              try:
+                  members = json.loads(membership.stdout) if membership.returncode == 0 else {}
+              except ValueError:
+                  members = {}
+              if account in members:
+                  print('Authenticated account is a member of the selected organization; verify package-creation permission')
+              else:
+                  print('Selected scope differs from account and organization membership could not be verified')
+          PY
