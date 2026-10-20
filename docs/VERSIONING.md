@@ -1,0 +1,40 @@
+# Semantic versions and signed releases
+
+VERSION is the source of truth. The initial prototype release is **0.1.0**; the CLI reports
+it through `SINet version` and `SINet --version` without contacting the API. CHANGELOG.md
+records dated release behavior and limitations. Never label a prototype as production.
+
+Follow SemVer 2.0.0. During 0.x development, increment the minor component for features or
+breaking public CLI/API/manifest changes; use patch increments for compatible fixes. After
+1.0.0, breaking public changes increment major, compatible additions minor and fixes patch.
+Prereleases use identifiers such as `0.2.0-rc.1`; build metadata does not change precedence.
+Numeric identifiers cannot have leading zeroes. Release tags are `v` plus VERSION.
+
+Prepare a release on a reviewed branch: update VERSION and the dated changelog entry,
+run validation, build the CLI, and run:
+
+```sh
+python3 -m unittest discover -s scripts -p test_version.py -v
+python3 scripts/check_version.py --binary ./bin/SINet
+```
+
+After the reviewed release commit is signed, verified and present on main, maintainers
+create and verify the annotated tag using their provisioned signing key:
+
+```sh
+git tag -s v0.1.0 -m 'SINet 0.1.0 — production-oriented prototype'
+git verify-tag v0.1.0
+git verify-commit 'v0.1.0^{}'
+git push origin v0.1.0
+```
+
+The semantic-version Action validates syntax, dated changelog and compiled CLI agreement.
+For tags, it rejects lightweight tags, mismatched versions, untrusted signatures, unsigned
+release commits and commits outside main. Its SSH trust list is loaded from main's public
+.github/release/allowed_signers. Key changes require maintainer review; public key fingerprint
+is SHA256:DZbp/eHiq7txsnGklKuBtZ1XOotv927BpKkCIfS5ggw. The private key never enters Actions.
+
+The portable-binaries Action uploads builds/checksums for version tags. They are CI artifacts,
+not independently signed production binaries. Tag signing and commit signatures establish
+source provenance; runtime/operational release gates remain in issues #2–#6. Never move an
+already published tag to different content; publish a new SemVer instead.

@@ -12,3 +12,5 @@ Echo is deterministic. Live production email/model/remote services require confi
 No uploaded code, hosted shell, host filesystem/USB access, active inbox or wallet is shipped.
 
 [Documentation home](Home.md)
+
+[Versions and signed releases](Versioning.md)

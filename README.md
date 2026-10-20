@@ -2,6 +2,8 @@
 
 **Your terminal. Your network.** A Go social CLI and PostgreSQL API prototype.
 The project and executable are named **SINet** (case sensitive).
+Current prototype version: **0.1.0** — `SINet version`. See [changelog](CHANGELOG.md)
+and [signed release/version policy](docs/VERSIONING.md).
 
 ## Working prototype
 

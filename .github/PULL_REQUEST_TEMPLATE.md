@@ -1,6 +1,7 @@
 ## Problem and resulting behavior
 
-Describe the trigger and the resulting behavior. Link the issue and apply type/area labels.
+Describe the trigger and the resulting behavior. Link the issue and apply type/area labels. For a release, apply the appropriate
+semver:major/minor/patch label and update VERSION plus CHANGELOG.md.
 
 ## Evidence
 

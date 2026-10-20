@@ -7,3 +7,4 @@
 - [Contributing and community](Contributing.md)
 - [Roadmap and release gates](Roadmap.md)
 - [Validation evidence](Validation.md)
+- [Versions and signed releases](Versioning.md)

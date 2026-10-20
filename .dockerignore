@@ -11,3 +11,5 @@
 !contracts/**
 !prompts/
 !prompts/**
+!VERSION
+!version.go

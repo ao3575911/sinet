@@ -125,3 +125,16 @@ writes only from trusted main/manual configuration; PR labelling never executes 
 Workflow check fix verified remotely: run 39352937595 is green for automation tests,
 workflow/ShellCheck lint, the full Go validation, cross-build, real Mailpit/PTY journeys
 and vulnerability scan. Owner explicitly requested finalization and main delivery.
+
+All five initial main publishing/check workflows passed at 466447f: validate,
+dependency-security, portable-binaries, community-setup and documentation-pages. Custom
+labels were read back on issues/PRs; discussion starters #9–#11 and their labels rendered
+on GitHub. Pages deployment succeeded at https://ao3575911.github.io/sinet/; direct fetching
+from this restricted runtime returned 403, so the Pages workflow now checks its own public
+HTML from the allowed runner. The wiki is published and signed. Portable artifact
+12234416437 contains the three builds and checksums (14-day retention).
+
+Owner requested SemVer with signed verification. Added canonical VERSION=0.1.0, dated
+CHANGELOG.md, embedded local CLI version, three Python version tests, and a semantic-version
+workflow checking syntax/changelog/CLI and trusted annotated tag/release commit signatures.
+The signing trust list contains only the public key; private keys remain outside CI/source.

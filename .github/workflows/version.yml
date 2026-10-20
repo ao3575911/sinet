@@ -1,0 +1,38 @@
+name: semantic-version
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.2'
+          cache: true
+      - run: python3 -m unittest discover -s scripts -p test_version.py -v
+      - run: go build -trimpath -o bin/SINet ./cmd/SINet
+      - run: python3 scripts/check_version.py --binary ./bin/SINet
+      - name: Verify annotated tag and release commit signatures
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 scripts/check_version.py --tag "$RELEASE_TAG" --binary ./bin/SINet
+          test "$(git cat-file -t "$RELEASE_TAG")" = tag
+          mkdir -p work
+          git show origin/main:.github/release/allowed_signers > work/release-allowed-signers
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile "$PWD/work/release-allowed-signers"
+          git verify-tag "$RELEASE_TAG"
+          release_commit=$(git rev-list -n 1 "$RELEASE_TAG")
+          git verify-commit "$release_commit"
+          git merge-base --is-ancestor "$release_commit" origin/main

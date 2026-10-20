@@ -1,0 +1,19 @@
+---
+layout: default
+title: Versions and signed releases
+---
+
+The initial prototype version is **0.1.0**. VERSION is authoritative; `SINet version` and
+`SINet --version` report it locally without API access. CHANGELOG.md records dated changes.
+
+Use SemVer 2.0.0. In 0.x, use a minor bump for features/breaking public changes and patch
+for compatible fixes. Release tags are v plus VERSION. Prereleases such as 0.2.0-rc.1 are
+supported. Do not move a published tag; issue a new version.
+
+The semantic-version Action checks syntax, changelog and compiled CLI agreement. A tag
+must be annotated and signed, match VERSION, point to a signed commit reachable from main,
+and verify against the public trust list from main. Private signing keys never enter CI.
+Portable builds and checksums are artifacts, not automatically signed production binaries.
+
+See [full versioning/release procedure](https://github.com/ao3575911/sinet/blob/main/docs/VERSIONING.md)
+and [changelog](https://github.com/ao3575911/sinet/blob/main/CHANGELOG.md).

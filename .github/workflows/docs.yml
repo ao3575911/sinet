@@ -34,3 +34,10 @@ jobs:
       - name: Deploy documentation
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Check published documentation content
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          mkdir -p work
+          curl --proto '=https' --proto-redir '=https' --retry 6 --retry-delay 3 --retry-all-errors --max-time 15 -fsSL "$PAGES_URL" -o work/site-index.html
+          python3 -c 'from pathlib import Path; html=Path("work/site-index.html").read_text(); assert "<h1>SINet documentation</h1>" in html; assert "/sinet/quickstart.html" in html'

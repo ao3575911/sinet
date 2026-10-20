@@ -88,3 +88,22 @@ including ShellCheck, 17 race-enabled Go tests, real SMTP/CLI/PTY journeys, port
 and vulnerability scanning. The previously failing unused-variable ShellCheck warning is
 fixed. Pages and community publishing are activated by the authorized main push; their
 actual results are recorded after the workflows complete.
+
+## Published repository features
+
+At main commit 466447fd354d59b465bba01802a13c457aad5fd1, all five workflows passed:
+validate (39353107801), dependency-security (39353107712), portable-binaries (39353107323),
+community-setup (39353107429) and documentation-pages (39353107401). GitHub marks all eleven
+implementation commits through that point verified=true, reason=valid. The remote main
+SHA matched local HEAD; PR #1 is merged.
+
+Issues/PR custom labels were read back, and Discussions #9, #10 and #11 plus their labels
+were verified in published GitHub HTML. Wiki guide HTML was also verified. Pages deployed
+to https://ao3575911.github.io/sinet/; the restricted runtime receives 403 on github.io,
+so an explicit post-deployment HTML/navigation check was added to the Pages runner.
+Portable artifact 12234416437 includes three builds/SHA256SUMS with 14-day retention.
+
+SemVer additions validate VERSION=0.1.0, a dated changelog and CLI agreement, with three
+Python tests. Release-tag signature checks run against the public main-branch trust list.
+The actual signed tag result is recorded after publication; preparing a tag is not reported
+as a verified release until those checks pass.

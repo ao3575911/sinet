@@ -54,6 +54,21 @@
       "name": "automation",
       "color": "ededed",
       "description": "Repository automation and workflows"
+    },
+    {
+      "name": "semver:major",
+      "color": "b60205",
+      "description": "Breaking public contract change after 1.0"
+    },
+    {
+      "name": "semver:minor",
+      "color": "1d76db",
+      "description": "Feature or 0.x breaking-change release"
+    },
+    {
+      "name": "semver:patch",
+      "color": "0e8a16",
+      "description": "Compatible fix release"
     }
   ],
   "issue_labels": {
@@ -94,8 +109,12 @@
     ],
     "8": [
       "area:docs",
-      "automation",
-      "status:blocked"
+      "automation"
+    ],
+    "12": [
+      "security",
+      "area:operations",
+      "semver:minor"
     ]
   },
   "discussions": [

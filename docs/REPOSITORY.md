@@ -4,7 +4,7 @@
 
 Type labels: bug, enhancement, documentation. Area labels: area:cli, area:identity,
 area:connectors, area:operations, area:docs. Security/release labels: security, release-gate,
-priority:high, status:blocked, prototype. Automation changes use automation.
+priority:high, status:blocked, prototype. Automation changes use automation. Release intent uses semver:major/minor/patch.
 
 Release issues #2–#6 contain verifiable public-launch acceptance. #7 records the fixed
 PostgreSQL startup race. #8 tracks documentation/community publication. PR #1 is labelled,
@@ -16,6 +16,7 @@ untrusted PR source. The label configuration is .github/labeler.yml.
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
+| semantic-version | main, PR, version tags and manual | SemVer/changelog/CLI agreement; signed annotated tag and release commit verification against main trust list |
 | validate | push and PR | Two automation tests; workflow lint; fmt/vet/module checks; real PostgreSQL race tests; cross-build; Mailpit CLI/PTY journeys; govulncheck |
 | dependency-security | weekly, manual and scanner configuration changes | Current vulnerability database scan without requiring live application credentials |
 | portable-binaries | main client changes, version tags and manual | Linux/macOS/Windows CLI artifacts and SHA256SUMS, retained 14 days; not an automatically signed production release |

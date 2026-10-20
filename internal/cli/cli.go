@@ -22,6 +22,7 @@ Usage: SINet [command]
 No command opens guided onboarding and a keyboard dashboard in an interactive terminal.
 All responses are JSON except help/share cards. Errors go to stderr, exit code 1.
 
+  version | --version                 Print local semantic version
   health                              Check API health
   login                               Guided email and code sign-in
   login request EMAIL                 Send OTP (development: view in Mailpit)

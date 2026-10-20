@@ -13,3 +13,5 @@ The account journey is real: email OTP, atomic unique handle, public profile, ro
 notes, a reviewed installed connector, explicit grant, audited agent tool use and revocation.
 Echo is deterministic. Live production email/model/remote services require configuration.
 No uploaded code, hosted shell, host filesystem/USB access, active inbox or wallet is shipped.
+
+[Versions and signed releases](versioning.html)
