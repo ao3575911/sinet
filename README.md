@@ -6,7 +6,9 @@ Current prototype version: **0.1.1** — `SINet version`. See [changelog](CHANGE
 and [signed release/version policy](docs/VERSIONING.md).
 Published prototype: [v0.1.1](https://github.com/ao3575911/sinet/releases/tag/v0.1.1).
 Portable packages and provenance verification: [release instructions](docs/RELEASE.md).
-npm/npx, PyPI/pip and GitHub Marketplace are not published; [tracked work and prerequisites](https://github.com/ao3575911/sinet/issues/14).
+PyPI/pip: [sinet-cli 0.1.1 is published](https://pypi.org/project/sinet-cli/0.1.1/).
+npm/npx publication is awaiting scope access; Marketplace remains pending.
+[Distribution tracking](https://github.com/ao3575911/sinet/issues/14).
 
 Next: [real read-only connector slice](docs/NEXT_SLICE.md), proposed for 0.2.0.
 [Registry preparation](packaging/README.md) packages the existing 0.1.1 CLI first; it does

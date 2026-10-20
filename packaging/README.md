@@ -2,7 +2,10 @@
 
 Distribution names: **@ao3575911/sinet** (npm/npx) and **sinet-cli** (PyPI/pip).
 These are thin launchers for the existing Go application, not JavaScript/Python APIs.
-Status: prepared candidates; neither registry publication is currently claimed.
+Status: [sinet-cli 0.1.1 is published on PyPI](https://pypi.org/project/sinet-cli/0.1.1/)
+and verified with public file hashes and a fresh pip install. npm publishing is blocked
+by the registry's E404 permission/scope response for @ao3575911/sinet; no npm publication
+is claimed. The signed preparation branch remains unmerged until npm is verified.
 
 The npm package bundles Linux x64, macOS arm64 and Windows x64 binaries. Python uses
 separate wheels for each target. macOS wheels require macOS 14+; the Linux wheel uses
@@ -19,7 +22,8 @@ but cannot protect against an attacker who can replace the launcher and manifest
 All Go binary bytes originate in the verified GitHub release, with build information and
 third-party licenses retained. Do not describe them as platform-notarized executables.
 
-After actual registry publication and fresh-install verification, the intended commands are:
+The pip commands below are verified against the public registry. npm/npx commands are
+publication targets awaiting scope access:
 
 ```sh
 npx @ao3575911/sinet@0.1.1 version
@@ -29,8 +33,8 @@ python3 -m pip install sinet-cli==0.1.1
 SINet version
 ```
 
-These commands are publication targets, not claims that the names are already registered.
-Use a Python virtual environment where required by the operating system.
+Use a Python virtual environment where required by the operating system. No npm/npx
+publication is claimed until the upload and fresh registry installation pass.
 
 ## Build and verify candidates
 
@@ -56,7 +60,7 @@ checksums and source metadata again; local checksum comparison alone is not auth
 
 ## Owner setup required before publication
 
-On 20 October 2026, public lookups found neither chosen name registered. Availability does
+Before the first publication on 20 October 2026, public lookups found neither chosen name registered. Availability does
 not reserve a name or establish ownership. Use an owner-controlled npm account/scope
 `ao3575911` and an owner-controlled PyPI project `sinet-cli`; change the scope if the owner
 cannot control it. Never publish using somebody else's namespace or paste tokens in chat.
@@ -67,7 +71,10 @@ npm with --provenance. Once the package exists, configure npm Trusted Publishing
 ao3575911/sinet, workflow registry.yml, environment npm, then remove the bootstrap token.
 For PyPI, configure a pending Trusted Publisher for sinet-cli, owner ao3575911, repository
 sinet, workflow registry.yml, environment pypi. No PyPI token is required with that setup.
-The registry account owner must perform those external account settings.
+The registry account owner must perform those external account settings. The PyPI
+configuration has now completed a successful trusted publish. The npm token reached
+publication but the registry rejected package creation in @ao3575911; the owner must
+confirm scope ownership and token/publishing permissions before retrying that job.
 
 After registry setup and passing candidate checks, publish from the signed preparation
 branch before merging main by creating signed intent tags:

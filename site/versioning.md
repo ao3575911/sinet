@@ -17,7 +17,8 @@ and verify against the public trust list from main. Private signing keys never e
 three CLI archives, a Linux server archive, BUILDINFO.json and SHA256SUMS. Every asset has
 verified GitHub OIDC/Sigstore build provenance; the annotated source tag is SSH-signed.
 See [installation and verification](https://github.com/ao3575911/sinet/blob/main/docs/RELEASE.md).
-npm/npx, PyPI/pip and Marketplace publication remain [tracked in issue #14](https://github.com/ao3575911/sinet/issues/14).
+[PyPI sinet-cli 0.1.1](https://pypi.org/project/sinet-cli/0.1.1/) is published and verified.
+npm/npx scope access and the future Marketplace listing remain [tracked in issue #14](https://github.com/ao3575911/sinet/issues/14).
 
 See [full versioning/release procedure](https://github.com/ao3575911/sinet/blob/main/docs/VERSIONING.md)
 and [changelog](https://github.com/ao3575911/sinet/blob/main/CHANGELOG.md).
