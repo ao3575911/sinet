@@ -48,3 +48,6 @@ coverage.html
 ._*
 Thumbs.db
 Desktop.ini
+
+# Task scratch files and signing material
+/work/
