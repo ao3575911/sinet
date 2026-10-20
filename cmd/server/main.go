@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -46,10 +47,22 @@ func run() error {
 			return fmt.Errorf("production SMTP configuration required")
 		}
 	}
-	db, err := store.Open(ctx, dbURL)
-	if err != nil {
-		return fmt.Errorf("database connection unavailable")
+	var db *sql.DB
+	var err error
+	startup, cancelStartup := context.WithTimeout(ctx, 30*time.Second)
+	for {
+		db, err = store.Open(startup, dbURL)
+		if err == nil {
+			break
+		}
+		select {
+		case <-startup.Done():
+			cancelStartup()
+			return fmt.Errorf("database connection unavailable after startup retry budget")
+		case <-time.After(time.Second):
+		}
 	}
+	cancelStartup()
 	defer db.Close()
 	if err = migrations.Apply(ctx, db); err != nil {
 		return err

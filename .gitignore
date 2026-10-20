@@ -51,3 +51,8 @@ Desktop.ini
 
 # Task scratch files and signing material
 /work/
+
+# Documentation and Python build caches
+/_site/
+__pycache__/
+*.pyc

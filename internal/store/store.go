@@ -15,6 +15,9 @@ func Open(ctx context.Context, rawURL string) (*sql.DB, error) {
 	}
 	q := parsed.Query()
 	q.Set("timezone", "UTC")
+	if q.Get("connect_timeout") == "" {
+		q.Set("connect_timeout", "5")
+	}
 	parsed.RawQuery = q.Encode()
 	db, err := sql.Open("postgres", parsed.String())
 	if err != nil {

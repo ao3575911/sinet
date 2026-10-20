@@ -98,3 +98,20 @@ without adding dependencies. Minimum module Go version is now 1.26; validation/c
 remain Go 1.27.2. Formatter/vet/checksums and the full real-PostgreSQL race suite pass with
 these versions. The Docker build now uses one allowlisted source-copy layer to reduce
 builder storage amplification; .dockerignore continues to exclude credentials and work/.
+
+Final dependency CI scan (39351660041) passed and explicitly reported “No vulnerabilities
+found” after scanning the five required modules and Go 1.27.2 standard library. Earlier
+module advisory GO-2026-5024 affected x/sys/windows before v0.44.0; v0.49.0 removes it.
+The owner's subsequent review explicitly authorizes pushing the completed changes to main.
+
+The final empty-volume bootstrap exposed a temporary PostgreSQL Unix-socket readiness
+race. Fixed Compose/CI health checks to require TCP readiness and added a 30-second API
+startup retry with a default 5-second connection timeout. Revalidated 17 Go tests with
+race detection and a newly created sinet-ready volume: health, the real CLI/Mailpit journey
+and the PTY journey passed; 4 migrations applied, publisher SINet, 0 test accounts remain.
+Bug #7 records the failure, fix and evidence and is closed as completed.
+
+Repository polish requested by the owner: labelled PR #1 and release-gate issues #2–#6;
+issue #8 tracks feature publication. Owner enabled Discussions/Pages and initialized wiki.
+Nine wiki guides plus navigation were published in signed commit
+`e6ea1759fe54c0a3de241cb036a117492f210cb8`; local signature and exact remote SHA verified.
