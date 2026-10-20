@@ -148,3 +148,13 @@ The extracted binary reported 0.1.1, and the archive included dependency license
 macOS/Windows have cross-build evidence only. No npm/PyPI/Marketplace publication is claimed.
 Those channels need owner-controlled registry projects/authentication and tested installers
 or an appropriate Action listing; see issue #14. No registry credentials were supplied.
+
+## Registry distribution preparation
+
+Prepared @ao3575911/sinet and sinet-cli 0.1.1 candidates from public release bytes, with
+the release manifest checked against authenticated GitHub metadata. Linux npm global
+installation, npx invocation, pip wheel installation, version checks and both launchers'
+tamper denials passed. All three platform wheels passed Twine 6.2.0 strict metadata
+validation; license metadata matches the repository's Apache-2.0 license. Launchers add
+no runtime libraries or download hooks. Windows installation runs in the registry CI;
+macOS remains cross-build-only evidence. These are candidate tests, not registry publication.

@@ -8,6 +8,10 @@ Published prototype: [v0.1.1](https://github.com/ao3575911/sinet/releases/tag/v0
 Portable packages and provenance verification: [release instructions](docs/RELEASE.md).
 npm/npx, PyPI/pip and GitHub Marketplace are not published; [tracked work and prerequisites](https://github.com/ao3575911/sinet/issues/14).
 
+Next: [real read-only connector slice](docs/NEXT_SLICE.md), proposed for 0.2.0.
+[Registry preparation](packaging/README.md) packages the existing 0.1.1 CLI first; it does
+not imply the planned connector is implemented or the registry names are published.
+
 ## Working prototype
 
 - Guided CLI sign-in and keyboard dashboard; scriptable JSON commands on Linux/macOS/Windows.
