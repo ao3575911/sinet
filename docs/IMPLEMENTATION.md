@@ -77,8 +77,8 @@ Owner naming decision: the project and executable are now **SINet**, preserving 
 Active docs, help, profile/share commands, build targets, examples, runtime policy and
 CLI tests were renamed; config variables are SINET_API / SINET_CONFIG. Historical SQL
 migrations and reference library remain checksum-stable. Migration 0004 updates existing
-bundled echo publisher metadata to SINet. PostgreSQL development role/database identifiers
-remain projectname for existing local volumes; they are not user-facing command names.
+bundled echo publisher metadata to SINet. Fresh-install PostgreSQL role/database defaults are now sinet. Existing local volumes
+retain their identifiers through explicit POSTGRES_USER / POSTGRES_DB overrides.
 
 Before the rename, final isolated Go 1.27.2 API image bootstrap passed from a new empty
 PostgreSQL volume: native CLI and PTY journeys passed on ports 8081/8026. Container

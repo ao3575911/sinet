@@ -18,15 +18,15 @@ jobs:
       postgres:
         image: postgres:17.6-alpine
         env:
-          POSTGRES_USER: projectname
+          POSTGRES_USER: sinet
           POSTGRES_PASSWORD: local-development-only
-          POSTGRES_DB: projectname
+          POSTGRES_DB: sinet
         ports: [5432:5432]
         options: >-
-          --health-cmd "pg_isready -h 127.0.0.1 -U projectname -d projectname"
+          --health-cmd "pg_isready -h 127.0.0.1 -U sinet -d sinet"
           --health-interval 2s --health-timeout 2s --health-retries 30
     env:
-      TEST_DATABASE_URL: postgres://projectname:local-development-only@127.0.0.1:5432/projectname?sslmode=disable
+      TEST_DATABASE_URL: postgres://sinet:local-development-only@127.0.0.1:5432/sinet?sslmode=disable
       RELEASE_TAG: ${{ github.ref_name }}
       GH_TOKEN: ${{ github.token }}
     steps:

@@ -29,7 +29,7 @@ func env(key, fallback string) string {
 func run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
-	dbURL := env("DATABASE_URL", "postgres://projectname:local-development-only@127.0.0.1:5432/projectname?sslmode=disable")
+	dbURL := env("DATABASE_URL", "postgres://sinet:local-development-only@127.0.0.1:5432/sinet?sslmode=disable")
 	development := env("APP_ENV", "development") == "development"
 	publicURL := env("APP_PUBLIC_URL", "http://127.0.0.1:8080")
 	if !development {

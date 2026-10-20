@@ -1,5 +1,5 @@
 GO ?= go
-TEST_DATABASE_URL ?= postgres://projectname:local-development-only@127.0.0.1:5432/projectname?sslmode=disable
+TEST_DATABASE_URL ?= postgres://sinet:local-development-only@127.0.0.1:5432/sinet?sslmode=disable
 .PHONY: build dev test integration check cross smoke smoke-tui
 build:
 	mkdir -p bin

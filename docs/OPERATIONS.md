@@ -191,10 +191,10 @@ Example trusted operator backup/restore (backup files contain private data):
 ```sh
 mkdir -p work/backups
 umask 077
-docker compose exec -T db pg_dump -U projectname -Fc projectname > work/backups/sinet.dump
+docker compose exec -T db pg_dump -U sinet -Fc sinet > work/backups/sinet.dump
 # Restore into a NEW database first; never overwrite the live database to test recovery.
-docker compose exec -T db createdb -U projectname sinet_restore
-docker compose exec -T db pg_restore -U projectname -d sinet_restore < work/backups/sinet.dump
+docker compose exec -T db createdb -U sinet sinet_restore
+docker compose exec -T db pg_restore -U sinet -d sinet_restore < work/backups/sinet.dump
 ```
 
 Keep encrypted off-host backups with access controls and a documented expiry. Test recovery
@@ -214,3 +214,21 @@ The dedicated private signing key is only in ignored `work/signing/`, with mode 
 it is not in source, Docker context, binaries or downloadable deliverables. Securely
 transfer it outside the workspace if future signing with this identity is needed, or
 remove its registration after this task. Do not disclose the private key in chat.
+
+
+## Existing database volumes after the SINet rename
+
+Fresh installations use database/role `sinet`. PostgreSQL does not rename an existing
+volume's role or database when environment variables change. For a volume created before
+this rename, add these non-secret compatibility settings to the ignored local `.env`:
+
+```dotenv
+POSTGRES_USER=projectname
+POSTGRES_DB=projectname
+```
+
+Compose uses these settings for both readiness and the API connection. When running the
+API or integration tests directly, set DATABASE_URL / TEST_DATABASE_URL to the existing
+role/database as well. Substitute those identifiers in backup commands above. No database
+or role is renamed or deleted automatically. Retain backups before an operator-led rename.
+The old echo publisher in migration 0003 is historical; migration 0004 updates it to SINet.
