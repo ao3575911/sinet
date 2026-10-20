@@ -15,7 +15,8 @@ three CLI archives, a Linux server archive, BUILDINFO.json and SHA256SUMS. Every
 verified GitHub OIDC/Sigstore build provenance; the annotated source tag is SSH-signed.
 See [installation and verification](https://github.com/ao3575911/sinet/blob/main/docs/RELEASE.md).
 npm/npx is published as `@ao3575911/sinet@0.1.1`, with fresh Linux installation verified.
-PyPI/pip and Marketplace publication remain [tracked in issue #14](https://github.com/ao3575911/sinet/issues/14).
+PyPI/pip is published as `sinet-cli==0.1.1`, with an independent Linux wheel installation verified.
+Marketplace publication remains [tracked in issue #14](https://github.com/ao3575911/sinet/issues/14).
 
 See [full versioning/release procedure](https://github.com/ao3575911/sinet/blob/main/docs/VERSIONING.md)
 and [changelog](https://github.com/ao3575911/sinet/blob/main/CHANGELOG.md).

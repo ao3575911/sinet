@@ -1,0 +1,13 @@
+{
+  "full_name": "ao3575911/sinet",
+  "html_url": "https://github.com/ao3575911/sinet",
+  "private": false,
+  "description": "Synthetic SINet repository fixture; not a live service response.",
+  "language": "Go",
+  "stargazers_count": 12,
+  "forks_count": 3,
+  "open_issues_count": 6,
+  "archived": false,
+  "updated_at": "2026-10-20T00:00:00Z",
+  "ignored_upstream_field": {"must_not_be_forwarded": true}
+}
