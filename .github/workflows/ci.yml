@@ -14,7 +14,7 @@ jobs:
           POSTGRES_DB: projectname
         ports: [5432:5432]
         options: >-
-          --health-cmd 'pg_isready -U projectname' --health-interval 2s
+          --health-cmd "pg_isready -U projectname" --health-interval 2s
           --health-timeout 2s --health-retries 30
     env:
       TEST_DATABASE_URL: postgres://projectname:local-development-only@127.0.0.1:5432/projectname?sslmode=disable

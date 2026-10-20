@@ -65,3 +65,10 @@ Final initial milestone IDs: d75c6c6 and 7a779e2. GitHub REST verification repor
 verified=true, reason=valid for both (2026-10-20T00:48:45Z). The branch SHA matched
 `git ls-remote`. Reference provenance commit d5151fc retains all supplied materials;
 all 107 reference/MANIFEST.json checksums passed before committing.
+
+Final local Go 1.27.2 suite: **17 tests passed, 0 failed, 0 skipped**, with `-race`:
+nine PostgreSQL integration tests and eight unit/adapter security tests. Three portable
+CLI builds passed on Go 1.27.2. Initial GitHub CI failed during container initialization
+because the runner parsed a single-quoted health command incorrectly; health-command
+quoting was corrected to the runner's supported double-quoted form. No application test
+had run in that failed workflow. The PTY harness now honors MAILPIT_URL for isolated stacks.

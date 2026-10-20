@@ -43,7 +43,7 @@ def send(text):
 
 
 def get_json(path):
-    with urllib.request.urlopen("http://127.0.0.1:8025" + path, timeout=5) as response:
+    with urllib.request.urlopen(os.environ.get("MAILPIT_URL", "http://127.0.0.1:8025") + path, timeout=5) as response:
         return json.load(response)
 
 
