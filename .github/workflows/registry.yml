@@ -1,0 +1,174 @@
+name: registry-distribution
+on:
+  push:
+    branches: [main, codex/next-slice-distribution]
+    tags: ['npm-v*', 'pypi-v*']
+    paths: ['packaging/**', 'scripts/package_registries.py', 'scripts/registry_preflight.py', 'scripts/check_version.py', 'tests/registry_install.py', '.github/workflows/registry.yml']
+  workflow_dispatch:
+    inputs:
+      publish_npm:
+        description: Publish the tested npm package (owner registry access required)
+        type: boolean
+        default: false
+      publish_pypi:
+        description: Publish tested wheels (owner PyPI Trusted Publisher required)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: registry-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'ao3575911/sinet' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/codex/next-slice-distribution' || startsWith(github.ref, 'refs/tags/npm-v') || startsWith(github.ref, 'refs/tags/pypi-v'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Verify signed preparation and release source
+        run: |
+          python3 scripts/check_version.py
+          release_tag="v$(cat VERSION)"
+          git fetch --force origin "refs/tags/$release_tag:refs/tags/$release_tag"
+          mkdir -p work
+          git show origin/main:.github/release/allowed_signers > work/registry-signers
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile "$PWD/work/registry-signers"
+          git verify-commit HEAD
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            publication_tag=${GITHUB_REF#refs/tags/}
+            python3 scripts/check_version.py --publication-tag "$publication_tag"
+            git fetch --force origin "refs/tags/$publication_tag:refs/tags/$publication_tag"
+            git verify-tag "$publication_tag"
+            test "$(git rev-parse "$publication_tag^{commit}")" = "$(git rev-parse HEAD)"
+          fi
+          git verify-tag "$release_tag"
+          source_commit=$(git rev-parse "$release_tag^{commit}")
+          git verify-commit "$source_commit"
+          git merge-base --is-ancestor "$source_commit" origin/main
+          echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
+          echo "SOURCE_COMMIT=$source_commit" >> "$GITHUB_ENV"
+      - name: Verify actual published Go binary provenance
+        run: |
+          gh release download "$RELEASE_TAG" --dir work/registry-source
+          for asset in work/registry-source/*; do
+            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" --source-ref "refs/tags/$RELEASE_TAG" --source-digest "$SOURCE_COMMIT"
+          done
+          (cd work/registry-source && sha256sum -c SHA256SUMS)
+      - run: python3 scripts/package_registries.py --source work/registry-source --output work/registry-packages
+      - name: Validate PyPI metadata
+        run: |
+          python3 -m pip install twine==6.2.0
+          python3 -m twine check --strict work/registry-packages/*.whl
+      - name: Attest installer candidates
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: 'work/registry-packages/*'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SINet-registry-candidates
+          path: work/registry-packages/*
+          retention-days: 14
+  install:
+    needs: build
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: SINet-registry-candidates
+          path: work/registry-packages
+      - run: python tests/registry_install.py --packages work/registry-packages
+  npm:
+    if: (github.event_name == 'workflow_dispatch' && inputs.publish_npm) || startsWith(github.ref, 'refs/tags/npm-v')
+    needs: [build, install]
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+      attestations: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          name: SINet-registry-candidates
+          path: packages
+      - name: Verify exact installer source before publishing
+        run: |
+          for asset in packages/*.tgz; do
+            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/registry.yml" --source-ref "$GITHUB_REF" --source-digest "$GITHUB_SHA"
+          done
+      - name: Check immutable npm version
+        id: preflight
+        run: python3 scripts/registry_preflight.py --channel npm --packages packages
+      - run: npm publish ./packages/*.tgz --access public --provenance
+        if: steps.preflight.outputs.published != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: python3 tests/registry_install.py --packages packages --registry npm
+        env:
+          NODE_AUTH_TOKEN: ''
+  pypi:
+    if: (github.event_name == 'workflow_dispatch' && inputs.publish_pypi) || startsWith(github.ref, 'refs/tags/pypi-v')
+    needs: [build, install]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+      attestations: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          name: SINet-registry-candidates
+          path: packages
+      - name: Verify exact wheel source before publishing
+        run: |
+          for asset in packages/*.whl; do
+            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/registry.yml" --source-ref "$GITHUB_REF" --source-digest "$GITHUB_SHA"
+          done
+          mkdir wheels
+          cp packages/*.whl wheels/
+      - name: Check immutable PyPI version
+        id: preflight
+        run: python3 scripts/registry_preflight.py --channel pypi --packages packages
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        if: steps.preflight.outputs.published != 'true'
+        with:
+          packages-dir: wheels/
+          skip-existing: true
+      - run: python3 tests/registry_install.py --packages packages --registry pypi

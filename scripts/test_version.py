@@ -20,6 +20,20 @@ class VersionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check(tag='v'+version+'-unexpected')
 
+    def test_publication_intents_and_retries(self):
+        version = (ROOT / 'VERSION').read_text().strip()
+        for channel in ['npm', 'pypi']:
+            for suffix in ['', '-retry.1', '-retry.12']:
+                self.assertEqual(check(publication_tag=channel+'-v'+version+suffix), version)
+
+    def test_publication_intents_reject_wrong_version_or_retry(self):
+        version = (ROOT / 'VERSION').read_text().strip()
+        for tag in ['npm-v999.0.0', 'other-v'+version, 'npm-v'+version+'-retry.0',
+                    'npm-v'+version+'-retry.01', 'npm-v'+version+'-retry.x',
+                    'npm-v'+version+'; echo unsafe']:
+            with self.subTest(tag=tag), self.assertRaises(ValueError):
+                check(publication_tag=tag)
+
 
 if __name__ == '__main__':
     unittest.main()

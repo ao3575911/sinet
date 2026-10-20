@@ -148,3 +148,44 @@ The extracted binary reported 0.1.1, and the archive included dependency license
 macOS/Windows have cross-build evidence only. No npm/PyPI/Marketplace publication is claimed.
 Those channels need owner-controlled registry projects/authentication and tested installers
 or an appropriate Action listing; see issue #14. No registry credentials were supplied.
+
+## Registry distribution preparation
+
+Prepared @ao3575911/sinet and sinet-cli 0.1.1 candidates from public release bytes, with
+the release manifest checked against authenticated GitHub metadata. Linux npm global
+installation, npx invocation, pip wheel installation, version checks and both launchers'
+tamper denials passed. All three platform wheels passed Twine 6.2.0 strict metadata
+validation; license metadata matches the repository's Apache-2.0 license. Launchers add
+no runtime libraries or download hooks. [Registry CI 39366222801](https://github.com/ao3575911/sinet/actions/runs/39366222801)
+passed native Linux and Windows npm/npx/pip installs and both tamper denials; macOS remains
+cross-build-only evidence. These are candidate tests, not registry publication.
+
+
+## PyPI publication and npm access gate
+
+[PyPI publication run 39368811306](https://github.com/ao3575911/sinet/actions/runs/39368811306)
+completed successfully on its second attempt. The first attempt stopped during Sigstore
+Rekor signing with HTTP 502, before upload; signing remained mandatory on retry. All three
+0.1.1 wheels are public through Trusted Publishing, with matching candidate hashes:
+
+| Wheel platform | SHA-256 |
+| --- | --- |
+| macosx_14_0_arm64 | becdff2f1bf04a6b4b3497150980a86788de14ee5f8e33e05c54939561773c65 |
+| manylinux_2_28_x86_64 | 375c42349f9479ce51d5eb7e545d39dfe0774ff6da8059fc7d5016a4da1e5ee7 |
+| win_amd64 | 7b72d68b7ddd04b5c7baf5cf79b40f53aa4f7f18d0937c8a3ca88c34d939bc80 |
+
+An independent public PyPI install in this workspace matched all three hashes to the
+CI candidate artifact and the installed Linux command reported 0.1.1. Candidate artifact
+12240836406 was downloaded and its ZIP SHA-256 matched authenticated GitHub metadata:
+124f6c9b7929116dd5814770cc67d31b02ccb7ed4722e03601abc370bf365400.
+
+The first npm intent stopped before upload because npm interpreted an archive path without
+`./` as a GitHub shorthand. The corrected explicit local path passed a publication dry-run;
+a signed retry intent retained the original immutable tag. In
+[npm retry run 39369067573](https://github.com/ao3575911/sinet/actions/runs/39369067573),
+Linux/Windows installs and provenance verification passed; npm signed provenance but the
+registry rejected PUT @ao3575911/sinet with E404 (not found or no permission). No npm
+package is claimed. Scope ownership/token access remains an external account-owner gate.
+Main remains unchanged until both requested registries are published and verified.
+
+All 13 Python version/publication guard tests and actionlint pass after the path/retry fix.

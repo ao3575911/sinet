@@ -34,6 +34,11 @@ two-account grant/consent/audit/revocation journey remain delivery gates.
 
 ## Later tracks (not prerequisites)
 
+Next prepared slice: [one real public GitHub connector outcome](NEXT_SLICE.md), proposed
+for 0.2.0. Distribution of the existing 0.1.1 CLI to npm/npx and PyPI/pip comes first.
+The connector is planned, not deployed or approved. Its public TLS endpoint and ownership
+proof remain external dependencies; the plan defines the contract and evidence gates.
+
 - Business namespaces and verified-domain mail, local terminal/USB bridge, cloud sandbox, remote MCP adapters, wallet + ENS/DID integration, mobile/web companion, payments.
 
 **Release rule:** no progression by screenshots alone. Require command transcript, test output, migration state and identified known limitations.

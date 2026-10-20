@@ -1,0 +1,95 @@
+name: npm-publishing-access
+on:
+  push:
+    branches: [codex/next-slice-distribution]
+    paths: ['.github/workflows/npm-access.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Identify account and scope ownership without exposing credentials
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          result = subprocess.run(['npm', 'whoami', '--json'], capture_output=True, text=True)
+          if result.returncode:
+              raise SystemExit('npm token cannot authenticate; check NPM_TOKEN in the npm environment/repository')
+          account = json.loads(result.stdout)
+          print('Authenticated npm username:', account)
+          scope = 'ao3575911'
+          if account == scope:
+              print('Selected scope is the authenticated personal namespace')
+          else:
+              membership = subprocess.run(['npm', 'org', 'ls', scope, '--json'], capture_output=True, text=True)
+              try:
+                  members = json.loads(membership.stdout) if membership.returncode == 0 else {}
+              except ValueError:
+                  members = {}
+              if account in members:
+                  print('Authenticated account is a member of the selected organization; verify package-creation permission')
+              else:
+                  print('Selected scope differs from account and organization membership could not be verified')
+          profile = subprocess.run(['npm', 'profile', 'get', '--json'], capture_output=True, text=True)
+          if profile.returncode == 0:
+              data = json.loads(profile.stdout)
+              verified = data.get('email_verified')
+              print('Account email verified:', verified if isinstance(verified, bool) else 'not reported')
+          tokens = subprocess.run(['npm', 'token', 'list', '--json'], capture_output=True, text=True)
+          if tokens.returncode:
+              print('Token permission introspection unavailable; owner must inspect token settings')
+          else:
+              records = json.loads(tokens.stdout)
+              active = []
+              credential = os.environ.get('NODE_AUTH_TOKEN', '')
+              for record in records:
+                  prefix = re.match(r'[A-Za-z0-9_]+', str(record.get('token', '')))
+                  if prefix and len(prefix[0]) >= 8 and credential.startswith(prefix[0]):
+                      active.append(record)
+              if len(active) != 1 and len(records) == 1:
+                  active = records
+              if len(active) != 1:
+                  print('Cannot uniquely identify active token policy; owner must inspect token settings')
+              else:
+                  record = active[0]
+                  print('Token policy field names:', ', '.join(sorted(record)))
+                  for name in ['readonly', 'packages_all', 'bypass_2fa']:
+                      if isinstance(record.get(name), bool):
+                          print('Token policy', name + ':', record[name])
+                  permission = record.get('packages_and_scopes_permission')
+                  if permission in ['read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write']:
+                      print('Token package permission:', permission)
+                  allowed = {'read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write', 'readonly', 'readwrite', 'all', 'selected', 'all_packages', 'selected_packages', 'read and write', 'publish', 'admin', '*', 'package', 'packages', 'scope', 'scopes', 'org', 'orgs', 'organization', 'organizations', 'packages-and-scopes', 'packages_and_scopes', 'user', 'users', 'account'}
+                  fields = {'packages', 'package', 'scopes', 'scope', 'orgs', 'organizations', 'org', 'permission', 'permissions', 'access', 'role', 'roles', 'all', 'all_packages', 'all_scopes', 'selection', 'resources', 'actions', 'operations', 'read', 'write', 'publish', 'resource', 'resource_type', 'type', 'level', 'access_level', 'permission_type'}
+                  def permission_flags(value, prefix='permissions'):
+                      if isinstance(value, dict):
+                          for key, item in value.items():
+                              label = key if key in fields else 'other-field'
+                              permission_flags(item, prefix + '.' + label)
+                      elif isinstance(value, list):
+                          print('Token permission structure', prefix + ':', len(value), 'entries')
+                          for index, item in enumerate(value):
+                              permission_flags(item, prefix + '[' + str(index) + ']')
+                      elif isinstance(value, bool) or isinstance(value, int) and 0 <= value <= 7:
+                          print('Token permission flag', prefix + ':', value)
+                      elif isinstance(value, str):
+                          standard = r'(?:package|packages|scope|scopes|org|orgs|organization|organizations):(?:read|write|publish|all|\*)|(?:read|write|publish|all):(?:package|packages|scope|scopes|org|orgs|organization|organizations)'
+                          if value.lower() in allowed or re.fullmatch(standard, value.lower()):
+                              print('Token permission flag', prefix + ':', value)
+                          else:
+                              print('Token permission structure', prefix + ':', 'unrecognized value withheld')
+                  permission_flags(record.get('permissions'))
+                  print('Token IP restriction configured:', bool(record.get('cidr_whitelist') or record.get('cidr')))
+                  scopes = record.get('scopes') or []
+                  print('Selected scope explicitly granted:', scope in scopes or '@' + scope in scopes)
+                  print('Existing-package grants count:', len(record.get('packages') or []))
+          PY
