@@ -4,11 +4,7 @@ WORKDIR /src
 COPY go.mod go.sum ./
 RUN --mount=type=secret,id=proxy_ca \
     if [ -f /run/secrets/proxy_ca ]; then SSL_CERT_FILE=/run/secrets/proxy_ca go mod download; else go mod download; fi
-COPY cmd cmd
-COPY internal internal
-COPY migrations migrations
-COPY contracts contracts
-COPY prompts prompts
+COPY . .
 RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /server ./cmd/server
 FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=build /server /server

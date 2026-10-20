@@ -92,3 +92,9 @@ the used code path; dependencies are being updated before main delivery. Local d
 lookup remains denied by policy; the allowed CI runner supplied this external evidence.
 The SINet rename passed local race/integration checks, all three cross-builds, the real
 CLI journey and PTY journey against the existing isolated container stack.
+
+Dependency hardening: updated lib/pq to v1.12.3, x/term to v0.47.0 and x/sys to v0.49.0
+without adding dependencies. Minimum module Go version is now 1.26; validation/compiler
+remain Go 1.27.2. Formatter/vet/checksums and the full real-PostgreSQL race suite pass with
+these versions. The Docker build now uses one allowlisted source-copy layer to reduce
+builder storage amplification; .dockerignore continues to exclude credentials and work/.
