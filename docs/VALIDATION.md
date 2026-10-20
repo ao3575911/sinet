@@ -122,3 +122,11 @@ its local tag reference. Both signature-check jobs rejected that local lightweig
 before packaging/publication. Version 0.1.1 explicitly fetches the actual remote tag and
 requires HEAD to equal its signed commit. The original tag is retained, never moved.
 Binary packages also include Go/runtime dependency license notices.
+
+The v0.1.1 build passed trusted source signatures, PostgreSQL integration/race tests,
+vulnerability scanning, packaging and OIDC provenance/checksum verification. Publication
+paused at draft verification: GitHub's release-by-tag endpoint returned 404 for the draft.
+The publisher now uses the authenticated draft-inclusive listing. Two regression tests
+verify successful draft finalization and rejection of mismatched digests; all five Python
+tests and actionlint pass. A signed publication intent requests recovery of those exact
+already-attested assets, with no asset replacement.

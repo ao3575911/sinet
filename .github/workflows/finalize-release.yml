@@ -1,0 +1,55 @@
+name: finalize-verified-release
+on:
+  push:
+    branches: [main]
+    paths: ['.github/release/publish.json', '.github/workflows/finalize-release.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  attestations: read
+concurrency:
+  group: finalize-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate signed publication intent and release source
+        run: |
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          intent = json.loads(Path('.github/release/publish.json').read_text())
+          version = Path('VERSION').read_text().strip()
+          assert intent['tag'] == 'v' + version
+          assert re.fullmatch(r'[0-9a-f]{40}', intent['source_commit'])
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write('RELEASE_TAG=' + intent['tag'] + '\n')
+              env.write('SOURCE_COMMIT=' + intent['source_commit'] + '\n')
+          PY
+          python3 scripts/check_version.py
+      - name: Verify tag and commit trust
+        run: |
+          git fetch --force origin "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+          test "$(git cat-file -t "$RELEASE_TAG")" = tag
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile "$PWD/.github/release/allowed_signers"
+          git verify-commit HEAD
+          git verify-tag "$RELEASE_TAG"
+          test "$(git rev-parse "$RELEASE_TAG^{commit}")" = "$SOURCE_COMMIT"
+          git verify-commit "$SOURCE_COMMIT"
+          git merge-base --is-ancestor "$SOURCE_COMMIT" origin/main
+      - name: Download and verify existing assets
+        run: |
+          gh release download "$RELEASE_TAG" --dir dist --pattern '*.tar.gz' --pattern '*.zip' --pattern BUILDINFO.json --pattern SHA256SUMS
+          for asset in dist/*; do
+            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" --source-ref "refs/tags/$RELEASE_TAG" --source-digest "$SOURCE_COMMIT"
+          done
+          (cd dist && sha256sum -c SHA256SUMS)
+      - run: python3 scripts/publish_release.py --existing-only

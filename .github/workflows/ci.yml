@@ -24,7 +24,7 @@ jobs:
         with:
           go-version: '1.27.2'
           cache: true
-      - run: python3 -m unittest discover -s scripts -p test_version.py -v
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - run: node --test scripts/community.test.cjs
       - run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - run: make check integration cross

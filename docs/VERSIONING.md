@@ -41,3 +41,12 @@ before publishing a GitHub prerelease. See [installation and verification](RELEA
 The portable-binaries Action also retains temporary CI artifacts. Neither workflow receives
 the maintainer private key. Runtime/operational release gates remain issues #2–#6.
 Never move an already published tag; publish a new SemVer instead.
+
+A draft whose assets already have valid provenance can be finalized separately. A trusted
+signed main commit records its exact tag/source SHA in `.github/release/publish.json`.
+The finalize-verified-release Action verifies the intent commit, release tag/source,
+asset provenance (including exact source digest), checksums and authenticated draft asset
+digests before publishing. It neither rebuilds nor replaces assets. This recovery path
+handles GitHub's published-only release-by-tag endpoint; draft verification uses the
+maintainer-authenticated draft-inclusive release listing. Publisher regression tests
+reject digest mismatches and prohibit uploads in existing-only mode.

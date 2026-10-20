@@ -52,7 +52,7 @@ jobs:
           git verify-commit "$release_commit"
           git merge-base --is-ancestor "$release_commit" origin/main
       - run: make check integration
-      - run: python3 -m unittest discover -s scripts -p test_version.py -v
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
       - run: python3 scripts/package_release.py
       - name: Sign build provenance with GitHub OIDC
