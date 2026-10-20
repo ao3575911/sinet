@@ -116,3 +116,9 @@ found no absolute or traversal paths; the extracted Linux CLI reported version 0
 Three SemVer tests and actionlint passed. macOS/Windows remain cross-build-only evidence.
 The signed-prototype-release workflow adds signed-tag/commit checks, integration tests,
 OIDC build provenance verification and remote asset digest checks before public publication.
+
+Tag v0.1.0 was verified by GitHub, but Actions checkout fetched the peeled commit over
+its local tag reference. Both signature-check jobs rejected that local lightweight ref
+before packaging/publication. Version 0.1.1 explicitly fetches the actual remote tag and
+requires HEAD to equal its signed commit. The original tag is retained, never moved.
+Binary packages also include Go/runtime dependency license notices.

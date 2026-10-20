@@ -1,6 +1,6 @@
 # Versions and signed releases
 
-The initial prototype version is **0.1.0**. VERSION is authoritative; `SINet version` and
+The current prototype version is **0.1.1**. VERSION is authoritative; `SINet version` and
 `SINet --version` report it locally without API access. CHANGELOG.md records dated changes.
 
 Use SemVer 2.0.0. In 0.x, use a minor bump for features/breaking public changes and patch

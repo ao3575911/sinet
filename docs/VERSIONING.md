@@ -1,6 +1,6 @@
 # Semantic versions and signed releases
 
-VERSION is the source of truth. The initial prototype release is **0.1.0**; the CLI reports
+VERSION is the source of truth. The current prototype release is **0.1.1**; the CLI reports
 it through `SINet version` and `SINet --version` without contacting the API. CHANGELOG.md
 records dated release behavior and limitations. Never label a prototype as production.
 
@@ -22,10 +22,10 @@ After the reviewed release commit is signed, verified and present on main, maint
 create and verify the annotated tag using their provisioned signing key:
 
 ```sh
-git tag -s v0.1.0 -m 'SINet 0.1.0 — production-oriented prototype'
-git verify-tag v0.1.0
-git verify-commit 'v0.1.0^{}'
-git push origin v0.1.0
+git tag -s v0.1.1 -m 'SINet 0.1.1 — production-oriented prototype'
+git verify-tag v0.1.1
+git verify-commit 'v0.1.1^{}'
+git push origin v0.1.1
 ```
 
 The semantic-version Action validates syntax, dated changelog and compiled CLI agreement.

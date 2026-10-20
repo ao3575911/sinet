@@ -2,6 +2,15 @@
 
 Versions follow Semantic Versioning 2.0.0. This project is in its 0.x prototype phase.
 
+## [0.1.1] - 2026-10-20
+
+### Fixed
+
+- Restore annotated tag objects after Actions checkout before checking signatures, and
+  require the checked-out commit to match the signed tag. The 0.1.0 tag remains immutable;
+  its workflow failed closed before any GitHub release was published.
+- Include Go runtime and dependency license notices in binary distributions.
+
 ## [0.1.0] - 2026-10-20
 
 ### Added

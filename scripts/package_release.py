@@ -36,6 +36,7 @@ def main():
         root = f'{component}-{version}-{target}-{arch}'
         files = {binary: destination.read_bytes(),
                  'LICENSE': Path('LICENSE').read_bytes(),
+                 'THIRD_PARTY_NOTICES.md': Path('THIRD_PARTY_NOTICES.md').read_bytes(),
                  'CHANGELOG.md': Path('CHANGELOG.md').read_bytes(),
                  'INSTALL.md': Path('docs/RELEASE.md').read_bytes()}
         if component == 'server':
