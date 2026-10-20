@@ -11,6 +11,7 @@ import (
 	"sinet/internal/api"
 	"sinet/internal/mail"
 	"sinet/internal/model"
+	"sinet/internal/operator"
 	"sinet/internal/store"
 	"sinet/migrations"
 	"strings"
@@ -56,6 +57,9 @@ func run() error {
 	if len(os.Args) > 1 && os.Args[1] == "migrate" {
 		fmt.Println("migrations applied")
 		return nil
+	}
+	if len(os.Args) > 1 {
+		return operator.Run(ctx, db, os.Args[1:], os.Stdout)
 	}
 	provider, err := model.New(os.Getenv("MODEL_API_BASE_URL"), os.Getenv("MODEL_API_KEY"), os.Getenv("MODEL_NAME"), development)
 	if err != nil {

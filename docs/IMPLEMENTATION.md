@@ -27,3 +27,13 @@ cross-account note read/edit/delete denial, note persistence, settings, export/d
 handle tombstone, idempotency conflict/replay, invalid pagination and large requests.
 No external SMTP delivery, CLI bootstrap, model provider or remote service claimed yet.
 Signing blocked: owner chose to provision an existing signer; no signer available yet.
+
+## M3 validation and signing
+
+2026-10-20: PostgreSQL-backed full suite passed: seven API integration tests plus manifest
+validation and safe-egress unit tests. Echo hero loop, grants, tenant/version isolation,
+revocation, submission review state, consent binding/consumption, model disclosure and
+quotas pass. Model test uses a named test provider; no live model demo is claimed.
+A dedicated SSH signing key was generated at the owner's request, outside Git in work/.
+The owner confirmed registering its public key as a GitHub signing key. Commit eb60b86
+verified locally with `git verify-commit` and `%G? = G`.

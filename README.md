@@ -10,9 +10,12 @@ revocable hashed sessions, atomic normalized handles, public JSON/HTML profiles,
 private agent identity, directory, lobby membership/messages, reports and blocks,
 private persistent notes, settings, idempotent writes, account export/deletion.
 
-`internal/api/api_test.go`: four PostgreSQL integration tests pass. These tests use a
-capturing mail adapter; actual Mailpit delivery and the full CLI journey are pending.
-The connector registry, model journey, CLI and Docker API packaging are under construction.
+Seven PostgreSQL integration tests pass, including the echo connector hero loop,
+review-only submissions, version-pinned installs, grants/revocation, one-use input-bound
+consent, private agent history, explicit model disclosure and daily quotas. Manifest and
+SSRF/connected-IP/redirect unit tests pass. Tests use capturing mail and model adapters;
+actual Mailpit delivery and the full CLI journey are pending. CLI and Docker API
+packaging are under construction.
 This is not a production release. See [implementation evidence](docs/IMPLEMENTATION.md).
 
 ## Development
@@ -46,5 +49,5 @@ Active contracts: [PRD](docs/PRD.md), [architecture](docs/ARCHITECTURE.md),
 Original materials remain unchanged under [reference/](reference/README.md).
 
 The configured remote is `https://github.com/ao3575911/sinet.git`. Milestone commits require
-an existing signing key/agent provisioned by the owner; none was available at the first
-validation boundary. No unsigned commit or push has been substituted.
+SSH signatures. The owner registered the dedicated public signing key. Local signature
+verification passes; remote verification is recorded in docs/IMPLEMENTATION.md when run.

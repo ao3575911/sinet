@@ -1,0 +1,29 @@
+INSERT INTO connectors(id,version,manifest,status,review_reference) VALUES ('echo','1.0.0', $manifest${
+  "id": "echo",
+  "version": "1.0.0",
+  "publisher": "project-name",
+  "name": "Echo",
+  "description": "Returns the text you provide. No network or data export.",
+  "runtime": "builtin",
+  "operations": [
+    {
+      "name": "repeat",
+      "description": "Return the supplied text",
+      "risk": "read",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    }
+  ]
+}
+$manifest$::jsonb,'approved','bundled audited deterministic echo');
