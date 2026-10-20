@@ -115,3 +115,9 @@ Repository polish requested by the owner: labelled PR #1 and release-gate issues
 issue #8 tracks feature publication. Owner enabled Discussions/Pages and initialized wiki.
 Nine wiki guides plus navigation were published in signed commit
 `e6ea1759fe54c0a3de241cb036a117492f210cb8`; local signature and exact remote SHA verified.
+
+Repository workflow lint now also runs on GitHub with ShellCheck. Its first remote run
+caught an unused retry-loop variable that the local environment's absent ShellCheck did
+not inspect; changed it to the conventional ignored variable. Automation tests, actionlint
+and Python compilation pass locally. New workflows use narrow permissions and run community
+writes only from trusted main/manual configuration; PR labelling never executes PR source.

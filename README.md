@@ -82,3 +82,11 @@ Original materials remain unchanged under [reference/](reference/README.md).
 The configured remote is `https://github.com/ao3575911/sinet.git`. Milestone commits require
 SSH signatures. The owner registered the dedicated public signing key. Local signature
 verification passes; remote verification is recorded in docs/IMPLEMENTATION.md when run.
+
+## Guides and community
+
+- [Published wiki](https://github.com/ao3575911/sinet/wiki) and [versioned guides](docs/wiki/Home.md)
+- [Documentation site](https://ao3575911.github.io/sinet/) — built and deployed by GitHub Actions
+- [Labelled release work](https://github.com/ao3575911/sinet/issues) and [Discussions](https://github.com/ao3575911/sinet/discussions)
+- [Contributing](CONTRIBUTING.md), [security reporting](SECURITY.md), [community expectations](CODE_OF_CONDUCT.md)
+- [Repository labels, workflows and signed publishing](docs/REPOSITORY.md)
