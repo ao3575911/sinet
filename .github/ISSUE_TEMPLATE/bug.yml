@@ -1,0 +1,30 @@
+name: Bug report
+description: Reproducible product or development failure
+title: 'bug: '
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not publish secrets, private account data or exploitable security details. See SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: Commit, OS and Go version
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Safe reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted commands, errors and test evidence

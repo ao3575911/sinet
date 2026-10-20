@@ -1,0 +1,6 @@
+title: SINet
+description: Your terminal. Your network.
+url: https://ao3575911.github.io
+baseurl: /sinet
+markdown: kramdown
+exclude: []

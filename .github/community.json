@@ -1,0 +1,130 @@
+{
+  "labels": [
+    {
+      "name": "security",
+      "color": "b60205",
+      "description": "Security controls and independent review"
+    },
+    {
+      "name": "release-gate",
+      "color": "d93f0b",
+      "description": "Required before a public production release"
+    },
+    {
+      "name": "priority:high",
+      "color": "b60205",
+      "description": "High-priority verified work"
+    },
+    {
+      "name": "area:cli",
+      "color": "1d76db",
+      "description": "CLI interaction and local credential handling"
+    },
+    {
+      "name": "area:identity",
+      "color": "5319e7",
+      "description": "Authentication, handles and tenant identity"
+    },
+    {
+      "name": "area:connectors",
+      "color": "0e8a16",
+      "description": "Connector registry, permissions and egress"
+    },
+    {
+      "name": "area:operations",
+      "color": "0052cc",
+      "description": "Runtime, CI, quotas and recovery"
+    },
+    {
+      "name": "area:docs",
+      "color": "0075ca",
+      "description": "Documentation and community guidance"
+    },
+    {
+      "name": "status:blocked",
+      "color": "fbca04",
+      "description": "Waiting on a named external dependency"
+    },
+    {
+      "name": "prototype",
+      "color": "c2e0c6",
+      "description": "Implemented prototype scope and limitations"
+    },
+    {
+      "name": "automation",
+      "color": "ededed",
+      "description": "Repository automation and workflows"
+    }
+  ],
+  "issue_labels": {
+    "1": [
+      "prototype",
+      "area:cli",
+      "area:connectors",
+      "security",
+      "area:docs"
+    ],
+    "2": [
+      "release-gate",
+      "security",
+      "priority:high",
+      "area:identity"
+    ],
+    "3": [
+      "release-gate",
+      "area:operations",
+      "status:blocked"
+    ],
+    "4": [
+      "release-gate",
+      "area:connectors",
+      "status:blocked"
+    ],
+    "5": [
+      "release-gate",
+      "area:operations"
+    ],
+    "6": [
+      "release-gate",
+      "area:cli"
+    ],
+    "7": [
+      "area:operations",
+      "priority:high"
+    ],
+    "8": [
+      "area:docs",
+      "automation",
+      "status:blocked"
+    ]
+  },
+  "discussions": [
+    {
+      "title": "Welcome to SINet: prototype scope and first useful connector outcome",
+      "category": "General",
+      "labels": [
+        "prototype",
+        "area:docs"
+      ],
+      "body": "SINet combines a Go social CLI, private account agent and governed connector tools. Start with the README and docs/wiki/Quickstart.md. The tested first outcome is email OTP, a unique handle, room interaction, an installed/granted echo tool, audit and revocation. Echo is deterministic. No production inbox, host shell, USB bridge or arbitrary plugin execution is claimed. Share onboarding feedback without credentials or private data."
+    },
+    {
+      "title": "Connector showcase and trust review proposals",
+      "category": "Ideas",
+      "labels": [
+        "area:connectors",
+        "security"
+      ],
+      "body": "Propose useful bounded connectors with explicit operations, parameter schemas, privacy policy, hostname ownership evidence and a review plan. Submissions begin in review; never upload executable code or secrets. Remote data disclosure requires per-call consent. Valuable external writes require upstream idempotency and reconciliation before approval. See docs/OPERATIONS.md and release issue #4."
+    },
+    {
+      "title": "Release readiness, operating evidence and community feedback",
+      "category": "General",
+      "labels": [
+        "release-gate",
+        "area:operations"
+      ],
+      "body": "Track public-launch readiness through labelled issues #2\u2013#6 and docs/VALIDATION.md. CI, race tests, real CLI/SMTP/TUI journeys and vulnerability scans are evidence for a prototype, not a production certification. Discuss load measurements, independent review, native-platform UX and recovery here. Report sensitive security findings through SECURITY.md rather than public discussion."
+    }
+  ]
+}

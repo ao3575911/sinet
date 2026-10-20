@@ -1,0 +1,15 @@
+name: label-pull-requests
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      # Metadata-only action; never check out or execute pull-request source here.
+      - uses: actions/labeler@v5
+        with:
+          sync-labels: false

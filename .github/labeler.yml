@@ -1,0 +1,15 @@
+area:cli:
+  - changed-files:
+      - any-glob-to-any-file: ['cmd/SINet/**', 'internal/cli/**', 'internal/client/**']
+area:identity:
+  - changed-files:
+      - any-glob-to-any-file: ['internal/api/identity.go', 'internal/api/server.go']
+area:connectors:
+  - changed-files:
+      - any-glob-to-any-file: ['internal/connectors/**', 'internal/api/connectors*', 'connectors/**', 'contracts/**']
+area:operations:
+  - changed-files:
+      - any-glob-to-any-file: ['compose.yaml', 'Dockerfile', 'migrations/**', 'cmd/server/**', '.github/workflows/**']
+area:docs:
+  - changed-files:
+      - any-glob-to-any-file: ['docs/**', 'site/**', '*.md']

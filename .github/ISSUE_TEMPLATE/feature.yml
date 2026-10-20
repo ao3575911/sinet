@@ -1,0 +1,21 @@
+name: Feature or refinement
+description: A bounded improvement with verifiable acceptance
+title: 'enhancement: '
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem and proposed outcome
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance checks and affected trust boundaries
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: External dependencies and prototype limits
