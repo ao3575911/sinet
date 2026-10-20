@@ -3,7 +3,7 @@ on:
   push:
     branches: [main, codex/next-slice-distribution]
     tags: ['npm-v*', 'pypi-v*']
-    paths: ['packaging/**', 'scripts/package_registries.py', 'tests/registry_install.py', '.github/workflows/registry.yml']
+    paths: ['packaging/**', 'scripts/package_registries.py', 'scripts/registry_preflight.py', 'tests/registry_install.py', '.github/workflows/registry.yml']
   workflow_dispatch:
     inputs:
       publish_npm:
@@ -36,6 +36,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - name: Verify signed preparation and release source
         run: |
           python3 scripts/check_version.py
@@ -111,6 +112,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -124,9 +126,16 @@ jobs:
           for asset in packages/*.tgz; do
             gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/registry.yml" --source-ref "$GITHUB_REF" --source-digest "$GITHUB_SHA"
           done
+      - name: Check immutable npm version
+        id: preflight
+        run: python3 scripts/registry_preflight.py --channel npm --packages packages
       - run: npm publish packages/*.tgz --access public --provenance
+        if: steps.preflight.outputs.published != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: python3 tests/registry_install.py --packages packages --registry npm
+        env:
+          NODE_AUTH_TOKEN: ''
   pypi:
     if: (github.event_name == 'workflow_dispatch' && inputs.publish_pypi) || startsWith(github.ref, 'refs/tags/pypi-v')
     needs: [build, install]
@@ -139,6 +148,10 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - uses: actions/download-artifact@v4
         with:
           name: SINet-registry-candidates
@@ -150,6 +163,12 @@ jobs:
           done
           mkdir wheels
           cp packages/*.whl wheels/
+      - name: Check immutable PyPI version
+        id: preflight
+        run: python3 scripts/registry_preflight.py --channel pypi --packages packages
       - uses: pypa/gh-action-pypi-publish@release/v1
+        if: steps.preflight.outputs.published != 'true'
         with:
           packages-dir: wheels/
+          skip-existing: true
+      - run: python3 tests/registry_install.py --packages packages --registry pypi

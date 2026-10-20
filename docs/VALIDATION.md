@@ -156,5 +156,6 @@ the release manifest checked against authenticated GitHub metadata. Linux npm gl
 installation, npx invocation, pip wheel installation, version checks and both launchers'
 tamper denials passed. All three platform wheels passed Twine 6.2.0 strict metadata
 validation; license metadata matches the repository's Apache-2.0 license. Launchers add
-no runtime libraries or download hooks. Windows installation runs in the registry CI;
-macOS remains cross-build-only evidence. These are candidate tests, not registry publication.
+no runtime libraries or download hooks. [Registry CI 39366222801](https://github.com/ao3575911/sinet/actions/runs/39366222801)
+passed native Linux and Windows npm/npx/pip installs and both tamper denials; macOS remains
+cross-build-only evidence. These are candidate tests, not registry publication.

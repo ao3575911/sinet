@@ -39,7 +39,9 @@ source tag and every asset's exact-source GitHub attestation, checks SHA256SUMS,
 the npm tarball and three wheels. It uses npm's packer and Python's standard library for
 the wheel archive/metadata/RECORD; no custom installation code executes during pip install.
 It signs provenance for the candidates and runs real npm/npx/pip installs and tamper-denial
-tests on Linux and Windows. Native macOS remains a release gate.
+tests on Linux and Windows. Both platforms passed in
+[registry CI 39366222801](https://github.com/ao3575911/sinet/actions/runs/39366222801).
+Native macOS remains a release gate.
 
 For an already verified local release directory:
 
@@ -86,8 +88,10 @@ manually dispatched; signed intent tags make the owner's publish-before-main seq
 possible without weakening source verification. Publishing jobs require
 both native install jobs to pass. PyPI requires Trusted Publishing; npm accepts configured
 Trusted Publishing or the bootstrap secret. Versions are immutable: never replace published
-package bytes. Verify the public registry metadata, npm integrity/provenance, PyPI hashes
-and clean npm/npx/pip installs before merging the signed branch to main.
+package bytes. A preflight rejects conflicting existing npm/PyPI hashes; identical complete
+versions can be verified again without uploading. After publication, the workflow compares
+public registry metadata with candidate hashes, audits npm signatures/provenance, and runs
+fresh npm/npx or pip installations before merging the signed branch to main.
 
 Marketplace is deferred until after npm/PyPI. It needs a useful tested Setup SINet Action
 and the owner's Marketplace listing step; the backend repository itself is not a listing.
