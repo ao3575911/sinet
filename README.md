@@ -7,7 +7,10 @@ and [signed release/version policy](docs/VERSIONING.md).
 Published prototype: [v0.1.1](https://github.com/ao3575911/sinet/releases/tag/v0.1.1).
 Portable packages and provenance verification: [release instructions](docs/RELEASE.md).
 npm/npx: [`@ao3575911/sinet@0.1.1`](https://www.npmjs.com/package/@ao3575911/sinet), with fresh Linux installation verified; [installer details](docs/NPM.md).
-PyPI/pip and GitHub Marketplace remain unpublished; [tracked work and prerequisites](https://github.com/ao3575911/sinet/issues/14).
+PyPI/pip: [`sinet-cli==0.1.1`](https://pypi.org/project/sinet-cli/0.1.1/), with an independent Linux wheel installation verified.
+GitHub Marketplace remains unpublished; [tracked work and prerequisites](https://github.com/ao3575911/sinet/issues/14).
+
+Next application slice: [public GitHub connector gateway](docs/GITHUB_CONNECTOR.md), implemented for local review; no live endpoint or registry approval is claimed.
 
 ## Working prototype
 

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["full_name", "html_url", "description", "language", "stargazers_count", "forks_count", "open_issues_count", "archived", "updated_at", "source"],
+  "properties": {
+    "full_name": {"const": "ao3575911/sinet"},
+    "html_url": {"const": "https://github.com/ao3575911/sinet"},
+    "description": {"type": ["string", "null"], "maxLength": 1024},
+    "language": {"type": ["string", "null"], "maxLength": 128},
+    "stargazers_count": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "forks_count": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "open_issues_count": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "archived": {"type": "boolean"},
+    "updated_at": {"type": "string", "format": "date-time", "maxLength": 40},
+    "source": {"const": "https://api.github.com/repos/ao3575911/sinet"}
+  }
+}

@@ -61,6 +61,8 @@ Published GitHub prototype: https://github.com/ao3575911/sinet/releases/tag/v0.1
 Three CLI targets and Linux server archives have verified build provenance and checksums.
 The source tag and release/main commits are signed. npm/npx is available as
 `@ao3575911/sinet@0.1.1`; fresh Linux registry installation and npm execution pass.
-See docs/NPM.md for packaging and validation. PyPI/pip and a Marketplace Action remain
-unpublished; issue #14 tracks the remaining work. The Go application is not published
+See docs/NPM.md for packaging and validation. PyPI `sinet-cli==0.1.1` is also public;
+an independent Linux wheel download matched the registry SHA-256 and passed installation
+and version execution. A Marketplace Action remains unpublished; issue #14 tracks the
+remaining work. The Go application is not published
 as a JavaScript or Python library. Marketplace lists Actions/apps; no listing is claimed.
