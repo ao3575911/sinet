@@ -4,6 +4,7 @@
 The project and executable are named **SINet** (case sensitive).
 Current prototype version: **0.1.0** — `SINet version`. See [changelog](CHANGELOG.md)
 and [signed release/version policy](docs/VERSIONING.md).
+Portable packages and verification: [release instructions](docs/RELEASE.md).
 
 ## Working prototype
 

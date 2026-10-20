@@ -34,7 +34,10 @@ release commits and commits outside main. Its SSH trust list is loaded from main
 .github/release/allowed_signers. Key changes require maintainer review; public key fingerprint
 is SHA256:DZbp/eHiq7txsnGklKuBtZ1XOotv927BpKkCIfS5ggw. The private key never enters Actions.
 
-The portable-binaries Action uploads builds/checksums for version tags. They are CI artifacts,
-not independently signed production binaries. Tag signing and commit signatures establish
-source provenance; runtime/operational release gates remain in issues #2–#6. Never move an
-already published tag to different content; publish a new SemVer instead.
+The signed-prototype-release Action verifies source signatures, runs integration tests and
+vulnerability scanning, packages the CLI/server, and signs every asset's build provenance
+using GitHub OIDC/Sigstore. It verifies those attestations and checks uploaded SHA-256 digests
+before publishing a GitHub prerelease. See [installation and verification](RELEASE.md).
+The portable-binaries Action also retains temporary CI artifacts. Neither workflow receives
+the maintainer private key. Runtime/operational release gates remain issues #2–#6.
+Never move an already published tag; publish a new SemVer instead.

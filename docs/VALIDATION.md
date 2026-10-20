@@ -107,3 +107,12 @@ SemVer additions validate VERSION=0.1.0, a dated changelog and CLI agreement, wi
 Python tests. Release-tag signature checks run against the public main-branch trust list.
 The actual signed tag result is recorded after publication; preparing a tag is not reported
 as a verified release until those checks pass.
+
+## Portable release packaging
+
+The 0.1.0 packaging rehearsal built three CLI archives and the Linux server archive with
+CGO disabled. SHA256SUMS validated all four archives and BUILDINFO.json. Archive inspection
+found no absolute or traversal paths; the extracted Linux CLI reported version 0.1.0.
+Three SemVer tests and actionlint passed. macOS/Windows remain cross-build-only evidence.
+The signed-prototype-release workflow adds signed-tag/commit checks, integration tests,
+OIDC build provenance verification and remote asset digest checks before public publication.
