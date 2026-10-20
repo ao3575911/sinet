@@ -20,7 +20,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           python3 - <<'PY'
-          import json, subprocess
+          import json, os, re, subprocess
           result = subprocess.run(['npm', 'whoami', '--json'], capture_output=True, text=True)
           if result.returncode:
               raise SystemExit('npm token cannot authenticate; check NPM_TOKEN in the npm environment/repository')
@@ -39,4 +39,36 @@ jobs:
                   print('Authenticated account is a member of the selected organization; verify package-creation permission')
               else:
                   print('Selected scope differs from account and organization membership could not be verified')
+          profile = subprocess.run(['npm', 'profile', 'get', '--json'], capture_output=True, text=True)
+          if profile.returncode == 0:
+              data = json.loads(profile.stdout)
+              verified = data.get('email_verified')
+              print('Account email verified:', verified if isinstance(verified, bool) else 'not reported')
+          tokens = subprocess.run(['npm', 'token', 'list', '--json'], capture_output=True, text=True)
+          if tokens.returncode:
+              print('Token permission introspection unavailable; owner must inspect token settings')
+          else:
+              records = json.loads(tokens.stdout)
+              active = []
+              credential = os.environ.get('NODE_AUTH_TOKEN', '')
+              for record in records:
+                  prefix = re.match(r'[A-Za-z0-9_]+', str(record.get('token', '')))
+                  if prefix and len(prefix[0]) >= 8 and credential.startswith(prefix[0]):
+                      active.append(record)
+              if len(active) != 1 and len(records) == 1:
+                  active = records
+              if len(active) != 1:
+                  print('Cannot uniquely identify active token policy; owner must inspect token settings')
+              else:
+                  record = active[0]
+                  for name in ['readonly', 'packages_all', 'bypass_2fa']:
+                      if isinstance(record.get(name), bool):
+                          print('Token policy', name + ':', record[name])
+                  permission = record.get('packages_and_scopes_permission')
+                  if permission in ['read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write']:
+                      print('Token package permission:', permission)
+                  print('Token IP restriction configured:', bool(record.get('cidr_whitelist')))
+                  scopes = record.get('scopes', [])
+                  print('Selected scope explicitly granted:', scope in scopes or '@' + scope in scopes)
+                  print('Existing-package grants count:', len(record.get('packages', [])))
           PY
