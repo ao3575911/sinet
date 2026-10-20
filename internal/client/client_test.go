@@ -11,14 +11,14 @@ import (
 
 func TestCredentialStorageOriginAndPermissions(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "profile", "session.json")
-	t.Setenv("PROJECT_NAME_CONFIG", path)
+	t.Setenv("SINET_CONFIG", path)
 	received := false
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		received = r.Header.Get("Authorization") != ""
 		_, _ = w.Write([]byte(`{"ok":true}`))
 	}))
 	defer server.Close()
-	t.Setenv("PROJECT_NAME_API", server.URL)
+	t.Setenv("SINET_API", server.URL)
 	c, err := New()
 	if err != nil {
 		t.Fatal(err)
@@ -34,7 +34,7 @@ func TestCredentialStorageOriginAndPermissions(t *testing.T) {
 	if _, err = c.Do("GET", "/test", nil); err != nil || !received {
 		t.Fatal("saved credential not used for bound origin")
 	}
-	t.Setenv("PROJECT_NAME_API", "http://127.0.0.1:1")
+	t.Setenv("SINET_API", "http://127.0.0.1:1")
 	c, err = New()
 	if err != nil {
 		t.Fatal(err)
@@ -57,8 +57,8 @@ func TestSymlinkAndInsecureOriginDenied(t *testing.T) {
 	if err := os.WriteFile(target, []byte(`{}`), 0600); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("PROJECT_NAME_CONFIG", path)
-	t.Setenv("PROJECT_NAME_API", "http://remote.example")
+	t.Setenv("SINET_CONFIG", path)
+	t.Setenv("SINET_API", "http://remote.example")
 	if _, err := New(); err == nil {
 		t.Fatal("insecure remote origin accepted")
 	}

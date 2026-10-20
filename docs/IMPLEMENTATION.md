@@ -51,7 +51,7 @@ fmt/vet/module integrity/race tests also passed on that compiler. The final imag
 portable builds now target Go 1.27.2. Additional tests cover operator review attestation,
 moderation removal, retention maintenance, migration reapplication/checksum tampering,
 concurrent OTP redemption and session expiry. Export was bounded into pages; note input
-is byte-limited. No data response or test transcript includes a session token or OTP.
+is byte-limited. Public profile responses and test transcripts exclude session tokens and OTPs.
 
 The vulnerability scanner (both v1.1.4 and current v1.9.0) could not query the official
 vuln.go.dev database: environment HTTP policy returned Forbidden. This is an uncompleted
@@ -72,3 +72,23 @@ CLI builds passed on Go 1.27.2. Initial GitHub CI failed during container initia
 because the runner parsed a single-quoted health command incorrectly; health-command
 quoting was corrected to the runner's supported double-quoted form. No application test
 had run in that failed workflow. The PTY harness now honors MAILPIT_URL for isolated stacks.
+
+Owner naming decision: the project and executable are now **SINet**, preserving that case.
+Active docs, help, profile/share commands, build targets, examples, runtime policy and
+CLI tests were renamed; config variables are SINET_API / SINET_CONFIG. Historical SQL
+migrations and reference library remain checksum-stable. Migration 0004 updates existing
+bundled echo publisher metadata to SINet. PostgreSQL development role/database identifiers
+remain projectname for existing local volumes; they are not user-facing command names.
+
+Before the rename, final isolated Go 1.27.2 API image bootstrap passed from a new empty
+PostgreSQL volume: native CLI and PTY journeys passed on ports 8081/8026. Container
+inspection confirmed UID 65532, read-only root, all capabilities dropped and no mounts.
+The renamed binary and migration are being validated against that same persistent stack.
+
+GitHub Actions run 39351071802 passed the full Go/race/cross-build, real SMTP/CLI/PTY
+journeys and govulncheck v1.9.0. The scan reported zero called-code vulnerabilities,
+zero vulnerabilities in imported packages and one advisory in a required module outside
+the used code path; dependencies are being updated before main delivery. Local database
+lookup remains denied by policy; the allowed CI runner supplied this external evidence.
+The SINet rename passed local race/integration checks, all three cross-builds, the real
+CLI journey and PTY journey against the existing isolated container stack.

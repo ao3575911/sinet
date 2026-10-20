@@ -37,7 +37,7 @@ All list endpoints paginated; `409` conflict for handle collision; `401/403` for
 ## Implemented prototype extensions and details
 
 The implementation follows the draft routes above. Its active command mapping is in
-`project-name help`; operator-only actions are described in OPERATIONS.md.
+`SINet help`; operator-only actions are described in OPERATIONS.md.
 
 - `GET /healthz` is the canonical health route; `/v1/healthz` redirects there.
 - `GET /u/{handle}` is an escaped public HTML profile with OG title/description/URL.

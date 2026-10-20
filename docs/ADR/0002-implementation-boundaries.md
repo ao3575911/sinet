@@ -10,8 +10,10 @@ Use Go net/http, database/sql with lib/pq, PostgreSQL transactions and forward-o
 embedded migrations. Use a JSON Schema validator for manifests and operation arguments.
 No ORM, local daemon, general executor or uploaded-code interpreter.
 
-ASSUMPTION: keep the literal `project-name` executable requested by the detailed contract;
-SINet is the product name. Renaming and production domains await a release decision.
+Owner decision (2026-10-20): the project and case-sensitive executable are `SINet`.
+CLI configuration uses SINET_API and SINET_CONFIG. Preserved references and historical
+migration checksums remain unchanged; migration 0004 updates existing connector branding.
+Production domains await configuration.
 
 ASSUMPTION: a small keyboard menu plus line editor meets initial TUI needs; full-screen
 rendering is unnecessary. Every dashboard action also has a noninteractive command.
@@ -39,3 +41,10 @@ SMTP is a development Mailpit sink, or production SMTP requiring STARTTLS. A con
 OpenAI-compatible model is optional; missing configuration returns an explicit unavailable
 state. Production delivery and a real model demo require external credentials. No claim
 of public-launch readiness follows from prototype tests.
+
+ASSUMPTION: tighten manifest acceptance beyond the supplied schema by requiring a
+privacy policy URL for remote connectors and closed object parameter schemas
+(`type: object`, `additionalProperties: false`). External parameter-schema references
+are denied. These restrictions prevent schema compilation from fetching URLs and avoid
+undeclared input being forwarded. Export uses bounded offset pages, with an explicit
+next-offset response, rather than loading all account history into memory.

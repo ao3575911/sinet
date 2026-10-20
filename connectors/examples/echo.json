@@ -1,7 +1,7 @@
 {
   "id": "echo",
   "version": "1.0.0",
-  "publisher": "project-name",
+  "publisher": "SINet",
   "name": "Echo",
   "description": "Returns the text you provide. No network or data export.",
   "runtime": "builtin",

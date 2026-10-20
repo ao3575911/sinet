@@ -9,8 +9,8 @@ as deployment credentials.
 ```sh
 docker compose up -d --build
 make build
-./bin/project-name health
-./bin/project-name
+./bin/SINet health
+./bin/SINet
 ```
 
 Compose starts PostgreSQL, Mailpit and a nonroot API with a read-only root filesystem,
@@ -51,27 +51,27 @@ Configure edge throttles deliberately before public signup.
 
 ## First connector outcome
 
-Interactive: run `project-name`, verify email using Mailpit, claim a handle, browse the
+Interactive: run `SINet`, verify email using Mailpit, claim a handle, browse the
 connector menu, inspect/install `echo` version `1.0.0`, grant `repeat`, and run it.
 
 Equivalent scriptable commands:
 
 ```sh
-./bin/project-name login request you@example.test
+./bin/SINet login request you@example.test
 # View the code in Mailpit. Feed the code on stdin; it is not a command-line argument.
-./bin/project-name login verify you@example.test
-./bin/project-name claim your_handle
-./bin/project-name room lobby join
-./bin/project-name room lobby say 'Hello SINet'
-./bin/project-name note new 'First note' 'Saved in PostgreSQL'
-./bin/project-name plug list
-./bin/project-name plug info echo 1.0.0
-./bin/project-name plug install echo 1.0.0
-./bin/project-name plug grant echo 1.0.0 repeat --approve
-./bin/project-name agent call echo 1.0.0 repeat '{"text":"Hello SINet"}'
-./bin/project-name agent audit
-./bin/project-name plug revoke echo repeat
-./bin/project-name share
+./bin/SINet login verify you@example.test
+./bin/SINet claim your_handle
+./bin/SINet room lobby join
+./bin/SINet room lobby say 'Hello SINet'
+./bin/SINet note new 'First note' 'Saved in PostgreSQL'
+./bin/SINet plug list
+./bin/SINet plug info echo 1.0.0
+./bin/SINet plug install echo 1.0.0
+./bin/SINet plug grant echo 1.0.0 repeat --approve
+./bin/SINet agent call echo 1.0.0 repeat '{"text":"Hello SINet"}'
+./bin/SINet agent audit
+./bin/SINet plug revoke echo repeat
+./bin/SINet share
 ```
 
 Echo is a deterministic tool, not AI. Calls before installation/grant and after revocation
@@ -82,7 +82,7 @@ to that operator-configured provider; last 20 messages may accompany it. User se
 cannot remove grant or consent checks. Model output never automatically runs tools.
 No real provider credentials have been used for validation.
 
-`PROJECT_NAME_CONFIG` selects a separate account/session file; `PROJECT_NAME_API` selects
+`SINET_CONFIG` selects a separate account/session file; `SINET_API` selects
 the server. Session files contain bearer credentials, bind to one API origin, use atomic
 replacement and mode 0600 on Unix, and reject symlinks/insecure permissions. An OS keychain
 is not integrated. On Windows, verify user-only filesystem ACLs; Unix mode checks are not
@@ -176,7 +176,7 @@ data and consent tokens; protect the database and its backups accordingly.
 
 ## Backup, export, deletion and recovery
 
-`project-name export` returns account data and pages of notes, messages, grants, chat and tool audit.
+`SINet export` returns account data and pages of notes, messages, grants, chat and tool audit.
 Repeat with `export --offset NEXT_OFFSET` while `pagination.next_offset` is non-null;
 concurrent writes can shift offset pages, so pause activity while exporting. Each table
 uses the same page size (default 20, maximum 50).

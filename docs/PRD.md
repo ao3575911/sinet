@@ -13,7 +13,7 @@ Make the terminal a welcoming social destination with a memorable handle, a usef
 
 ## Primary experience
 
-`project-name` opens a terminal UI. User verifies email, claims one globally unique normalized handle, lands in a discoverable profile, sees their private agent and platform email alias, joins a room, installs a curated connector, and executes a tool via agent approval. A profile URL/card can be shared outside the CLI.
+`SINet` opens a terminal UI. User verifies email, claims one globally unique normalized handle, lands in a discoverable profile, sees their private agent and platform email alias, joins a room, installs a curated connector, and executes a tool via agent approval. A profile URL/card can be shared outside the CLI.
 
 ## P0: implement for the first working MVP
 

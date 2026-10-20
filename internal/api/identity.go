@@ -124,7 +124,7 @@ func (c *call) verifyOTP() (any, error) {
 	return map[string]any{"token": token, "expires_in": 86400, "account_id": account}, nil
 }
 func reserved(handle string) bool {
-	for _, name := range strings.Fields("admin administrator root system support help security official sinet project_name projectname api www mail email postmaster abuse moderator staff null undefined lobby agent connectors settings login logout me") {
+	for _, name := range strings.Fields("admin administrator root system support help security official sinet api www mail email postmaster abuse moderator staff null undefined lobby agent connectors settings login logout me") {
 		if strings.ReplaceAll(handle, "_", "") == strings.ReplaceAll(name, "_", "") {
 			return true
 		}
@@ -235,7 +235,7 @@ func (c *call) users() (any, error) {
 	return c.many(`SELECT json_build_object('handle',p.handle,'display_name',p.display_name,'bio',p.bio) FROM profiles p WHERE p.public AND p.handle IS NOT NULL AND (strpos(p.handle,$1)>0 OR strpos(lower(p.display_name),$1)>0) AND NOT EXISTS(SELECT 1 FROM blocks b WHERE (b.account_id=$2 AND b.blocked_id=p.account_id) OR (b.blocked_id=$2 AND b.account_id=p.account_id)) ORDER BY p.handle LIMIT $3 OFFSET $4`, q, c.user, limit, off)
 }
 
-var profileTemplate = template.Must(template.New("profile").Parse(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>@{{.Handle}} · SINet</title><meta property="og:title" content="@{{.Handle}} · SINet"><meta property="og:description" content="{{.Bio}}"><meta property="og:url" content="{{.URL}}"><meta name="description" content="{{.Bio}}"><body><main><h1>@{{.Handle}}</h1><h2>{{.Name}}</h2><p>{{.Bio}}</p><p>SINet · Your terminal. Your network.</p><p>Find this person: <code>project-name user {{.Handle}}</code></p></main></body></html>`))
+var profileTemplate = template.Must(template.New("profile").Parse(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>@{{.Handle}} · SINet</title><meta property="og:title" content="@{{.Handle}} · SINet"><meta property="og:description" content="{{.Bio}}"><meta property="og:url" content="{{.URL}}"><meta name="description" content="{{.Bio}}"><body><main><h1>@{{.Handle}}</h1><h2>{{.Name}}</h2><p>{{.Bio}}</p><p>SINet · Your terminal. Your network.</p><p>Find this person: <code>SINet user {{.Handle}}</code></p></main></body></html>`))
 
 func (s *Server) webProfile(w http.ResponseWriter, r *http.Request) {
 	var p struct{ Handle, Name, Bio, URL string }

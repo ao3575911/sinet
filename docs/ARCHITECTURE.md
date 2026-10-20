@@ -40,9 +40,9 @@ Agent state is tenant-isolated and stored server side. Model access is optional 
 ## Files and terminal
 
 - Notes are persisted app documents, not general storage.
-- `project-name terminal --local` later starts a **local PTY** with ordinary OS permissions and a clear warning, never called a sandbox.
-- `project-name usb list/copy` later enumerates mountpoints through a native local bridge and copies only explicitly named files after preview and confirmation. No automatic USB read, exfiltration, or autorun.
-- `project-name terminal --cloud` later requires hardened isolated per-session compute. Never expose an API host shell or mount server secrets.
+- `SINet terminal --local` later starts a **local PTY** with ordinary OS permissions and a clear warning, never called a sandbox.
+- `SINet usb list/copy` later enumerates mountpoints through a native local bridge and copies only explicitly named files after preview and confirmation. No automatic USB read, exfiltration, or autorun.
+- `SINet terminal --cloud` later requires hardened isolated per-session compute. Never expose an API host shell or mount server secrets.
 
 ## Email and Web3 fidelity
 

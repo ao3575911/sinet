@@ -65,7 +65,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	sender := mail.SMTP{Addr: env("SMTP_ADDR", "127.0.0.1:1025"), From: env("SMTP_FROM", "no-reply@project-name.example"), Username: os.Getenv("SMTP_USERNAME"), Password: os.Getenv("SMTP_PASSWORD"), RequireTLS: !development}
+	sender := mail.SMTP{Addr: env("SMTP_ADDR", "127.0.0.1:1025"), From: env("SMTP_FROM", "no-reply@sinet.example"), Username: os.Getenv("SMTP_USERNAME"), Password: os.Getenv("SMTP_PASSWORD"), RequireTLS: !development}
 	handler := api.New(db, sender, provider, publicURL)
 	if key := os.Getenv("OTP_HASH_KEY"); key != "" {
 		handler.OTPKey = []byte(key)

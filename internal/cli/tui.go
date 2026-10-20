@@ -65,7 +65,7 @@ func (a *App) menu(title string, items []string) (int, error) {
 			case "j", "\x1b[B":
 				selected = (selected + 1) % len(items)
 			case "?":
-				_, _ = fmt.Fprint(a.Out, "\r\nChoose an action. Every action also has a plain command: project-name help.\r\n")
+				_, _ = fmt.Fprint(a.Out, "\r\nChoose an action. Every action also has a plain command: SINet help.\r\n")
 			default:
 				if len(key) == 1 && key[0] >= '1' && int(key[0]-'1') < len(items) {
 					return int(key[0] - '1'), nil

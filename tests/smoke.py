@@ -11,7 +11,7 @@ import urllib.request
 
 root = pathlib.Path(__file__).resolve().parents[1]
 run_id = secrets.token_hex(5)
-base = os.environ.get("PROJECT_NAME_API", "http://127.0.0.1:8080")
+base = os.environ.get("SINET_API", "http://127.0.0.1:8080")
 mailpit = os.environ.get("MAILPIT_URL", "http://127.0.0.1:8025")
 
 
@@ -21,9 +21,9 @@ def get_json(url):
 
 
 def cli(who, *args, stdin=None, ok=True):
-    env = dict(os.environ, PROJECT_NAME_API=base,
-               PROJECT_NAME_CONFIG=str(root / "work" / f"smoke-{run_id}-{who}.json"))
-    result = subprocess.run([str(root / "bin" / "project-name"), *args],
+    env = dict(os.environ, SINET_API=base,
+               SINET_CONFIG=str(root / "work" / f"smoke-{run_id}-{who}.json"))
+    result = subprocess.run([str(root / "bin" / "SINet"), *args],
                             env=env, input=stdin, text=True, capture_output=True, timeout=35)
     if (result.returncode == 0) != ok:
         raise AssertionError(f"command {args[0]} unexpected exit: {result.stderr}")

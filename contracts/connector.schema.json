@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "project-name Connector Manifest",
+  "title": "SINet Connector Manifest",
   "type": "object",
   "additionalProperties": false,
   "required": [

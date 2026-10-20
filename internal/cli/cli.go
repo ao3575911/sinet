@@ -18,7 +18,7 @@ import (
 )
 
 const Help = `SINet · Your terminal. Your network.
-Usage: project-name [command]
+Usage: SINet [command]
 No command opens guided onboarding and a keyboard dashboard in an interactive terminal.
 All responses are JSON except help/share cards. Errors go to stderr, exit code 1.
 
@@ -57,7 +57,7 @@ All responses are JSON except help/share cards. Errors go to stderr, exit code 1
 
 List pages: append --limit N (1–50), --offset N for catalog/notes/directory/blocks,
 or --before ID for messages/history/audit. Repeat using the last returned ID.
-API: PROJECT_NAME_API (HTTPS, or loopback HTTP). Session: PROJECT_NAME_CONFIG.
+API: SINET_API (HTTPS, or loopback HTTP). Session: SINET_CONFIG.
 No host shell, USB, arbitrary plugin execution, active inbox or wallet is provided.
 `
 
@@ -243,7 +243,7 @@ func (a *App) run(args []string) error {
 		if handle == "" {
 			return errors.New("claim a handle first")
 		}
-		_, err = fmt.Fprintf(a.Out, "@%s · SINet\n%s\n%s\nproject-name user %s\n", SafeText(handle), SafeText(fmt.Sprint(me["bio"])), SafeText(fmt.Sprint(me["profile_url"])), SafeText(handle))
+		_, err = fmt.Fprintf(a.Out, "@%s · SINet\n%s\n%s\nSINet user %s\n", SafeText(handle), SafeText(fmt.Sprint(me["bio"])), SafeText(fmt.Sprint(me["profile_url"])), SafeText(handle))
 		return err
 	case "rooms":
 		return a.do("GET", "/v1/rooms"+pathQuery, nil)
@@ -313,7 +313,7 @@ func (a *App) run(args []string) error {
 		}
 		return errors.New("use delete-account --confirm-delete to explicitly authorize deletion")
 	}
-	return errors.New("invalid command or arguments; run project-name help")
+	return errors.New("invalid command or arguments; run SINet help")
 }
 func pageFlags(args []string) ([]string, string, error) {
 	rest := []string{}

@@ -28,15 +28,15 @@ type Client struct {
 }
 
 func New() (*Client, error) {
-	path := os.Getenv("PROJECT_NAME_CONFIG")
+	path := os.Getenv("SINET_CONFIG")
 	if path == "" {
 		base, err := os.UserConfigDir()
 		if err != nil {
 			return nil, err
 		}
-		path = filepath.Join(base, "project-name", "session.json")
+		path = filepath.Join(base, "SINet", "session.json")
 	}
-	c := &Client{API: os.Getenv("PROJECT_NAME_API"), Config: path, HTTP: &http.Client{Timeout: 30 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("API redirect denied") }}}
+	c := &Client{API: os.Getenv("SINET_API"), Config: path, HTTP: &http.Client{Timeout: 30 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("API redirect denied") }}}
 	if info, err := os.Lstat(path); err == nil {
 		if info.Mode()&os.ModeSymlink != 0 {
 			return nil, errors.New("session file must not be a symlink")
@@ -136,7 +136,7 @@ func (c *Client) Do(method, path string, body any) (map[string]any, error) {
 	}
 	resp, err := c.HTTP.Do(req)
 	if err != nil {
-		return nil, errors.New("API unavailable; check PROJECT_NAME_API and server health")
+		return nil, errors.New("API unavailable; check SINET_API and server health")
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(io.LimitReader(resp.Body, 32*1024*1024+1))

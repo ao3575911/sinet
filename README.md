@@ -1,7 +1,7 @@
 # SINet
 
 **Your terminal. Your network.** A Go social CLI and PostgreSQL API prototype.
-The executable remains `project-name` as specified in the supplied contracts.
+The project and executable are named **SINet** (case sensitive).
 
 ## Working prototype
 
@@ -18,7 +18,8 @@ This is a production-oriented **prototype**, not a public-launch release. Valida
 passed PostgreSQL integration/race tests, the real CLI/SMTP journey and a POSIX PTY journey.
 See [evidence and limits](docs/IMPLEMENTATION.md) and [operating instructions](docs/OPERATIONS.md).
 A live model and real remote connector have not been provisioned. The vulnerability database
-lookup is blocked by this environment's network policy and is not counted as passed.
+lookup is blocked locally; GitHub CI completed the scan with zero called-code findings
+and one advisory outside the used code path, being addressed before main delivery.
 
 ## Start locally
 
@@ -27,8 +28,8 @@ Requires a current patched Go compiler (validation target **Go 1.27.2**) and Doc
 ```sh
 docker compose up -d --build
 make build
-./bin/project-name health
-./bin/project-name
+./bin/SINet health
+./bin/SINet
 ```
 
 Read OTPs in Mailpit at http://127.0.0.1:8025. The API is http://127.0.0.1:8080.
@@ -39,19 +40,19 @@ server; it does not automatically source `.env`. See `.env.example`.
 Proxy-intercepted cloud builds need the documented [CA mount](docs/OPERATIONS.md).
 
 ```sh
-./bin/project-name login request you@example.test
-./bin/project-name login verify you@example.test  # reads the code from stdin
-./bin/project-name claim your_handle
-./bin/project-name room lobby join
-./bin/project-name plug info echo 1.0.0
-./bin/project-name plug install echo 1.0.0
-./bin/project-name plug grant echo 1.0.0 repeat --approve
-./bin/project-name agent call echo 1.0.0 repeat '{"text":"Hello SINet"}'
-./bin/project-name plug revoke echo repeat
-./bin/project-name share
+./bin/SINet login request you@example.test
+./bin/SINet login verify you@example.test  # reads the code from stdin
+./bin/SINet claim your_handle
+./bin/SINet room lobby join
+./bin/SINet plug info echo 1.0.0
+./bin/SINet plug install echo 1.0.0
+./bin/SINet plug grant echo 1.0.0 repeat --approve
+./bin/SINet agent call echo 1.0.0 repeat '{"text":"Hello SINet"}'
+./bin/SINet plug revoke echo repeat
+./bin/SINet share
 ```
 
-`project-name help` lists every command. Separate sessions use `PROJECT_NAME_CONFIG`.
+`SINet help` lists every command. Separate sessions use `SINET_CONFIG`.
 Echo is a deterministic tool. No model configuration means “AI unavailable”, not invented
 AI output. No shell, USB access, uploaded-code execution, live inbox or wallet is shipped.
 

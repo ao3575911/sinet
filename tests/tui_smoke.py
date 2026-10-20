@@ -15,9 +15,9 @@ import urllib.request
 root = pathlib.Path(__file__).resolve().parents[1]
 run_id = secrets.token_hex(5)
 email = f"tui-{run_id}@example.test"
-env = dict(os.environ, PROJECT_NAME_CONFIG=str(root / "work" / f"tui-{run_id}.json"))
+env = dict(os.environ, SINET_CONFIG=str(root / "work" / f"tui-{run_id}.json"))
 master, slave = pty.openpty()
-proc = subprocess.Popen([str(root / "bin" / "project-name")], stdin=slave, stdout=slave, stderr=slave, env=env)
+proc = subprocess.Popen([str(root / "bin" / "SINet")], stdin=slave, stdout=slave, stderr=slave, env=env)
 os.close(slave)
 seen = b""
 
@@ -81,10 +81,10 @@ try:
     send("q")
     proc.wait(timeout=5)
     assert proc.returncode == 0
-    result = subprocess.run([str(root / "bin" / "project-name"), "note", "list"], env=env, text=True, capture_output=True, check=True)
+    result = subprocess.run([str(root / "bin" / "SINet"), "note", "list"], env=env, text=True, capture_output=True, check=True)
     notes = json.loads(result.stdout)["items"]
     assert notes[0]["title"] == "TUI note" and "built-in editor" in notes[0]["body"]
-    subprocess.run([str(root / "bin" / "project-name"), "delete-account", "--confirm-delete"], env=env, capture_output=True, check=True)
+    subprocess.run([str(root / "bin" / "SINet"), "delete-account", "--confirm-delete"], env=env, capture_output=True, check=True)
     print("PASS PTY: guided email/OTP signup, unique handle, dashboard, multiline note save, arrow navigation, q/back")
 finally:
     if proc.poll() is None:
