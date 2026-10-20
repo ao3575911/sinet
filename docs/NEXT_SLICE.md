@@ -1,6 +1,6 @@
 # Next slice: one real connector outcome
 
-Status: preparation only; no live GitHub connector is approved or deployed. Target application
+Status: gateway implementation and local fixture tests are complete for review; no live GitHub connector is approved or deployed. See [implementation and gates](GITHUB_CONNECTOR.md). Target application
 version: **0.2.0**, after the 0.1.1 CLI distribution work. npm/npx and pip packaging are a
 separate delivery step and do not imply this connector already works.
 

@@ -1,5 +1,12 @@
 # Implementation roadmap
 
+## Active follow-up: public GitHub connector
+
+The [next-slice plan](NEXT_SLICE.md) targets a read-only public repository outcome
+for 0.2.0. The [standalone gateway](GITHUB_CONNECTOR.md) implements the initial
+fixed-repository contract for local review. Live ownership/TLS approval and the
+two-account grant/consent/audit/revocation journey remain delivery gates.
+
 ## M0: runnable skeleton
 
 - `go.mod`, CLI and server entry points, config loading, health endpoint, Docker Compose with Postgres + Mailpit, migrations and make targets.
