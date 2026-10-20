@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["owner", "repository"],
+  "properties": {
+    "owner": {"type": "string", "const": "ao3575911"},
+    "repository": {"type": "string", "const": "sinet"}
+  }
+}
