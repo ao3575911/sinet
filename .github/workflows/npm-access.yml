@@ -68,19 +68,27 @@ jobs:
                   permission = record.get('packages_and_scopes_permission')
                   if permission in ['read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write']:
                       print('Token package permission:', permission)
-                  allowed = {'read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write', 'readonly', 'readwrite', 'all', 'selected', 'all_packages', 'selected_packages', 'read and write'}
-                  def policy_flags(data, prefix=''):
-                      for key, value in data.items():
-                          if not re.fullmatch(r'[A-Za-z_]+', key):
-                              continue
-                          label = prefix + key
-                          if isinstance(value, dict) and re.search(r'permission|access|package|scope', key, re.I):
-                              policy_flags(value, label + '.')
-                          elif re.search(r'permission|access|read|write|all', key, re.I):
-                              if isinstance(value, bool) or isinstance(value, str) and value.lower() in allowed:
-                                  print('Token permission flag', label + ':', value)
-                  policy_flags(record)
-                  print('Token IP restriction configured:', bool(record.get('cidr_whitelist')))
+                  allowed = {'read-only', 'read-write', 'read', 'write', 'none', 'read_only', 'read_write', 'readonly', 'readwrite', 'all', 'selected', 'all_packages', 'selected_packages', 'read and write', 'publish', 'admin', '*'}
+                  fields = {'packages', 'package', 'scopes', 'scope', 'orgs', 'organizations', 'org', 'permission', 'permissions', 'access', 'role', 'roles', 'all', 'all_packages', 'all_scopes', 'selection', 'resources', 'actions', 'operations', 'read', 'write', 'publish'}
+                  def permission_flags(value, prefix='permissions'):
+                      if isinstance(value, dict):
+                          for key, item in value.items():
+                              label = key if key in fields else 'other-field'
+                              permission_flags(item, prefix + '.' + label)
+                      elif isinstance(value, list):
+                          print('Token permission structure', prefix + ':', len(value), 'entries')
+                          for index, item in enumerate(value):
+                              permission_flags(item, prefix + '[' + str(index) + ']')
+                      elif isinstance(value, bool) or isinstance(value, int) and 0 <= value <= 7:
+                          print('Token permission flag', prefix + ':', value)
+                      elif isinstance(value, str):
+                          standard = r'(?:package|packages|scope|scopes|org|orgs|organization|organizations):(?:read|write|publish|all|\*)|(?:read|write|publish|all):(?:package|packages|scope|scopes|org|orgs|organization|organizations)'
+                          if value.lower() in allowed or re.fullmatch(standard, value.lower()):
+                              print('Token permission flag', prefix + ':', value)
+                          else:
+                              print('Token permission structure', prefix + ':', 'unrecognized value withheld')
+                  permission_flags(record.get('permissions'))
+                  print('Token IP restriction configured:', bool(record.get('cidr_whitelist') or record.get('cidr')))
                   scopes = record.get('scopes') or []
                   print('Selected scope explicitly granted:', scope in scopes or '@' + scope in scopes)
                   print('Existing-package grants count:', len(record.get('packages') or []))
