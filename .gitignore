@@ -1,0 +1,50 @@
+# Go binaries and build outputs
+/bin/
+/build/
+/dist/
+/sinet
+/sinet.exe
+/server
+/server.exe
+*.test
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test coverage and profiling
+/coverage/
+coverage.out
+coverage.html
+*.prof
+
+# Local environment files; retain examples
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local runtime data
+/data/
+/tmp/
+/logs/
+*.log
+*.pid
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
