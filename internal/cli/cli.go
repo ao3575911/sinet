@@ -30,6 +30,18 @@ All responses are JSON except help/share cards. Errors go to stderr, exit code 1
   logout                              Revoke this session and remove local credential
   claim HANDLE                        Claim a normalized unique handle
   me | user HANDLE | find QUERY       Own profile, public profile, directory
+  sections [ID]                      Wallet, email and other service readiness
+  wallet [list]                      Verified linked Ethereum accounts
+  wallet challenge ADDRESS           One-time ownership message (expires in 5 minutes)
+  wallet verify NONCE                Read personal_sign signature from stdin
+  wallet connect ADDRESS             Guided external-wallet signature linking
+  wallet unlink ADDRESS --confirm-unlink
+                                     Remove identity link; funds stay in wallet
+  email [status] | inbox              Account mail status or external Gmail inbox link
+  email list | get ID | delete ID     Private draft management
+  email new TO SUBJECT BODY           Save draft; --stdin in place of BODY reads stdin
+  email edit ID TO SUBJECT BODY       Replace draft; --stdin reads stdin
+  email gmail ID --approve            Prepare Gmail compose link for review and sending
   share                               Shareable text profile card
   rooms                               List community rooms
   room SLUG join|read|say [MESSAGE]    Join, read, post (join required)
@@ -59,7 +71,9 @@ All responses are JSON except help/share cards. Errors go to stderr, exit code 1
 List pages: append --limit N (1–50), --offset N for catalog/notes/directory/blocks,
 or --before ID for messages/history/audit. Repeat using the last returned ID.
 API: SINET_API (HTTPS, or loopback HTTP). Session: SINET_CONFIG.
-No host shell, USB, arbitrary plugin execution, active inbox or wallet is provided.
+Gmail links share draft contents with Google when opened. Mailbox sync and a platform
+email alias need separate setup. Wallet linking proves ownership; it enables no transfers.
+Host shell, USB access and arbitrary uploaded plugin execution are unavailable.
 `
 
 type App struct {
@@ -163,13 +177,24 @@ func (a *App) run(args []string) error {
 	rest := args[1:]
 	pathQuery := ""
 	var queryErr error
-	if command != "agent" && command != "login" && command != "note" || command == "note" && len(rest) > 0 && rest[0] == "list" {
+	if command != "agent" && command != "login" && command != "note" && command != "wallet" && command != "email" || (command == "note" || command == "email") && len(rest) > 0 && rest[0] == "list" {
 		rest, pathQuery, queryErr = pageFlags(rest)
 		if queryErr != nil {
 			return queryErr
 		}
 	}
 	switch command {
+	case "sections":
+		if len(rest) == 0 {
+			return a.do("GET", "/v1/sections", nil)
+		}
+		if len(rest) == 1 {
+			return a.do("GET", "/v1/sections/"+segment(rest[0]), nil)
+		}
+	case "wallet":
+		return a.walletCommand(rest)
+	case "email":
+		return a.emailCommand(rest, pathQuery)
 	case "help", "--help", "-h":
 		_, err := fmt.Fprint(a.Out, Help)
 		return err

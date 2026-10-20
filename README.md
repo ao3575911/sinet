@@ -12,6 +12,8 @@ GitHub Marketplace remains unpublished; [tracked work and prerequisites](https:/
 
 Next application slice: [public GitHub connector gateway](docs/GITHUB_CONNECTOR.md), implemented for local review; no live endpoint or registry approval is claimed.
 
+Unreleased expansion: [wallet ownership linking, private email drafts and Gmail handoff](docs/WALLET_EMAIL.md), plus setup screens for the remaining service sections. Build current source to use these features; published 0.1.1 packages are unchanged.
+
 ## Working prototype
 
 - Guided CLI sign-in and keyboard dashboard; scriptable JSON commands on Linux/macOS/Windows.
@@ -63,7 +65,8 @@ Proxy-intercepted cloud builds need the documented [CA mount](docs/OPERATIONS.md
 
 `SINet help` lists every command. Separate sessions use `SINET_CONFIG`.
 Echo is a deterministic tool. No model configuration means “AI unavailable”, not invented
-AI output. No shell, USB access, uploaded-code execution, live inbox or wallet is shipped.
+AI output. Published 0.1.1 has no shell, USB access, uploaded-code execution, live inbox
+or wallet support. The unreleased wallet/email expansion is documented above.
 
 ## Validate
 

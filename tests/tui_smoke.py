@@ -76,6 +76,32 @@ try:
     expect("A single . saves")
     send("Created in the built-in editor\n.\n")
     expect("Your network")
+    send("8")
+    expect("Wallet, email and services")
+    send("2")
+    expect("Compose a draft")
+    send("2")
+    expect("Recipient (empty is allowed in a draft):")
+    send("friend@example.test\n")
+    expect("Subject:")
+    send("TUI email draft\n")
+    expect("A single . saves")
+    send("Private email draft from the terminal\n.\n")
+    expect("Your network")
+    drafts_result = subprocess.run([str(root / "bin" / "SINet"), "email", "list"], env=env, text=True, capture_output=True, check=True)
+    drafts = json.loads(drafts_result.stdout)["items"]
+    assert drafts[0]["subject"] == "TUI email draft" and drafts[0]["status"] == "draft"
+    send("8")
+    expect("Wallet, email and services")
+    send("2")
+    expect("Review a draft in Gmail")
+    send("3")
+    expect("Draft ID:")
+    send(drafts[0]["id"] + "\n")
+    expect("Type gmail to prepare it:")
+    send("gmail\n")
+    expect("mail.google.com")
+    expect("Your network")
     send("\x1b[B")
     expect("> 2. Find people")
     send("q")
@@ -85,7 +111,7 @@ try:
     notes = json.loads(result.stdout)["items"]
     assert notes[0]["title"] == "TUI note" and "built-in editor" in notes[0]["body"]
     subprocess.run([str(root / "bin" / "SINet"), "delete-account", "--confirm-delete"], env=env, capture_output=True, check=True)
-    print("PASS PTY: guided email/OTP signup, unique handle, dashboard, multiline note save, arrow navigation, q/back")
+    print("PASS PTY: signup, handle, note editor, private email draft, explicit Gmail handoff, arrow navigation, q/back")
 finally:
     if proc.poll() is None:
         proc.kill()

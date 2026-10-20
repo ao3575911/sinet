@@ -8,6 +8,14 @@ Base path: `/v1`. HTTPS in non-local environments. JSON requests/responses. `Aut
 | POST | `/auth/verify-otp` | Redeem code, establish session |
 | POST | `/auth/logout` | Revoke session |
 | GET | `/me` | Own account + agent state |
+| GET | `/sections`, `/sections/{id}` | Wallet/email availability and other section setup states |
+| GET | `/wallets` | Own verified address links (maximum five) |
+| POST | `/wallets/challenge` | Account/origin-bound five-minute ownership message |
+| POST | `/wallets/verify` | Consume a personal_sign proof; does not issue a session |
+| DELETE | `/wallets/{address}` | Remove own link with `{"confirm":true}` |
+| GET | `/email` | Own verified sign-in email, Gmail handoff and alias status |
+| GET/POST | `/email/drafts` | List/create private email drafts |
+| GET/PATCH/DELETE | `/email/drafts/{id}` | Read/update/delete one owned draft |
 | PATCH | `/me` | Edit public profile/settings |
 | GET | `/handles/{name}/availability` | Advisory availability |
 | POST | `/handles/claim` | Atomic verified claim |
@@ -69,3 +77,17 @@ The implementation follows the draft routes above. Its active command mapping is
 Only built-in echo is preapproved. Remote service approval is an operator attestation
 following out-of-band ownership and security checks, not automatic domain verification.
 There is no API approval route, arbitrary execution endpoint, local file API or MCP runner.
+
+## Unreleased wallet/email additions
+
+See [wallet/email guide](WALLET_EMAIL.md). Challenge input is exactly `{"address":"0x..."}`;
+response includes the canonical address, nonce, exact SIWE-format message, expiration and
+fragment-based signing URL. Verify input is `{"nonce":"...","signature":"0x..."}`.
+Successful proof links the address to the current account; it enables no wallet login,
+transactions or balance access. Five attempts exhaust a challenge; a fresh one replaces
+the old one. The static `GET /wallet/link` helper requires no bearer credential and cannot
+submit a proof; challenge data must be passed in the fragment, not query parameters.
+
+Draft create/update inputs are exactly `recipient`, `subject`, `body`. Recipient can be
+empty. Gmail URLs are prepared by the CLI after explicit approval; there is no send or
+inbox-reading API. Private export includes wallets/drafts; public profiles omit them.

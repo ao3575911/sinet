@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Link your wallet · SINet</title>
+<style>body{margin:0;background:#080f19;color:#f8fafc;font:17px/1.5 system-ui,sans-serif}main{max-width:48rem;margin:4rem auto;padding:0 1.5rem}h1{font-size:2rem}p{color:#b8c6d8}pre,textarea{box-sizing:border-box;width:100%;padding:1rem;background:#101928;color:#f8fafc;border:1px solid #64748b;border-radius:.4rem;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.6 monospace}button{padding:.8rem 1.2rem;background:#00d1ff;color:#060a12;border:0;border-radius:.4rem;font:inherit;cursor:pointer}button:disabled{opacity:.5;cursor:default}#status{min-height:2rem}label{display:block;margin-top:1rem}a{color:#00d1ff}</style></head>
+<body><main><p>SINet · Your terminal. Your network.</p><h1>Link your Ethereum wallet</h1>
+<p id="account">Open the signing link from <code>SINet wallet connect ADDRESS</code>.</p>
+<p>Review the account and message in your wallet. This proves ownership and authorizes no transactions. Keep your recovery phrase and private keys in your wallet.</p>
+<pre id="message" aria-label="Exact signing message"></pre><button id="sign" disabled>Connect wallet and sign message</button>
+<p id="status" role="status" aria-live="polite"></p><label for="signature">One-time signature — copy it into the SINet CLI to finish linking</label><textarea id="signature" rows="4" readonly></textarea>
+<p>The page uses your browser wallet. It makes no network requests and submits no signature automatically.</p></main>
+<script nonce="{{.Nonce}}">
+'use strict';
+const expectedOrigin={{.Origin}}, expectedDomain={{.Domain}};
+const parameters=new URLSearchParams(location.hash.slice(1));
+history.replaceState(null,'',location.pathname);
+const address=parameters.get('address')||'', account=parameters.get('account')||'', nonce=parameters.get('nonce')||'', message=parameters.get('message')||'';
+const status=document.getElementById('status'), button=document.getElementById('sign');
+const lines=message.split('\n');
+let valid=false;
+try {
+  valid=location.origin===new URL(expectedOrigin).origin && /^0x[0-9a-fA-F]{40}$/.test(address) && /^[a-z][a-z0-9_]{2,23}$/.test(account) && /^[0-9a-f]{32}$/.test(nonce) && message.length<=2048 && lines.length===13 &&
+    lines[0]===expectedDomain+' wants you to sign in with your Ethereum account:' && lines[1]===address && lines[2]==='' && lines[3]==='Link this wallet to SINet @'+account+'. No transactions are authorized.' && lines[4]==='' &&
+    lines[5]==='URI: '+expectedOrigin.replace(/\/$/,'')+'/wallet/link' && lines[6]==='Version: 1' && lines[7]==='Chain ID: 1' && lines[8]==='Nonce: '+nonce &&
+    lines[9].startsWith('Issued At: ') && lines[10].startsWith('Expiration Time: ') && lines[11]==='Resources:' && lines[12]==='- urn:sinet:wallet-link';
+  const issued=Date.parse(lines[9].slice(11)), expires=Date.parse(lines[10].slice(17));
+  valid=valid && Number.isFinite(issued) && Number.isFinite(expires) && expires>issued && expires-issued<=300000 && issued<=Date.now()+60000 && expires>Date.now();
+} catch (_) { valid=false; }
+if (valid) {
+  document.getElementById('account').textContent='Link '+address+' to SINet @'+account+'.';
+  document.getElementById('message').textContent=message;
+  button.disabled=false;
+} else { status.textContent='This signing link is missing, expired or belongs to another SINet site. Request a new link in the CLI.'; }
+button.addEventListener('click',async()=>{
+  button.disabled=true;
+  try {
+    if (!valid || Date.parse(lines[10].slice(17))<=Date.now()) throw new Error('This challenge has expired. Request a new link in the CLI.');
+    if (!window.ethereum || typeof window.ethereum.request!=='function') throw new Error('Open this link in a browser with an Ethereum wallet extension.');
+    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    if (!Array.isArray(accounts) || typeof accounts[0]!=='string' || accounts[0].toLowerCase()!==address.toLowerCase()) throw new Error('Select the wallet address shown above, then try again.');
+    const chain=await window.ethereum.request({method:'eth_chainId'});
+    if (chain!=='0x1') throw new Error('Select Ethereum Mainnet in your wallet before signing this identity message.');
+    const bytes=new TextEncoder().encode(message);
+    const hex='0x'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+    const signature=await window.ethereum.request({method:'personal_sign',params:[hex,accounts[0]]});
+    if (typeof signature!=='string' || !/^0x[0-9a-fA-F]{130}$/.test(signature)) throw new Error('The wallet returned an unsupported signature.');
+    document.getElementById('signature').value=signature;
+    status.textContent='Message signed. Paste the signature into your SINet CLI to finish linking.';
+  } catch (error) {
+    const controlled=['This challenge has expired. Request a new link in the CLI.','Open this link in a browser with an Ethereum wallet extension.','Select the wallet address shown above, then try again.','Select Ethereum Mainnet in your wallet before signing this identity message.','The wallet returned an unsupported signature.'];
+    status.textContent=controlled.includes(error.message)?error.message:'Wallet signing was cancelled or unavailable. You can try again.';
+  } finally {button.disabled=!valid;}
+});
+</script></body></html>

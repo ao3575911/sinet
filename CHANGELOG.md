@@ -2,6 +2,16 @@
 
 Versions follow Semantic Versioning 2.0.0. This project is in its 0.x prototype phase.
 
+## Unreleased — targeting 0.2.0
+
+- Ethereum wallet ownership linking with one-time SIWE-format personal_sign proofs,
+  a browser signing helper, private links, revocation and account export/deletion.
+- Private email drafts and an explicitly approved Gmail compose/inbox handoff.
+- Dashboard navigation and accurate setup states for wallet, email, business,
+  external identity, files/devices, terminal/cloud and mobile.
+- Account-isolation, replay, expiry, concurrent-proof, draft and browser fixture tests.
+- No wallet custody/transfers, automatic Gmail sync or platform email provisioning.
+
 ## [0.1.1] - 2026-10-20
 
 ### Fixed

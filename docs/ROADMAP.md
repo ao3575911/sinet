@@ -1,5 +1,14 @@
 # Implementation roadmap
 
+## Active follow-up: wallet and email first
+
+At the owner's request, implement noncustodial wallet ownership proofs and private
+email drafts with a user-reviewed Gmail handoff, before the other sections. See
+[wallet/email guide](WALLET_EMAIL.md). The source also exposes accurate setup
+states for business, ENS/DID identity, devices/storage, terminal/cloud and mobile.
+Google OAuth mailbox sync, domain mail provisioning and live wallet-extension
+validation remain separate work; no replacement 0.1.1 registry package is published.
+
 ## Active follow-up: public GitHub connector
 
 The [next-slice plan](NEXT_SLICE.md) targets a read-only public repository outcome

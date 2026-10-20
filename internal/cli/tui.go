@@ -108,7 +108,7 @@ func (a *App) dashboard() error {
 		}
 	}
 	for {
-		choice, err := a.menu("Your network", []string{"Profile and share card", "Find people", "Community lobby", "Notes editor", "Connectors", "Personal agent", "Settings", "Help", "Exit"})
+		choice, err := a.menu("Your network", []string{"Profile and share card", "Find people", "Community lobby", "Notes editor", "Connectors", "Personal agent", "Settings", "Wallet, email and services", "Exit"})
 		if err != nil {
 			return err
 		}
@@ -168,7 +168,7 @@ func (a *App) dashboard() error {
 				}
 			}
 		case 7:
-			_, err = fmt.Fprint(a.Out, Help)
+			err = a.serviceMenu()
 		case 8:
 			return nil
 		}

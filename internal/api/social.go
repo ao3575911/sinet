@@ -211,6 +211,8 @@ func (c *call) export() (any, error) {
 	}
 	result["account"] = me
 	queries := map[string]string{
+		"wallets":        `SELECT json_build_object('address',address,'chain_id',chain_id,'verified_at',verified_at) FROM wallet_links WHERE account_id=$1 ORDER BY chain_id,address`,
+		"email_drafts":   `SELECT json_build_object('id',id,'recipient',recipient,'subject',subject,'body',body,'updated_at',updated_at) FROM email_drafts WHERE account_id=$1 ORDER BY id`,
 		"notes":          `SELECT row_to_json(x) FROM (SELECT id,title,body,updated_at FROM notes WHERE account_id=$1 ORDER BY id) x ORDER BY x.id`,
 		"messages":       `SELECT row_to_json(x) FROM (SELECT id,room,content,created_at FROM messages WHERE account_id=$1 ORDER BY id) x ORDER BY x.id`,
 		"blocks":         `SELECT json_build_object('handle',p.handle) FROM blocks b JOIN profiles p ON p.account_id=b.blocked_id WHERE b.account_id=$1 ORDER BY p.handle`,

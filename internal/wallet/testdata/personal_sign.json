@@ -1,0 +1,7 @@
+{
+  "source": "ethers 6.15.0, offline test vector; no production key",
+  "address": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+  "message": "SINet wallet ownership test — public fixture",
+  "signature": "0x2ce4bbcbba78a1db00440b2829abed4076a56db37242217a5dea2c14f96d1f9f07f93afb749f59369dfb111b9ce58e3867bae0b733c64940f41cf87678932e531c",
+  "digest": "0x84701062d3d3b4557c9bdf027ac17fd7f24f5865b01489ce5547aba6d482809a"
+}

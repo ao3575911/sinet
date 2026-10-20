@@ -24,10 +24,17 @@ jobs:
         with:
           go-version: '1.27.2'
           cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - run: node --test scripts/community.test.cjs
       - run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - run: make check integration cross
+      - name: Install the tested browser fixture runner
+        run: |
+          python3 -m pip install playwright==1.62.0
+          python3 -m playwright install --with-deps chromium
       - name: Real CLI, SMTP and TUI journey
         run: |
           docker compose up -d mailpit
@@ -40,4 +47,5 @@ jobs:
           done
           python3 tests/smoke.py
           python3 tests/tui_smoke.py
+          python3 tests/wallet_browser.py
       - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 -show verbose ./...

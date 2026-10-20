@@ -19,6 +19,15 @@ Protect email identities, session tokens, namespace/handle ownership, notes and 
 
 ## Security release checklist
 
+The wallet/email expansion adds private, account-bound wallet ownership proofs and
+email drafts. Wallet challenges bind the account, handle, origin, address, chain,
+nonce and expiry; the authenticated API consumes them once and caps attempts.
+Signatures, private keys and recovery phrases are not stored. The browser helper
+uses a per-response CSP nonce, blocks application network connections and invokes
+only personal_sign/account-selection methods. Wallet linking grants no transaction
+or login authority. Gmail handoff requires explicit disclosure approval and leaves
+review/sending in Gmail. See [the decision](ADR/0005-wallet-email-sections.md).
+
 - Concurrent handle claims: exactly one winner.
 - OTP replay, brute force, and expired codes fail.
 - Unauthorized profile edits, room reads, notes reads, tool calls, install changes fail.

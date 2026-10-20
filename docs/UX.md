@@ -19,6 +19,8 @@ SINet plug install <id>
 SINet plug grant <id> <operation>
 SINet plug remove <id>
 SINet settings
+SINet wallet connect ADDRESS # unreleased: ownership linking
+SINet email                  # unreleased: private drafts and Gmail handoff
 SINet help
 ```
 
@@ -31,7 +33,6 @@ SINet usb list
 SINet usb copy ./report.pdf --to usb:WORK
 SINet ./report.pdf --to usb:WORK
 SINet business create <handle>
-SINet wallet connect
 ```
 
 The bare-path shorthand is optional and can never automatically upload files. The `--to` destination and confirmation are required for copy/move operations. Device availability and OS privileges can differ by platform.
@@ -43,6 +44,11 @@ Welcome → `Email` → receive/enter OTP → handle availability check → tran
 ## Dashboard layout
 
 Profile/Handle | Agent | Plug-ins | People/Rooms | Notes | Settings
+
+Unreleased wallet/email expansion: dashboard item 8 opens Wallet, Email, Business,
+ENS/external identity, Files/devices, Terminal/cloud, Mobile and Help. Wallet ownership
+linking and private email drafts/Gmail handoff are functional; the other new sections
+show accurate planned/setup states. See [commands and boundaries](WALLET_EMAIL.md).
 
 Visible badges may indicate permissions, provenance and trial limits, not manufactured user scarcity. TUI always provides `?` help, escape/back, accessible terminal colors, and plain-text fallback.
 
