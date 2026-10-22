@@ -31,7 +31,17 @@ func (s SMTP) Send(ctx context.Context, to, code string) error {
 		return err
 	}
 	defer conn.Close()
-	_ = conn.SetDeadline(time.Now().Add(10 * time.Second))
+	// net/smtp does not accept contexts after dialing. Close on cancellation
+	// and respect an earlier caller deadline, including stalled greetings.
+	stop := context.AfterFunc(ctx, func() { _ = conn.Close() })
+	defer stop()
+	deadline := time.Now().Add(10 * time.Second)
+	if caller, ok := ctx.Deadline(); ok && caller.Before(deadline) {
+		deadline = caller
+	}
+	if err := conn.SetDeadline(deadline); err != nil {
+		return err
+	}
 	client, err := smtp.NewClient(conn, host)
 	if err != nil {
 		return err

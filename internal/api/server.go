@@ -22,6 +22,7 @@ import (
 	"sinet/internal/connectors"
 	"sinet/internal/mail"
 	"sinet/internal/model"
+	"sinet/internal/strictjson"
 )
 
 type Server struct {
@@ -56,13 +57,11 @@ func random(n int) string {
 }
 func hash(v string) string { return fmt.Sprintf("%x", sha256.Sum256([]byte(v))) }
 func decode(r *http.Request, v any) error {
-	d := json.NewDecoder(io.LimitReader(r.Body, 131073))
-	d.DisallowUnknownFields()
-	if err := d.Decode(v); err != nil {
-		return bad("invalid_json")
+	raw, err := io.ReadAll(io.LimitReader(r.Body, 131073))
+	if err != nil || len(raw) > 131072 {
+		return fail(413, "request_too_large")
 	}
-	var extra any
-	if d.Decode(&extra) != io.EOF {
+	if err := strictjson.Decode(raw, v); err != nil {
 		return bad("invalid_json")
 	}
 	return nil
@@ -116,8 +115,12 @@ func (s *Server) route(pattern string, auth bool, fn func(*call) (any, error)) {
 				output(w, 401, map[string]string{"error": "authentication_required"})
 				return
 			}
-			err = tx.QueryRowContext(ctx, `SELECT account_id FROM sessions WHERE token_hash=$1 AND expires_at>now()`, hash(token)).Scan(&c.user)
+			err = tx.QueryRowContext(ctx, `SELECT account_id FROM sessions WHERE token_hash=$1 AND expires_at>clock_timestamp()`, hash(token)).Scan(&c.user)
 			if err != nil {
+				if err != sql.ErrNoRows {
+					output(w, 503, map[string]string{"error": "database_unavailable"})
+					return
+				}
 				output(w, 401, map[string]string{"error": "authentication_required"})
 				return
 			}
@@ -127,8 +130,12 @@ func (s *Server) route(pattern string, auth bool, fn func(*call) (any, error)) {
 					return
 				}
 				var exists bool
-				err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM sessions WHERE token_hash=$1 AND expires_at>now())`, hash(token)).Scan(&exists)
-				if err != nil || !exists {
+				err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM sessions WHERE token_hash=$1 AND expires_at>clock_timestamp())`, hash(token)).Scan(&exists)
+				if err != nil {
+					output(w, 503, map[string]string{"error": "database_unavailable"})
+					return
+				}
+				if !exists {
 					output(w, 401, map[string]string{"error": "authentication_required"})
 					return
 				}
@@ -151,7 +158,7 @@ func (s *Server) route(pattern string, auth bool, fn func(*call) (any, error)) {
 			var previous string
 			var body []byte
 			var status int
-			err = tx.QueryRowContext(ctx, `SELECT fingerprint,response,status FROM idempotency WHERE account_id=$1 AND key=$2 AND expires_at>now()`, c.user, key).Scan(&previous, &body, &status)
+			err = tx.QueryRowContext(ctx, `SELECT fingerprint,response,status FROM idempotency WHERE account_id=$1 AND key=$2 AND expires_at>clock_timestamp()`, c.user, key).Scan(&previous, &body, &status)
 			if err == nil {
 				if previous != fingerprint {
 					output(w, 409, map[string]string{"error": "idempotency_key_reused"})
@@ -167,8 +174,16 @@ func (s *Server) route(pattern string, auth bool, fn func(*call) (any, error)) {
 				return
 			}
 			if err = c.limit("account:"+c.user, 120, time.Minute); err != nil {
+				var limited *failure
+				if !errors.As(err, &limited) || limited.Status != 429 {
+					output(w, 503, map[string]string{"error": "database_unavailable"})
+					return
+				}
+				if err := tx.Commit(); err != nil {
+					output(w, 503, map[string]string{"error": "database_unavailable"})
+					return
+				}
 				w.Header().Set("Retry-After", "60")
-				_ = tx.Commit()
 				output(w, 429, map[string]string{"error": "rate_limited"})
 				return
 			}

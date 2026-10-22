@@ -49,3 +49,11 @@ review/sending in Gmail. See [the decision](ADR/0005-wallet-email-sections.md).
 - API tokens/secrets absent from logs and returned errors.
 - Cloud agent has no host or USB capability in P0.
 - Load and cost limits defined and verified before public signup.
+
+## 2026-10-22 codebase review
+
+The connector diff was reviewed first, followed by the active API, client, gateway,
+wallet/email, persistence, packaging and automation code. Concrete reproduced
+findings and fixes, compatibility changes, validation and residual operational
+limits are recorded in [the security review](SECURITY_REVIEW_2026-10-22.md).
+This is an implementation review, not the independent assessment required by #2.

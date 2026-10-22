@@ -10,6 +10,10 @@ Release candidate source only; no release, tag or registry package published.
   installation, operation grant, one-use invocation consent, validated facts and audit.
 - Gateway output is revalidated at the SINet API and CLI; bounded fixed failure codes.
 - Counted two-account authorization, consent/revoke concurrency and failure fixtures.
+- Security review fixes queued session expiry, exact numeric consent binding and
+  concurrent connector publisher ownership; rejects ambiguous JSON and bounds schemas.
+- Parsed production TLS configuration, bounded client errors/session files, cancellable
+  SMTP and truthful database/upstream failures; null wallet-provider errors recover.
 - Upgrade build/CI toolchains to Go 1.27.3 after a reachable Go 1.27.2 x509 advisory.
 - Hardened gateway container/healthcheck and operator deployment/rollback instructions.
 - Live gateway/GitHub journey remains blocked on owned HTTPS hosting and operator review.

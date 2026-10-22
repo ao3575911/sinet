@@ -9,6 +9,7 @@ import (
 
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"sinet/contracts"
+	"sinet/internal/strictjson"
 )
 
 type Operation struct {
@@ -50,7 +51,7 @@ var manifestSchema = func() *jsonschema.Schema {
 func Parse(raw []byte) (Manifest, error) {
 	var value any
 	var m Manifest
-	if len(raw) > 32768 || json.Unmarshal(raw, &value) != nil {
+	if len(raw) > 32768 || strictjson.Decode(raw, &value) != nil {
 		return m, errors.New("invalid manifest JSON or size")
 	}
 	if err := manifestSchema.Validate(value); err != nil {
@@ -65,6 +66,9 @@ func Parse(raw []byte) (Manifest, error) {
 			return m, errors.New("duplicate operation name")
 		}
 		seen[op.Name] = true
+		if err := parameterBudget(op.Parameters); err != nil {
+			return m, err
+		}
 		schema, err := compile(string(op.Parameters))
 		if err != nil || schema == nil {
 			return m, errors.New("invalid operation parameter schema or external reference")
@@ -104,8 +108,11 @@ func (op Operation) Validate(args json.RawMessage) error {
 		return errors.New("arguments too large")
 	}
 	var value any
-	if json.Unmarshal(args, &value) != nil {
+	if strictjson.Decode(args, &value) != nil {
 		return errors.New("invalid arguments")
+	}
+	if err := parameterBudget(op.Parameters); err != nil {
+		return err
 	}
 	schema, err := compile(string(op.Parameters))
 	if err != nil {
@@ -115,4 +122,44 @@ func (op Operation) Validate(args json.RawMessage) error {
 		return fmt.Errorf("arguments do not match operation schema")
 	}
 	return nil
+}
+
+// Parameter schemas are untrusted at submission time, before operator review.
+// Inline schemas bound evaluation work by the supplied tree size. Reference
+// graphs can amplify a tiny document into exponential work without any I/O.
+func parameterBudget(raw []byte) error {
+	if len(raw) > 8192 {
+		return errors.New("parameter schema size limit")
+	}
+	var value any
+	if err := strictjson.Decode(raw, &value); err != nil {
+		return errors.New("invalid parameter schema JSON")
+	}
+	nodes := 0
+	var visit func(any, int) error
+	visit = func(value any, depth int) error {
+		nodes++
+		if nodes > 512 || depth > 16 {
+			return errors.New("parameter schema complexity limit")
+		}
+		switch value := value.(type) {
+		case map[string]any:
+			for key, child := range value {
+				if key == "$ref" || key == "$recursiveRef" || key == "$dynamicRef" {
+					return errors.New("parameter schemas must be inline; references denied")
+				}
+				if err := visit(child, depth+1); err != nil {
+					return err
+				}
+			}
+		case []any:
+			for _, child := range value {
+				if err := visit(child, depth+1); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+	return visit(value, 0)
 }

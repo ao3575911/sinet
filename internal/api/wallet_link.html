@@ -46,7 +46,7 @@ button.addEventListener('click',async()=>{
     status.textContent='Message signed. Paste the signature into your SINet CLI to finish linking.';
   } catch (error) {
     const controlled=['This challenge has expired. Request a new link in the CLI.','Open this link in a browser with an Ethereum wallet extension.','Select the wallet address shown above, then try again.','Select Ethereum Mainnet in your wallet before signing this identity message.','The wallet returned an unsupported signature.'];
-    status.textContent=controlled.includes(error.message)?error.message:'Wallet signing was cancelled or unavailable. You can try again.';
+    status.textContent=controlled.includes(error?.message)?error.message:'Wallet signing was cancelled or unavailable. You can try again.';
   } finally {button.disabled=!valid;}
 });
 </script></body></html>

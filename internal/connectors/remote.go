@@ -100,6 +100,7 @@ type Executor struct{ Transport http.RoundTripper }
 
 func (e Executor) Execute(ctx context.Context, m Manifest, op Operation, args json.RawMessage) (json.RawMessage, error) {
 	client := SafeClient()
+	defer client.CloseIdleConnections()
 	if e.Transport != nil {
 		client.Transport = e.Transport
 	}
@@ -133,12 +134,15 @@ func (e Executor) Execute(ctx context.Context, m Manifest, op Operation, args js
 	resp, err := client.Do(req)
 	if err != nil {
 		if m.ID == "github-public" {
+			var timeout net.Error
+			if errors.As(err, &timeout) && timeout.Timeout() {
+				return nil, &RemoteFailure{504, "github_gateway_timeout"}
+			}
 			return nil, &RemoteFailure{502, "github_gateway_unavailable_or_destination_denied"}
 		}
 		return nil, errors.New("remote connector unavailable or destination denied")
 	}
 	defer resp.Body.Close()
-	defer client.CloseIdleConnections()
 	if resp.StatusCode != 200 {
 		if m.ID == "github-public" {
 			return nil, githubFailure(resp)
@@ -147,7 +151,14 @@ func (e Executor) Execute(ctx context.Context, m Manifest, op Operation, args js
 	}
 	out, err := io.ReadAll(io.LimitReader(resp.Body, 65537))
 	if err != nil || len(out) > 65536 {
-		return nil, errors.New("connector output limit")
+		if m.ID == "github-public" {
+			var timeout net.Error
+			if errors.As(err, &timeout) && timeout.Timeout() {
+				return nil, &RemoteFailure{504, "github_gateway_timeout"}
+			}
+			return nil, &RemoteFailure{502, "github_invalid_gateway_response"}
+		}
+		return nil, errors.New("connector response interrupted or exceeds output limit")
 	}
 	if m.ID == "github-public" {
 		media, _, e := mime.ParseMediaType(resp.Header.Get("Content-Type"))

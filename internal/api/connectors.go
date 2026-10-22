@@ -10,6 +10,7 @@ import (
 	"sinet/internal/connectors"
 	"sinet/internal/githubpublic"
 	"sinet/internal/model"
+	"sinet/internal/strictjson"
 	"sinet/prompts"
 )
 
@@ -56,6 +57,10 @@ func (c *call) submitConnector() (any, error) {
 	}
 	if m.Publisher != handle {
 		return nil, fail(403, "publisher_must_match_your_handle")
+	}
+	// Account locks do not serialize competing publishers of the same ID.
+	if _, err = c.tx.ExecContext(c.r.Context(), `SELECT pg_advisory_xact_lock(hashtextextended($1,2))`, m.ID); err != nil {
+		return nil, err
 	}
 	var occupied bool
 	if err = c.tx.QueryRowContext(c.r.Context(), `SELECT EXISTS(SELECT 1 FROM connectors WHERE id=$1 AND (publisher_id IS NULL OR publisher_id<>$2))`, m.ID, c.user).Scan(&occupied); err != nil {
@@ -187,7 +192,7 @@ type toolRequest struct {
 
 func (t toolRequest) fingerprint() string {
 	var v any
-	_ = json.Unmarshal(t.Arguments, &v)
+	_ = strictjson.Decode(t.Arguments, &v)
 	return hash(t.Connector + ":" + t.Version + ":" + t.Operation + ":" + string(jsonBytes(v)))
 }
 func (c *call) authorizeTool(t toolRequest) (connectors.Manifest, connectors.Operation, error) {

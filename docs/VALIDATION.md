@@ -198,3 +198,9 @@ package is claimed. Scope ownership/token access remains an external account-own
 Main remains unchanged until both requested registries are published and verified.
 
 All 13 Python version/publication guard tests and actionlint pass after the path/retry fix.
+
+## Security hardening follow-up — 2026-10-22
+
+See [the security review ledger](SECURITY_REVIEW_2026-10-22.md) for baseline failures,
+fixed regression coverage, full application checks and outstanding external gates.
+This supersedes older test-count summaries without changing their historical results.

@@ -71,12 +71,13 @@ try:
         context.add_init_script("""window.walletCalls=[];window.walletMode='valid';
           window.ethereum={request:async(request)=>{
             window.walletCalls.push(request);
+            if(window.walletMode==='null_error')throw null;
             if(request.method==='eth_requestAccounts')return [window.walletMode==='wrong_address'?'0x1111111111111111111111111111111111111111':%s];
             if(request.method==='eth_chainId')return window.walletMode==='wrong_chain'?'0xa':'0x1';
             if(request.method==='personal_sign')return %s;
             throw new Error('unexpected wallet operation');
           }};""" % (json.dumps(vector["address"]), json.dumps(vector["signature"])))
-        for mode in ("valid", "wrong_address", "wrong_chain"):
+        for mode in ("valid", "wrong_address", "wrong_chain", "null_error"):
             page = context.new_page()
             page.goto(challenge["signing_url"])
             assert page.locator("#message").inner_text() == challenge["message"]
@@ -93,6 +94,9 @@ try:
             else:
                 assert page.locator("#signature").input_value() == ""
                 assert all(call["method"] != "personal_sign" for call in calls)
+            if mode == "null_error":
+                assert page.locator("#status").inner_text() == "Wallet signing was cancelled or unavailable. You can try again."
+                assert page.locator("#sign").is_enabled()
             page.close()
         params = urllib.parse.parse_qs(urllib.parse.urlsplit(challenge["signing_url"]).fragment)
         params["message"] = [params["message"][0].replace("No transactions are authorized.", "Send funds now.")]
@@ -104,7 +108,7 @@ try:
         page.close()
         assert requests and all(url == api + "/wallet/link" for url in requests)
         browser.close()
-    print("PASS browser wallet fixture: exact bytes/account/origin, fragment cleared, wrong address/chain/message denied, no external requests")
+    print("PASS browser wallet fixture: exact bytes/account/origin, fragment cleared, wrong address/chain/message denied, null rejection handled, no external requests")
 finally:
     if signed_in:
         cli("delete-account", "--confirm-delete")
