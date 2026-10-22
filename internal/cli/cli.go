@@ -16,6 +16,7 @@ import (
 	"sinet/internal/client"
 	"sinet/internal/connectors"
 	"sinet/internal/githubpublic"
+	"sinet/internal/strictjson"
 )
 
 const Help = `SINet · Your terminal. Your network.
@@ -521,7 +522,7 @@ func (a *App) agent(args []string) error {
 			return errors.New("unknown call flag")
 		}
 		var arguments map[string]any
-		if json.Unmarshal([]byte(args[4]), &arguments) != nil {
+		if strictjson.Decode([]byte(args[4]), &arguments) != nil {
 			return errors.New("arguments must be a JSON object")
 		}
 		info, err := a.C.Do("GET", "/v1/connectors/"+segment(args[1])+"?version="+url.QueryEscape(args[2]), nil)

@@ -159,7 +159,16 @@ func (g *gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data, err := io.ReadAll(io.LimitReader(response.Body, maxResponse+1))
-	if err != nil || len(data) > maxResponse {
+	if err != nil {
+		var timeout net.Error
+		if errors.As(err, &timeout) && timeout.Timeout() {
+			fail(w, http.StatusGatewayTimeout, "upstream_timeout")
+		} else {
+			fail(w, http.StatusBadGateway, "upstream_failure")
+		}
+		return
+	}
+	if len(data) > maxResponse {
 		fail(w, http.StatusBadGateway, "upstream_response_limit")
 		return
 	}

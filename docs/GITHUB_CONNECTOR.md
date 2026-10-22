@@ -172,3 +172,13 @@ or new release is established by these checks. The npm 0.1.1 package remains
 unchanged. Existing PyPI 0.1.1 Linux wheel bytes were independently downloaded,
 checked against the public registry SHA-256 and installed in an isolated venv;
 its `SINet version` command returned 0.1.1.
+
+### Security review follow-up
+
+A timeout while reading the upstream body now reports `upstream_timeout` (504),
+not a size-limit error. A truncated upstream body reports `upstream_failure` (502).
+The API similarly distinguishes `github_gateway_timeout` from an invalid gateway
+response, while forwarding no arbitrary remote error text. The CLI limits error
+bodies to 4096 bytes and displays only bounded machine codes. Existing DNS/peer-IP,
+TLS, redirect, disclosure and revocation controls remain in force. See the
+[codebase security review](SECURITY_REVIEW_2026-10-22.md).

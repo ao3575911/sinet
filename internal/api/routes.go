@@ -1,10 +1,16 @@
 package api
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+	"time"
+)
 
 func (s *Server) routes() {
 	s.mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
-		if err := s.DB.PingContext(r.Context()); err != nil {
+		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+		defer cancel()
+		if err := s.DB.PingContext(ctx); err != nil {
 			output(w, 503, map[string]string{"status": "unavailable"})
 			return
 		}

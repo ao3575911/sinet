@@ -12,7 +12,9 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"sinet/internal/strictjson"
 	"strings"
 	"time"
 )
@@ -38,17 +40,30 @@ func New() (*Client, error) {
 	}
 	c := &Client{API: os.Getenv("SINET_API"), Config: path, HTTP: &http.Client{Timeout: 30 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("API redirect denied") }}}
 	if info, err := os.Lstat(path); err == nil {
-		if info.Mode()&os.ModeSymlink != 0 {
-			return nil, errors.New("session file must not be a symlink")
+		if !info.Mode().IsRegular() {
+			return nil, errors.New("session file must be a regular file, not a symlink or device")
+		}
+		if info.Size() > 4096 {
+			return nil, errors.New("session file exceeds 4096 bytes")
 		}
 		if runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0 {
 			return nil, errors.New("session file permissions must be 0600")
 		}
-		raw, err := os.ReadFile(path)
+		f, err := os.Open(path)
 		if err != nil {
 			return nil, err
 		}
-		if json.Unmarshal(raw, &c.session) != nil {
+		opened, err := f.Stat()
+		if err != nil || !opened.Mode().IsRegular() || !os.SameFile(info, opened) {
+			f.Close()
+			return nil, errors.New("session file changed while opening")
+		}
+		raw, err := io.ReadAll(io.LimitReader(f, 4097))
+		f.Close()
+		if err != nil {
+			return nil, errors.New("session file could not be read")
+		}
+		if len(raw) > 4096 || json.Unmarshal(raw, &c.session) != nil || !validToken(c.session.Token) {
 			return nil, errors.New("invalid session file")
 		}
 	} else if !os.IsNotExist(err) {
@@ -69,7 +84,7 @@ func New() (*Client, error) {
 }
 func (c *Client) Authenticated() bool { return c.session.Token != "" && c.session.API == c.API }
 func (c *Client) Save(token string) error {
-	if len(token) != 64 {
+	if !validToken(token) {
 		return errors.New("invalid session token")
 	}
 	dir := filepath.Dir(c.Config)
@@ -88,8 +103,8 @@ func (c *Client) Save(token string) error {
 		f.Close()
 		return err
 	}
-	c.session = Session{c.API, token}
-	if err = json.NewEncoder(f).Encode(c.session); err != nil {
+	next := Session{c.API, token}
+	if err = json.NewEncoder(f).Encode(next); err != nil {
 		f.Close()
 		return err
 	}
@@ -100,7 +115,11 @@ func (c *Client) Save(token string) error {
 	if err = f.Close(); err != nil {
 		return err
 	}
-	return os.Rename(f.Name(), c.Config)
+	if err = os.Rename(f.Name(), c.Config); err != nil {
+		return err
+	}
+	c.session = next
+	return nil
 }
 func (c *Client) Forget() error {
 	c.session = Session{}
@@ -139,17 +158,41 @@ func (c *Client) Do(method, path string, body any) (map[string]any, error) {
 		return nil, errors.New("API unavailable; check SINET_API and server health")
 	}
 	defer resp.Body.Close()
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 32*1024*1024+1))
-	if err != nil || len(data) > 32*1024*1024 {
+	budget := int64(32 * 1024 * 1024)
+	failed := resp.StatusCode < 200 || resp.StatusCode >= 300
+	if failed {
+		budget = 4096
+	}
+	data, err := io.ReadAll(io.LimitReader(resp.Body, budget+1))
+	if err != nil {
+		return nil, errors.New("API response interrupted; check server health")
+	}
+	if int64(len(data)) > budget {
 		return nil, errors.New("API response exceeds client budget")
 	}
 	var out map[string]any
-	if json.Unmarshal(data, &out) != nil {
+	if strictjson.Decode(data, &out) != nil {
 		return nil, errors.New("API returned invalid JSON")
 	}
-	if resp.StatusCode >= 400 {
+	if failed {
 		code, _ := out["error"].(string)
+		if !errorCode.MatchString(code) {
+			code = "request_failed"
+		}
 		return nil, fmt.Errorf("HTTP %d: %s", resp.StatusCode, code)
 	}
+	if out == nil {
+		return nil, errors.New("API returned an invalid response object")
+	}
 	return out, nil
+}
+
+var errorCode = regexp.MustCompile(`^[a-z][a-z0-9_]{0,127}$`)
+
+func validToken(token string) bool {
+	if len(token) != 64 {
+		return false
+	}
+	_, err := hex.DecodeString(token)
+	return err == nil
 }

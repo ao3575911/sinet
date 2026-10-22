@@ -42,8 +42,8 @@ make build
 
 The server reads environment variables; it does not automatically source `.env`.
 `.env.example` lists configuration. `APP_ENV=production` requires HTTPS public URL,
-PostgreSQL `sslmode=verify-full`, SMTP settings with mandatory STARTTLS, and a random
-`OTP_HASH_KEY` of at least 32 characters. Development uses an ephemeral OTP hash key;
+PostgreSQL `sslmode=verify-full` as one parsed URL parameter (duplicates and query-host overrides rejected), SMTP settings with mandatory STARTTLS, and a random
+`OTP_HASH_KEY` of at least 32 characters. The public URL must be a bare HTTPS origin without credentials, query or fragment. Development uses an ephemeral OTP hash key;
 restarting the API invalidates pending development OTPs, while sessions remain valid.
 Place a trusted TLS reverse proxy in front of the API before any remote use. The API
 ignores forwarded IP headers; behind a proxy, IP throttles apply to the proxy address.
@@ -87,14 +87,17 @@ the server. Session files contain bearer credentials, bind to one API origin, us
 replacement and mode 0600 on Unix, and reject symlinks/insecure permissions. An OS keychain
 is not integrated. On Windows, verify user-only filesystem ACLs; Unix mode checks are not
 portable to Windows. Credentials are not encrypted at rest. Logout revokes this session;
-account deletion revokes all sessions. Normal token expiry is 24 hours.
+account deletion revokes all sessions. Normal token expiry is 24 hours, checked again
+after account-lock waits. Session files must be regular files of at most 4096 bytes
+with a 64-character hex token. Use a private, trusted config directory; these checks
+do not protect against a compromised local account or hostile parent directories.
 
 ## Connector review and remote services
 
 `plug validate FILE` and `plug submit FILE` are explicit user-directed local file reads.
 No server endpoint accepts executable uploads. Submissions validate against the supplied
 JSON Schema and compiled operation schemas, start in `review`, and cannot overwrite a
-published version. Publisher must match the authenticated handle. Only reviewed versions
+published version. Parameter schemas must be inline and meet the [documented resource limits](API.md#security-review-hardening-2026-10-22). Publisher must match the authenticated handle; concurrent submissions serialize ownership checks for each connector ID. Only reviewed versions
 can be installed; changing versions requires removal/reinstallation and new grants.
 
 Operators have database privileges and must run review commands in a trusted environment:

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
@@ -238,10 +239,16 @@ func (c *call) users() (any, error) {
 var profileTemplate = template.Must(template.New("profile").Parse(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>@{{.Handle}} · SINet</title><meta property="og:title" content="@{{.Handle}} · SINet"><meta property="og:description" content="{{.Bio}}"><meta property="og:url" content="{{.URL}}"><meta name="description" content="{{.Bio}}"><body><main><h1>@{{.Handle}}</h1><h2>{{.Name}}</h2><p>{{.Bio}}</p><p>SINet · Your terminal. Your network.</p><p>Find this person: <code>SINet user {{.Handle}}</code></p></main></body></html>`))
 
 func (s *Server) webProfile(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
 	var p struct{ Handle, Name, Bio, URL string }
-	err := s.DB.QueryRowContext(r.Context(), `SELECT handle,display_name,bio FROM profiles WHERE handle=$1 AND public`, strings.ToLower(r.PathValue("handle"))).Scan(&p.Handle, &p.Name, &p.Bio)
-	if err != nil {
+	err := s.DB.QueryRowContext(ctx, `SELECT handle,display_name,bio FROM profiles WHERE handle=$1 AND public`, strings.ToLower(r.PathValue("handle"))).Scan(&p.Handle, &p.Name, &p.Bio)
+	if err == sql.ErrNoRows {
 		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		output(w, 503, map[string]string{"error": "database_unavailable"})
 		return
 	}
 	p.URL = s.PublicURL + "/u/" + p.Handle

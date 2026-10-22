@@ -33,12 +33,8 @@ func run() error {
 	development := env("APP_ENV", "development") == "development"
 	publicURL := env("APP_PUBLIC_URL", "http://127.0.0.1:8080")
 	if !development {
-		u, err := url.Parse(publicURL)
-		if err != nil || u.Scheme != "https" || u.Host == "" {
-			return fmt.Errorf("production APP_PUBLIC_URL must be HTTPS")
-		}
-		if !strings.Contains(dbURL, "sslmode=verify-full") {
-			return fmt.Errorf("production database requires sslmode=verify-full")
+		if err := productionURLs(publicURL, dbURL); err != nil {
+			return err
 		}
 		if os.Getenv("OTP_HASH_KEY") == "" || len(os.Getenv("OTP_HASH_KEY")) < 32 {
 			return fmt.Errorf("production OTP_HASH_KEY requires at least 32 random characters")
@@ -102,4 +98,34 @@ func main() {
 		log.Print(err)
 		os.Exit(1)
 	}
+}
+
+// Validate parsed settings; a substring can appear in a password or another
+// parameter while the effective sslmode still disables verification.
+func productionURLs(publicURL, databaseURL string) error {
+	u, err := url.Parse(publicURL)
+	if err != nil || u.Scheme != "https" || u.Hostname() == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || u.ForceQuery || (u.Path != "" && u.Path != "/") {
+		return fmt.Errorf("production APP_PUBLIC_URL must be a bare HTTPS origin")
+	}
+	db, err := url.Parse(databaseURL)
+	if err != nil || (db.Scheme != "postgres" && db.Scheme != "postgresql") || db.Hostname() == "" || strings.ContainsAny(db.Hostname(), "/@\\") || db.Fragment != "" {
+		return fmt.Errorf("production database requires a PostgreSQL URL with sslmode=verify-full")
+	}
+	parameters, err := url.ParseQuery(db.RawQuery)
+	if err != nil {
+		return fmt.Errorf("invalid production database parameters")
+	}
+	for _, values := range parameters {
+		if len(values) != 1 {
+			return fmt.Errorf("duplicate production database parameter")
+		}
+	}
+	// lib/pq lets query host override the authority; Unix sockets disable TLS.
+	if _, overridden := parameters["host"]; overridden {
+		return fmt.Errorf("production database host must be in the URL authority")
+	}
+	if parameters.Get("sslmode") != "verify-full" {
+		return fmt.Errorf("production database requires sslmode=verify-full")
+	}
+	return nil
 }

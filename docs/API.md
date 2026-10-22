@@ -101,3 +101,28 @@ arguments, disclosure and recipients (the reviewed gateway URL and https://api.g
 Successful output is revalidated before audit success; fixed `github_*` failures carry
 no remote error body. Calls use the existing private agent and audit endpoints.
 See [user guide](GITHUB_CONNECTOR.md) for revocation/queued-expiry semantics and live gates.
+
+## Security review hardening (2026-10-22)
+
+Requests reject duplicate JSON object keys, invalid UTF-8, trailing values, nesting
+beyond 64 levels, number literals longer than 128 bytes and exponents outside
+-308..308. Generic connector consent preserves exact number literals, including
+integers above 2^53; key order and whitespace remain insignificant. Changing a
+number's representation may require fresh consent, even for mathematically equal
+values. CLI requests and displayed API results preserve those number literals too.
+
+Session validity is rechecked against wall-clock time after the account lock, before
+idempotency replay or execution. A request whose session expires in that queue gets
+401 and cannot write. Session/rate-counter database failures return 503, not false
+401/429 responses. Public profile database failures also return 503 rather than 404.
+Health and public HTML profile database calls have explicit 2s/5s deadlines.
+
+Parameter schemas must be inline: 8192 bytes, 512 value nodes, depth 16 maximum;
+`$ref`, `$recursiveRef` and `$dynamicRef` keys are rejected anywhere in the parameter
+document. This conservative bound also applies to schema metadata/constant data.
+Existing manifests requiring references must be rewritten and reviewed as a new
+immutable version; they fail closed until then. Bundled echo and github-public
+contracts already meet these limits. Competing publishers cannot claim separate
+versions of the same connector ID concurrently.
+
+See [the review and regression evidence](SECURITY_REVIEW_2026-10-22.md).
