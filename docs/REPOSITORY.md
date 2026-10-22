@@ -7,8 +7,8 @@ area:connectors, area:operations, area:docs. Security/release labels: security, 
 priority:high, status:blocked, prototype. Automation changes use automation. Release intent uses semver:major/minor/patch.
 
 Release issues #2–#6 contain verifiable public-launch acceptance. #7 records the fixed
-PostgreSQL startup race. #8 tracks documentation/community publication. PR #1 is labelled,
-links evidence and is ready for review; the owner explicitly authorized delivery to main.
+PostgreSQL startup race. #8 tracks documentation/community publication. PR #1 was merged; historical delivery to main is complete. This sprint uses a new
+feature branch and PR and does not authorize merging.
 Future PR area labels are applied by a metadata-only action that never checks out or runs
 untrusted PR source. The label configuration is .github/labeler.yml.
 

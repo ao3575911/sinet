@@ -3,41 +3,23 @@
 package githubconnector
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
 	"mime"
 	"net"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
-	"unicode"
-	"unicode/utf8"
 
 	"sinet/internal/connectors"
+	"sinet/internal/githubpublic"
 )
 
-const upstream = "https://api.github.com/repos/ao3575911/sinet"
-const publicURL = "https://github.com/ao3575911/sinet"
+const upstream = githubpublic.Upstream
 const route = "/repository_summary"
 const maxResponse = 65536
 const requestsPerMinute = 60
-
-// Summary contains only explicitly approved public fields, never raw GitHub JSON.
-type Summary struct {
-	FullName    string  `json:"full_name"`
-	HTMLURL     string  `json:"html_url"`
-	Description *string `json:"description"`
-	Language    *string `json:"language"`
-	Stars       int64   `json:"stargazers_count"`
-	Forks       int64   `json:"forks_count"`
-	OpenIssues  int64   `json:"open_issues_count"`
-	Archived    bool    `json:"archived"`
-	UpdatedAt   string  `json:"updated_at"`
-	Source      string  `json:"source"`
-}
 
 type gateway struct {
 	client   *http.Client
@@ -50,7 +32,17 @@ type gateway struct {
 // NewHandler uses the existing DNS-pinned, public-IP-only HTTPS transport.
 // Proxy environment variables, redirects and caller headers are never forwarded.
 func NewHandler() http.Handler {
-	return newHandler(connectors.SafeClient())
+	return NewHandlerWithTransport(nil)
+}
+
+// NewHandlerWithTransport supplies an isolated test upstream; nil retains safe HTTPS.
+// The standalone executable always calls NewHandler.
+func NewHandlerWithTransport(transport http.RoundTripper) http.Handler {
+	client := connectors.SafeClient()
+	if transport != nil {
+		client.Transport = transport
+	}
+	return newHandler(client)
 }
 
 func newHandler(client *http.Client) *gateway {
@@ -67,56 +59,6 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 
 func fail(w http.ResponseWriter, status int, code string) {
 	writeJSON(w, status, map[string]string{"error": code})
-}
-
-// object rejects duplicate keys and trailing values as well as malformed JSON.
-// Raw fields allow upstream additions without ever forwarding them.
-func object(data []byte) (map[string]json.RawMessage, error) {
-	if !utf8.Valid(data) {
-		return nil, errors.New("invalid UTF-8")
-	}
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	token, err := decoder.Token()
-	if err != nil || token != json.Delim('{') {
-		return nil, errors.New("object required")
-	}
-	fields := make(map[string]json.RawMessage)
-	for decoder.More() {
-		token, err := decoder.Token()
-		if err != nil {
-			return nil, err
-		}
-		key, ok := token.(string)
-		if !ok {
-			return nil, errors.New("invalid key")
-		}
-		if _, exists := fields[key]; exists {
-			return nil, errors.New("duplicate key")
-		}
-		var raw json.RawMessage
-		if err := decoder.Decode(&raw); err != nil {
-			return nil, err
-		}
-		fields[key] = raw
-	}
-	if _, err := decoder.Token(); err != nil {
-		return nil, err
-	}
-	if _, err := decoder.Token(); err != io.EOF {
-		return nil, errors.New("trailing data")
-	}
-	return fields, nil
-}
-
-func validInput(data []byte) bool {
-	fields, err := object(data)
-	if err != nil || len(fields) != 2 {
-		return false
-	}
-	var owner, repository string
-	return json.Unmarshal(fields["owner"], &owner) == nil &&
-		json.Unmarshal(fields["repository"], &repository) == nil &&
-		owner == "ao3575911" && repository == "sinet"
 }
 
 func (g *gateway) budget() bool {
@@ -157,7 +99,7 @@ func (g *gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fail(w, http.StatusRequestEntityTooLarge, "input_limit")
 		return
 	}
-	if !validInput(body) {
+	if !githubpublic.ValidInput(body) {
 		fail(w, http.StatusBadRequest, "invalid_repository_arguments")
 		return
 	}
@@ -221,69 +163,10 @@ func (g *gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fail(w, http.StatusBadGateway, "upstream_response_limit")
 		return
 	}
-	summary, err := parseSummary(data)
+	summary, err := githubpublic.ParseUpstream(data)
 	if err != nil {
 		fail(w, http.StatusBadGateway, "invalid_upstream_response")
 		return
 	}
 	writeJSON(w, http.StatusOK, summary)
-}
-
-func safeText(text string, limit int) bool {
-	if len(text) > limit {
-		return false
-	}
-	for _, r := range text {
-		if unicode.IsControl(r) || unicode.Is(unicode.Cf, r) || r == unicode.ReplacementChar {
-			return false
-		}
-	}
-	return true
-}
-
-func parseSummary(data []byte) (Summary, error) {
-	var summary Summary
-	fields, err := object(data)
-	if err != nil {
-		return summary, err
-	}
-	var private bool
-	values := map[string]any{
-		"full_name": &summary.FullName, "html_url": &summary.HTMLURL,
-		"description": &summary.Description, "language": &summary.Language,
-		"stargazers_count": &summary.Stars, "forks_count": &summary.Forks,
-		"open_issues_count": &summary.OpenIssues, "archived": &summary.Archived,
-		"updated_at": &summary.UpdatedAt, "private": &private,
-	}
-	for name, destination := range values {
-		raw, exists := fields[name]
-		if !exists || (name != "description" && name != "language" && strings.TrimSpace(string(raw)) == "null") {
-			return summary, errors.New("missing upstream field")
-		}
-		if err := json.Unmarshal(raw, destination); err != nil {
-			return summary, err
-		}
-	}
-	if private || summary.FullName != "ao3575911/sinet" || summary.HTMLURL != publicURL {
-		return summary, errors.New("unexpected repository")
-	}
-	for _, count := range []int64{summary.Stars, summary.Forks, summary.OpenIssues} {
-		if count < 0 || count > 9007199254740991 {
-			return summary, errors.New("invalid count")
-		}
-	}
-	if summary.Description != nil && !safeText(*summary.Description, 1024) {
-		return summary, errors.New("invalid description")
-	}
-	if summary.Language != nil && !safeText(*summary.Language, 128) {
-		return summary, errors.New("invalid language")
-	}
-	if len(summary.UpdatedAt) > 40 {
-		return summary, errors.New("invalid timestamp")
-	}
-	if _, err := time.Parse(time.RFC3339, summary.UpdatedAt); err != nil {
-		return summary, err
-	}
-	summary.Source = upstream
-	return summary, nil
 }

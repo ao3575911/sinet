@@ -15,6 +15,7 @@ import (
 	"golang.org/x/term"
 	"sinet/internal/client"
 	"sinet/internal/connectors"
+	"sinet/internal/githubpublic"
 )
 
 const Help = `SINet · Your terminal. Your network.
@@ -56,6 +57,7 @@ All responses are JSON except help/share cards. Errors go to stderr, exit code 1
   plug remove ID                      Remove installation and grants
   plug grant ID VERSION OP --approve  Explicit per-operation grant
   plug revoke ID OP                   Revoke operation and pending consent
+  agent github [--approve]           Fixed public SINet facts; preview disclosure first
   agent history | audit | usage       Own chat, tool audit and usage
   agent ask MESSAGE [--allow-model]   Explicit provider disclosure if AI is configured
   agent call ID VERSION OP JSON [--approve]
@@ -477,6 +479,15 @@ func (a *App) agent(args []string) error {
 		return errors.New("use agent ask|call|history|audit|usage")
 	}
 	switch args[0] {
+	case "github":
+		if len(args) > 2 || len(args) == 2 && args[1] != "--approve" {
+			return errors.New("usage: agent github [--approve]")
+		}
+		call := []string{"call", "github-public", "1.0.0", "repository_summary", githubpublic.Input}
+		if len(args) == 2 {
+			call = append(call, "--approve")
+		}
+		return a.agent(call)
 	case "history", "audit", "usage":
 		rest, q, err := pageFlags(args[1:])
 		if err != nil {
@@ -526,24 +537,73 @@ func (a *App) agent(args []string) error {
 		if err != nil {
 			return err
 		}
+		if manifest.ID == "github-public" && !githubpublic.ValidInput([]byte(args[4])) {
+			return errors.New("GitHub arguments must be exactly the allowlisted owner and repository")
+		}
 		if err = op.Validate(json.RawMessage(args[4])); err != nil {
 			return err
 		}
 		tool := map[string]any{"connector": args[1], "version": args[2], "operation": args[3], "arguments": arguments}
 		if manifest.Runtime == "remote_https" || op.Risk != "read" {
 			if !approve {
-				if err = a.print(map[string]any{"approval_required": true, "destination": manifest.EndpointURL, "risk": op.Risk, "operation": op.Name, "arguments": arguments}); err != nil {
+				if err = a.print(callDisclosure(manifest, op, json.RawMessage(args[4]))); err != nil {
 					return err
 				}
 				return errors.New("review destination and data; repeat with --approve to authorize this exact call")
 			}
 			consent, err := a.C.Do("POST", "/v1/agent/consents", map[string]any{"tool": tool, "approve": true})
 			if err != nil {
-				return err
+				return toolFailure(err)
 			}
 			tool["consent"] = consent["consent"]
 		}
-		return a.do("POST", "/v1/agent/messages", map[string]any{"tool": tool})
+		result, err := a.C.Do("POST", "/v1/agent/messages", map[string]any{"tool": tool})
+		if err != nil {
+			return toolFailure(err)
+		}
+		if manifest.ID == "github-public" {
+			raw, e := json.Marshal(result["output"])
+			if e != nil {
+				return e
+			}
+			summary, e := githubpublic.ParseOutput(raw)
+			if e != nil {
+				return errors.New("invalid GitHub facts from API")
+			}
+			result["output"] = summary
+			result["notice"] = "Untrusted public GitHub facts. Open-issue counts include pull requests. No model was used."
+		}
+		return a.print(result)
 	}
 	return errors.New("invalid agent command; see help")
+}
+
+func callDisclosure(m connectors.Manifest, op connectors.Operation, args json.RawMessage) map[string]any {
+	out := connectors.Disclosure(m, op, args)
+	out["approval_required"] = true
+	return out
+}
+func toolFailure(err error) error {
+	code := err.Error()
+	hint := ""
+	switch {
+	case strings.Contains(code, "operation_grant_required"):
+		hint = "Inspect the manifest, then grant the exact operation with plug grant ID VERSION OP --approve."
+	case strings.Contains(code, "approved_pinned_installation_required"):
+		hint = "Install the reviewed pinned version first; inspect plug installed."
+	case strings.Contains(code, "fresh_call_consent_required"):
+		hint = "Review the disclosure and approve a new exact invocation."
+	case strings.Contains(code, "github_repository_not_found"):
+		hint = "GitHub did not find the allowlisted public repository."
+	case strings.Contains(code, "rate_limited"), strings.Contains(code, "gateway_busy"):
+		hint = "The service budget is exhausted; wait before approving a new invocation."
+	case strings.Contains(code, "github_upstream_timeout"):
+		hint = "GitHub timed out; no facts were returned. A retry needs fresh approval."
+	case strings.Contains(code, "github_"):
+		hint = "No validated GitHub facts were returned. Check gateway health and operator review; retry only with fresh approval."
+	}
+	if hint == "" {
+		return err
+	}
+	return fmt.Errorf("%w. %s", err, hint)
 }

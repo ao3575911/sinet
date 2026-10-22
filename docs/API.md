@@ -91,3 +91,13 @@ submit a proof; challenge data must be passed in the fragment, not query paramet
 Draft create/update inputs are exactly `recipient`, `subject`, `body`. Recipient can be
 empty. Gmail URLs are prepared by the CLI after explicit approval; there is no send or
 inbox-reading API. Private export includes wallets/drafts; public profiles omit them.
+
+## Public GitHub operation (0.2.0-rc.1)
+
+`github-public@1.0.0` reserves exactly `repository_summary` with external_disclosure
+risk and `contracts/github-public/parameters.schema.json`. No live manifest is bundled.
+Consent responses retain the destination host field and add connector/version, exact
+arguments, disclosure and recipients (the reviewed gateway URL and https://api.github.com).
+Successful output is revalidated before audit success; fixed `github_*` failures carry
+no remote error body. Calls use the existing private agent and audit endpoints.
+See [user guide](GITHUB_CONNECTOR.md) for revocation/queued-expiry semantics and live gates.

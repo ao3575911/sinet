@@ -1,3 +1,11 @@
+# SINet 0.2.0-rc.1 preparation
+
+Source candidate only; no RC release/tag/package is published. Published downloads and
+npm/PyPI stay 0.1.1. [Candidate notes](releases/0.2.0-rc.1.md) cover wallet ownership,
+Gmail drafts and the completed local GitHub integration; [validation](releases/0.2.0-rc.1-validation.md)
+separates passing local checks from the blocked live gateway gate. Follow [versioning](VERSIONING.md)
+for a later reviewed release; do not move historical tags or overwrite 0.1.1 packages.
+
 # SINet 0.1.1 prototype
 
 Portable CLI packages: Linux amd64, macOS arm64 and Windows amd64. A separate Linux

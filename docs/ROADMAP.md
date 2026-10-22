@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-## Active follow-up: wallet and email first
+## 0.2.0 release candidate: wallet, email and public GitHub
 
 At the owner's request, implement noncustodial wallet ownership proofs and private
 email drafts with a user-reviewed Gmail handoff, before the other sections. See
@@ -9,12 +9,16 @@ states for business, ENS/DID identity, devices/storage, terminal/cloud and mobil
 Google OAuth mailbox sync, domain mail provisioning and live wallet-extension
 validation remain separate work; no replacement 0.1.1 registry package is published.
 
-## Active follow-up: public GitHub connector
+The public GitHub integration is complete locally in **0.2.0-rc.1** source. The CLI/TUI
+reuses reviewed registry installation, exact-operation grants, expiring single-use
+consent, deterministic personal-agent invocation and audit/revocation. Counted fixtures
+prove both accounts and default deny; they are not live GitHub evidence. Gateway output
+is revalidated server-side. See [guide](GITHUB_CONNECTOR.md), [sprint](GITHUB_SPRINT.md)
+and [release-candidate evidence](releases/0.2.0-rc.1-validation.md).
 
-The [next-slice plan](NEXT_SLICE.md) targets a read-only public repository outcome
-for 0.2.0. The [standalone gateway](GITHUB_CONNECTOR.md) implements the initial
-fixed-repository contract for local review. Live ownership/TLS approval and the
-two-account grant/consent/audit/revocation journey remain delivery gates.
+Live delivery remains blocked on controlled public HTTPS hosting, ownership evidence
+and operator approval. [Deployment preparation](GITHUB_DEPLOYMENT.md) is ready; no
+placeholder endpoint is approved. No release/tag/package publication occurred.
 
 ## M0: runnable skeleton
 
@@ -43,10 +47,9 @@ two-account grant/consent/audit/revocation journey remain delivery gates.
 
 ## Later tracks (not prerequisites)
 
-Next prepared slice: [one real public GitHub connector outcome](NEXT_SLICE.md), proposed
-for 0.2.0. Distribution of the existing 0.1.1 CLI to npm/npx and PyPI/pip comes first.
-The connector is planned, not deployed or approved. Its public TLS endpoint and ownership
-proof remain external dependencies; the plan defines the contract and evidence gates.
+The public GitHub slice advances issue #4 locally. Its live two-account journey remains
+an external gate. npm/PyPI 0.1.1 publication is verified; those immutable packages lack
+the new source features. Marketplace remains part of issue #14.
 
 - Business namespaces and verified-domain mail, local terminal/USB bridge, cloud sandbox, remote MCP adapters, wallet + ENS/DID integration, mobile/web companion, payments.
 

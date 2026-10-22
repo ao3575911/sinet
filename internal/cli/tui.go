@@ -1,9 +1,13 @@
 package cli
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
+	"sinet/internal/connectors"
+	"sinet/internal/githubpublic"
 	"strings"
 
 	"golang.org/x/term"
@@ -227,12 +231,15 @@ func (a *App) connectorMenu() error {
 	if err := a.run([]string{"plug", "list"}); err != nil {
 		return err
 	}
-	choice, err := a.menu("Connectors", []string{"Inspect connector", "Install connector", "Grant operation", "Run echo through agent", "Installed and permissions", "Revoke operation", "Remove connector", "Back"})
+	choice, err := a.menu("Connectors", []string{"Inspect connector", "Install connector", "Grant operation", "Run echo through agent", "Installed and permissions", "Revoke operation", "Remove connector", "GitHub public facts and audit", "Back"})
 	if err != nil {
 		return err
 	}
-	if choice == 7 {
+	if choice == 8 {
 		return nil
+	}
+	if choice == 7 {
+		return a.githubMenu()
 	}
 	if choice == 3 {
 		text, err := a.line("Text for echo: ")
@@ -291,4 +298,61 @@ func (a *App) connectorMenu() error {
 		return nil
 	}
 	return a.run([]string{"plug", "grant", id, version, op, "--approve"})
+}
+
+func (a *App) githubMenu() error {
+	choice, err := a.menu("GitHub public: ao3575911/sinet", []string{"Inspect reviewed version", "Install reviewed version", "Grant repository_summary", "Review and invoke through agent", "Inspect tool audit", "Revoke repository_summary", "Uninstall", "Back"})
+	if err != nil || choice == 7 {
+		return err
+	}
+	const id = "github-public"
+	const version = "1.0.0"
+	switch choice {
+	case 0:
+		return a.run([]string{"plug", "info", id, version})
+	case 4:
+		return a.run([]string{"agent", "audit"})
+	case 5:
+		return a.run([]string{"plug", "revoke", id, "repository_summary"})
+	case 6:
+		return a.run([]string{"plug", "remove", id})
+	}
+	info, err := a.C.Do("GET", "/v1/connectors/"+id+"?version="+url.QueryEscape(version), nil)
+	if err != nil {
+		return fmt.Errorf("reviewed github-public@1.0.0 is unavailable: %w; an operator must deploy and approve it first", err)
+	}
+	raw, _ := json.Marshal(info["manifest"])
+	m, err := connectors.Parse(raw)
+	if err != nil {
+		return err
+	}
+	op, err := m.Operation("repository_summary")
+	if err != nil {
+		return err
+	}
+	if choice == 3 {
+		if err = a.print(callDisclosure(m, op, json.RawMessage(githubpublic.Input))); err != nil {
+			return err
+		}
+		confirm, err := a.line("Type invoke to approve only this exact disclosure once (expires in 5 minutes): ")
+		if err != nil || confirm != "invoke" {
+			return err
+		}
+		return a.run([]string{"agent", "github", "--approve"})
+	}
+	if err = a.print(info); err != nil {
+		return err
+	}
+	verb := "install"
+	if choice == 2 {
+		verb = "grant"
+	}
+	confirm, err := a.line("Type " + verb + " to approve this step (invocation consent is separate): ")
+	if err != nil || confirm != verb {
+		return err
+	}
+	if choice == 1 {
+		return a.run([]string{"plug", "install", id, version})
+	}
+	return a.run([]string{"plug", "grant", id, version, "repository_summary", "--approve"})
 }

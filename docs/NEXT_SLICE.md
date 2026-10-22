@@ -1,8 +1,10 @@
 # Next slice: one real connector outcome
 
-Status: gateway implementation and local fixture tests are complete for review; no live GitHub connector is approved or deployed. See [implementation and gates](GITHUB_CONNECTOR.md). Target application
-version: **0.2.0**, after the 0.1.1 CLI distribution work. npm/npx and pip packaging are a
-separate delivery step and do not imply this connector already works.
+Status: local integration complete and tested in **0.2.0-rc.1** source. The live
+outcome is blocked on a controlled public HTTPS gateway and independent operator
+review. npm/PyPI 0.1.1 are published and unchanged. See the [sprint checklist](GITHUB_SPRINT.md),
+[connector guide](GITHUB_CONNECTOR.md), [deployment preparation](GITHUB_DEPLOYMENT.md)
+and [evidence ledger](releases/0.2.0-rc.1-validation.md).
 
 ## Outcome and boundaries
 
@@ -30,7 +32,7 @@ flowchart LR
   A --> D[(Grants, one-use consent, audit)]
 ```
 
-## Proposed operation contract
+## Fixed operation contract
 
 Connector ID: `github-public`; initial connector version: `1.0.0`.
 Operation: `repository_summary`; risk: `external_disclosure`, including for read-only data.
@@ -49,34 +51,20 @@ Forward no SINet session, email, notes, profile, model history or provider secre
 remains untrusted data and cannot grant permissions or trigger another operation. An LLM is
 optional and must not be required for the deterministic connector outcome.
 
-## Step-by-step preparation and implementation
+## Sprint delivery state
 
-1. **Finish distribution first.** Package the existing verified 0.1.1 Go CLI for
-   `@ao3575911/sinet` (npm/npx) and `sinet-cli` (PyPI/pip). Test real installs, version/help,
-   platform selection, checksums and tamper rejection. Publish only with owner-controlled
-   registry access. Keep this preparation on its signed branch; merge/push main after
-   registry publication is independently checked, as requested by the owner.
-2. **Freeze fixtures and contract.** Capture a public response as a clearly dated fixture;
-   add malformed, rate-limited, oversized, private and hostile-text fixtures. Record the
-   reviewed operation schema and disclosure copy before adding a manifest to the registry.
-3. **Implement the gateway independently.** Proposed paths: `cmd/connector-github` and
-   `internal/githubconnector`. Use Go standard library and the existing outbound security
-   primitives. Permit only the allowlisted repository and fixed GitHub endpoint, bounded
-   time/response sizes and TLS. Disable redirects and proxies; reject non-public DNS/peer IPs.
-   Map GitHub 404/403/429/timeouts honestly; never substitute a canned success.
-4. **Review and deploy the endpoint.** An operator must supply a controlled public hostname,
-   HTTPS on 443, ownership evidence, TLS termination, egress policy and service budget. Run
-   non-root with read-only filesystem, dropped capabilities and no host mounts/Docker socket.
-   Until this exists, live approval is blocked; local fixtures are not live-service evidence.
-5. **Connect the existing trust path.** Submit the immutable manifest for review, verify its
-   endpoint ownership, approve it, and exercise install → exact-operation grant → one-use
-   disclosure confirmation → agent invocation → audit. Preserve account/version/input-bound
-   confirmation, server-side authorization and immediate revocation. No runtime schema
-   change or permission broadening is currently proposed.
-6. **Validate and document the live journey.** Use two accounts and a counted gateway
-   upstream to prove allowed and denied requests. Run the existing race/integration,
-   CLI/SMTP/PTY and vulnerability checks. Capture command transcript, migration state,
-   redacted audit evidence and upstream limitations; then prepare signed 0.2.0 release notes.
+Distribution of 0.1.1, the standalone gateway, fixed schemas and wallet/email source
+features were already incorporated in origin/main. This sprint completes the existing
+registry/grant/consent/adapter/agent/audit path with both-recipient disclosure, fixed
+CLI/TUI invocation, strict gateway result validation and bounded useful failures.
+Counted two-account fixtures cover authorization, revocation concurrency, failures and
+isolation; existing egress defenses remain enforced. The container and operator guide
+are prepared. No live manifest exists because no controlled hostname is known.
+
+Next: provision owned HTTPS hosting, verify its ownership/TLS/operational controls,
+submit the actual immutable manifest for separate operator review, then record the
+real two-account journey against GitHub. The source release candidate is reviewable;
+no tag, GitHub release, registry publication or public-signup approval is authorized.
 
 ## Acceptance gates
 
@@ -91,7 +79,7 @@ optional and must not be required for the deterministic connector outcome.
 | Untrusted data | Prompt-like descriptions, terminal controls and malformed JSON cannot execute actions |
 | Failure handling | Rate limits, timeouts, oversize and upstream errors are bounded, truthful and audited |
 | Operations | Verified hostname/TLS, quotas, monitoring, backup/restore and rollback commands documented |
-| Delivery | Signed commits/tag, passing checks, accurate README and an actual command transcript |
+| Delivery | Signed commits, passing checks, accurate README and command evidence; release tags/publication deferred |
 
 Existing independent security, production hosting/mail/model, real-connector, load/restore
 and native-client gates remain issues #2–#6. This slice advances #4; it does not close the

@@ -1,3 +1,12 @@
+# Current candidate evidence
+
+The **0.2.0-rc.1** [22 October 2026 ledger](releases/0.2.0-rc.1-validation.md) supersedes
+current-capability claims below: Go 1.27.3, five migrations, counted two-account GitHub
+CLI/PTY fixtures, real SMTP smoke and wallet browser regression pass locally. Live
+GitHub hosting/approval remains blocked. The patched scan has zero reachable findings
+and one unused-package module advisory. Earlier records below retain their original
+scope, compiler/date and registry publication state; they are historical evidence.
+
 # Prototype validation — 20 October 2026
 
 This is a command/test evidence ledger, not a production certification.

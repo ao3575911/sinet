@@ -1,9 +1,53 @@
 # Public GitHub gateway: implementation slice
 
-Status: implemented locally for review, not deployed or approved in the connector
-registry. Target application release remains 0.2.0. This advances the existing
-[next-slice plan](NEXT_SLICE.md), steps 2–3, without changing grants, consent,
-manifests in the live registry, migrations or the published CLI release.
+Status: complete local CLI/TUI/API integration in **0.2.0-rc.1** source, not
+published, deployed or approved in a live registry. No model credentials are needed.
+See [sprint checklist](GITHUB_SPRINT.md), [validation evidence](releases/0.2.0-rc.1-validation.md)
+and [deployment/operator review](GITHUB_DEPLOYMENT.md). The existing wallet ownership
+and Gmail draft features are preserved. npm/PyPI packages remain 0.1.1.
+
+## User journey after operator approval
+
+Build current source; the published 0.1.1 installers do not contain this journey.
+Sign in and claim a handle, then run:
+
+```sh
+SINet plug info github-public 1.0.0
+SINet plug install github-public 1.0.0
+SINet plug grant github-public 1.0.0 repository_summary --approve
+SINet agent github
+# Read both recipients, exact owner/repository, purpose and privacy disclosure.
+# The preview exits with approval_required and makes no upstream call.
+SINet agent github --approve
+SINet agent audit
+SINet plug revoke github-public repository_summary
+SINet agent github --approve # denied; no upstream request
+SINet plug remove github-public
+```
+
+The explicit equivalent is `agent call github-public 1.0.0 repository_summary
+'{"owner":"ao3575911","repository":"sinet"}' [--approve]`. A different repository,
+extra/duplicate input fields or another operation fails. Each approved command obtains
+one fresh five-minute consent for this account, pinned connector version, operation and
+exact input. Failed upstream attempts consume consent too; no automatic retries occur.
+
+In the dashboard choose **5. Connectors → 8. GitHub public facts and audit**. Inspect,
+install, grant, invoke, audit, revoke and uninstall are separate steps. Invoking shows
+both recipients and exact fields, then requires typing `invoke`. Cancelling makes no
+upstream request. An unavailable reviewed version tells you an operator must deploy and
+approve it. The fixture gateway is never registered in your development database.
+
+Results are bounded JSON facts with a source URL and upstream updated timestamp. They
+are labelled untrusted data; descriptions cannot grant permissions or trigger tools.
+The API validates the returned gateway contract before recording success; the CLI also
+validates it before rendering. Unknown/duplicate fields, wrong links/types, invalid text
+and oversize data fail closed. No tool results enter model history.
+
+Revocation/uninstall use the existing per-account transaction lock. An invocation that
+already holds it may finish before revoke returns; after revoke commits, fresh calls
+are denied. Re-granting does not resurrect old consents. Consent expiry is checked with
+wall-clock time after any lock wait. Reusing an idempotency key can return a previous
+committed response without executing another request; it does not restore permission.
 
 ## Contract and disclosure
 
@@ -14,12 +58,12 @@ exactly `{"owner":"ao3575911","repository":"sinet"}`. Unknown/duplicate fields,
 other repositories, trailing JSON and bodies above 512 bytes fail before upstream
 I/O. The closed schemas are in `contracts/github-public/`.
 
-Proposed user disclosure, to be incorporated into a reviewed manifest after
-hostname provisioning:
+The CLI preview, TUI confirmation and server consent response disclose both recipients;
+the actual gateway endpoint comes from the immutable reviewed manifest:
 
 > Send owner "ao3575911" and repository "sinet" to the approved SINet GitHub
 > gateway and GitHub to fetch public repository facts. No SINet session, email,
-> notes, profile or model conversation is sent. This operation performs no writes.
+> notes, profile, model history or provider secrets are sent. This operation performs no writes.
 
 `GET https://api.github.com/repos/ao3575911/sinet` is the only upstream request.
 It is constructed independently of inbound headers and accepts no GitHub token,
@@ -82,20 +126,29 @@ malformed/private/oversized data, error mapping, header isolation, redirects,
 timeouts, cancellation, concurrency and rate budgets. Existing connector tests
 cover the shared DNS and peer-IP checks.
 
-## Remaining approval and delivery gates
+## Remaining live gate
 
-Provision a controlled public hostname with HTTPS on 443 and record ownership/TLS
-evidence and a public privacy policy. Configure egress allowing only GitHub, an
-ingress service identity or equivalent abuse protection, monitoring, quotas and
-rollback. Run non-root with a read-only filesystem, dropped capabilities and no
-host or Docker socket mounts. `SINET_GITHUB_LISTEN` controls the bind address
-behind that reviewed TLS ingress; changing it does not enable registry approval.
+Provision a controlled public hostname and hosting access, verify ownership/public TLS
+and operational controls, freeze the real immutable manifest, and obtain a separate
+operator approval. Then run the real two-account journey against that approved HTTPS
+gateway and GitHub, recording redacted audit evidence. No hostname was supplied, so
+no placeholder manifest was created or approved. Local integration is proven with
+isolated synthetic fixtures; no live GitHub journey or production readiness is claimed.
+See [deployment instructions](GITHUB_DEPLOYMENT.md).
 
-Only then create and review the immutable manifest and test the complete existing
-install → grant → input/version/account-bound one-use consent → agent call → audit
-→ revoke → deny journey using two accounts and counted upstream calls. The
-gateway is not an authorization replacement. No localhost exemption or automatic
-manifest approval is added. No live outcome or production readiness is claimed.
+The API returns locally selected `github_*` codes for not-found, forbidden, rate limits,
+busy service, timeout and invalid upstream responses. Other network/egress failures use
+a fixed unavailable/destination-denied code. Remote error bodies are never forwarded.
+Failures are audited as authorized execution_failed, rather than fabricated success.
+
+## Validation record — 22 October 2026
+
+[Release-candidate ledger](releases/0.2.0-rc.1-validation.md) records real PostgreSQL
+race tests, counted two-account adapter/gateway fixtures, CLI/PTY success and cancellation,
+SMTP and wallet browser regressions, migration state and vulnerability results. The
+compiler is now Go 1.27.3; the initial 1.27.2 scan found a reachable x509 advisory and
+was fixed. No reachable vulnerabilities remain in the patched scan; a module-only
+OpenPGP advisory remains in an unused package. Earlier results below are historical.
 
 ## Validation record — 20 October 2026
 

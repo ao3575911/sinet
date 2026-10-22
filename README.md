@@ -1,8 +1,12 @@
 # SINet
 
+Current source: **0.2.0-rc.1**, prepared for review and not published. Existing npm/PyPI
+packages remain 0.1.1. The [GitHub connector journey](docs/GITHUB_CONNECTOR.md) is tested
+locally; live use needs owned HTTPS hosting and operator approval. See [candidate notes](docs/releases/0.2.0-rc.1.md).
+
 **Your terminal. Your network.** A Go social CLI and PostgreSQL API prototype.
 The project and executable are named **SINet** (case sensitive).
-Current prototype version: **0.1.1** — `SINet version`. See [changelog](CHANGELOG.md)
+Published prototype version: **0.1.1**; current source reports **0.2.0-rc.1** with `SINet version`. See [changelog](CHANGELOG.md)
 and [signed release/version policy](docs/VERSIONING.md).
 Published prototype: [v0.1.1](https://github.com/ao3575911/sinet/releases/tag/v0.1.1).
 Portable packages and provenance verification: [release instructions](docs/RELEASE.md).
@@ -10,7 +14,7 @@ npm/npx: [`@ao3575911/sinet@0.1.1`](https://www.npmjs.com/package/@ao3575911/sin
 PyPI/pip: [`sinet-cli==0.1.1`](https://pypi.org/project/sinet-cli/0.1.1/), with an independent Linux wheel installation verified.
 GitHub Marketplace remains unpublished; [tracked work and prerequisites](https://github.com/ao3575911/sinet/issues/14).
 
-Next application slice: [public GitHub connector gateway](docs/GITHUB_CONNECTOR.md), implemented for local review; no live endpoint or registry approval is claimed.
+The [public GitHub connector](docs/GITHUB_CONNECTOR.md) now has tested local CLI/TUI integration; no live endpoint or registry approval is claimed.
 
 Unreleased expansion: [wallet ownership linking, private email drafts and Gmail handoff](docs/WALLET_EMAIL.md), plus setup screens for the remaining service sections. Build current source to use these features; published 0.1.1 packages are unchanged.
 
@@ -29,12 +33,14 @@ This is a production-oriented **prototype**, not a public-launch release. Valida
 passed PostgreSQL integration/race tests, the real CLI/SMTP journey and a POSIX PTY journey.
 See [evidence and limits](docs/IMPLEMENTATION.md) and [operating instructions](docs/OPERATIONS.md).
 A live model and real remote connector have not been provisioned.
-[GitHub CI](https://github.com/ao3575911/sinet/actions/runs/39364592136) passes the full
-journey and govulncheck v1.9.0 reports **no vulnerabilities found** on the updated dependencies.
+[Historical 0.1.1 CI](https://github.com/ao3575911/sinet/actions/runs/39364592136) passed its
+release checks. [Current candidate evidence](docs/releases/0.2.0-rc.1-validation.md) records
+the new journeys and patched Go 1.27.3 scan: zero reachable findings, with one unused-package
+module advisory.
 
 ## Start locally
 
-Requires a current patched Go compiler (validation target **Go 1.27.2**) and Docker Compose.
+Requires a current patched Go compiler (validation target **Go 1.27.3**) and Docker Compose.
 
 ```sh
 docker compose up -d --build

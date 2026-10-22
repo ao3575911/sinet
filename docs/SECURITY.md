@@ -17,6 +17,19 @@ Protect email identities, session tokens, namespace/handle ownership, notes and 
 9. **Wallets:** future noncustodial design only; never ask the agent or connector to hold a recovery phrase; onchain payments require out-of-band confirmation.
 10. **Safety:** reporting, blocking, abuse/spam handling, deletion/export, minimal logs, retention policy, content moderation path, spend controls.
 
+## Public GitHub authorization
+
+The reserved github-public contract permits only repository_summary with the fixed
+owner/repository and external_disclosure risk. Gateway and GitHub are both disclosed.
+The gateway, API adapter and CLI share strict public-fact validation; unknown fields,
+invalid text/links/types and oversize responses cannot become successful tool output.
+Per-account transaction locking serializes calls with grant/revoke/uninstall: already
+authorized in-flight work can complete before revoke returns; fresh requests after
+revocation commit cannot execute. Consent expiration uses clock_timestamp after lock
+waits. Transport fixtures are injected only in tests; production entry points always
+use DNS/connected-public-IP checked HTTPS with no proxies or redirects. No runtime
+configuration enables private-network exceptions. See [evidence](releases/0.2.0-rc.1-validation.md).
+
 ## Security release checklist
 
 The wallet/email expansion adds private, account-bound wallet ownership proofs and

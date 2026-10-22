@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.27.2'
+          go-version: '1.27.3'
           cache: true
       - run: python3 -m unittest discover -s scripts -p test_version.py -v
       - run: go build -trimpath -o bin/SINet ./cmd/SINet

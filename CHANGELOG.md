@@ -2,7 +2,17 @@
 
 Versions follow Semantic Versioning 2.0.0. This project is in its 0.x prototype phase.
 
-## Unreleased — targeting 0.2.0
+## [0.2.0-rc.1] - 2026-10-22
+
+Release candidate source only; no release, tag or registry package published.
+
+- Fixed public GitHub CLI/TUI journey with both-recipient disclosure, reviewed pinned
+  installation, operation grant, one-use invocation consent, validated facts and audit.
+- Gateway output is revalidated at the SINet API and CLI; bounded fixed failure codes.
+- Counted two-account authorization, consent/revoke concurrency and failure fixtures.
+- Upgrade build/CI toolchains to Go 1.27.3 after a reachable Go 1.27.2 x509 advisory.
+- Hardened gateway container/healthcheck and operator deployment/rollback instructions.
+- Live gateway/GitHub journey remains blocked on owned HTTPS hosting and operator review.
 
 - Ethereum wallet ownership linking with one-time SIWE-format personal_sign proofs,
   a browser signing helper, private links, revocation and account export/deletion.

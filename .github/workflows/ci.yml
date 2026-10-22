@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.27.2'
+          go-version: '1.27.3'
           cache: true
       - uses: actions/setup-python@v5
         with:
@@ -31,6 +31,25 @@ jobs:
       - run: node --test scripts/community.test.cjs
       - run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - run: make check integration cross
+      - name: Isolated gateway container controls and health
+        run: |
+          docker build -f deploy/github-public/Dockerfile -t sinet-github:ci .
+          export SINET_GITHUB_IMAGE=sinet-github:ci
+          trap 'docker compose -p sinet-github-ci -f deploy/github-public/compose.yaml down' EXIT
+          docker compose -p sinet-github-ci -f deploy/github-public/compose.yaml up -d --no-build
+          gateway_id=$(docker compose -p sinet-github-ci -f deploy/github-public/compose.yaml ps -q gateway)
+          for _ in $(seq 1 30); do
+            if docker exec "$gateway_id" /connector-github healthcheck; then break; fi
+            sleep 1
+          done
+          docker exec "$gateway_id" /connector-github healthcheck
+          test "$(docker inspect --format '{{.Config.User}}' "$gateway_id")" = '65532:65532'
+          test "$(docker inspect --format '{{.HostConfig.ReadonlyRootfs}}' "$gateway_id")" = true
+          test "$(docker inspect --format '{{json .HostConfig.CapDrop}}' "$gateway_id")" = '["ALL"]'
+          test "$(docker inspect --format '{{json .HostConfig.SecurityOpt}}' "$gateway_id")" = '["no-new-privileges:true"]'
+          test "$(docker inspect --format '{{len .Mounts}}' "$gateway_id")" = 0
+          code=$(curl -sS -o /dev/null -w '%{http_code}' -H 'Content-Type: application/json' -d '{"owner":"other","repository":"sinet"}' http://127.0.0.1:18090/repository_summary)
+          test "$code" = 400
       - name: Install the tested browser fixture runner
         run: |
           python3 -m pip install playwright==1.62.0

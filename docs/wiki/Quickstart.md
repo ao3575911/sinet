@@ -1,6 +1,6 @@
 # Quickstart
 
-Install a current patched Go compiler (tested with Go 1.27.2) and Docker Compose.
+Install a current patched Go compiler (tested with Go 1.27.3) and Docker Compose.
 
 ```sh
 git clone https://github.com/ao3575911/sinet.git

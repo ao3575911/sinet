@@ -68,3 +68,13 @@ The note editor replaces note text, saves on a single `.`, and cancels on `.canc
 Theme and notification settings are persisted preferences; this prototype uses plain
 terminal rendering and does not send notifications. List commands are paginated rather
 than live streamed. `room lobby` joins and reads; posting remains explicit.
+
+## Public GitHub facts (0.2.0-rc.1 source)
+
+Dashboard: Connectors → GitHub public facts and audit. Inspect/install/grant are
+separate from the exact one-use invocation disclosure; type invoke to approve.
+CLI: `SINet agent github` previews both recipients and fixed arguments, then
+`SINet agent github --approve` obtains one consent and calls through the personal
+agent. View `SINet agent audit`; revoke with `SINet plug revoke github-public
+repository_summary`. Live service awaits owned hosting and operator review.
+[Complete journey](GITHUB_CONNECTOR.md).

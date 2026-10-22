@@ -2,7 +2,7 @@
 
 ## Local stack
 
-Use a current patched Go compiler (validation target: **Go 1.27.2**) and Docker Compose.
+Use a current patched Go compiler (validation target: **Go 1.27.3**) and Docker Compose.
 No cloud account is needed for the deterministic MVP. Do not use the development defaults
 as deployment credentials.
 
