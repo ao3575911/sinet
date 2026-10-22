@@ -14,7 +14,11 @@ func main() {
 		_ = json.NewEncoder(os.Stdout).Encode(map[string]string{"name": "SINet", "version": sinet.Version()})
 		return
 	}
-	c, err := client.New()
+	var c *client.Client
+	var err error
+	if len(os.Args) < 2 || (os.Args[1] != "ui" && os.Args[1] != "doctor") {
+		c, err = client.New()
+	}
 	if err == nil {
 		err = cli.Run(c, os.Args[1:], os.Stdin, os.Stdout)
 	}

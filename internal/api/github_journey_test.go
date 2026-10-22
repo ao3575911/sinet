@@ -294,6 +294,7 @@ func TestGitHubCLIThroughPersonalAgent(t *testing.T) {
 	defer server.Close()
 	t.Setenv("SINET_API", server.URL)
 	t.Setenv("SINET_CONFIG", t.TempDir()+"/session.json")
+	t.Setenv("SINET_UI_CONFIG", t.TempDir()+"/ui.json")
 	c, err := client.New()
 	if err != nil {
 		t.Fatal(err)
@@ -466,6 +467,7 @@ func TestGitHubTUIThroughPersonalAgent(t *testing.T) {
 	defer server.Close()
 	t.Setenv("SINET_API", server.URL)
 	t.Setenv("SINET_CONFIG", t.TempDir()+"/session.json")
+	t.Setenv("SINET_UI_CONFIG", t.TempDir()+"/ui.json")
 	c, err := client.New()
 	if err != nil {
 		t.Fatal(err)
@@ -479,7 +481,7 @@ func TestGitHubTUIThroughPersonalAgent(t *testing.T) {
 	}
 	const driver = `import os,pty,select,subprocess,sys,time
 master,slave=pty.openpty()
-env=dict(os.environ,SINET_GITHUB_PTY_HELPER='1')
+env=dict(os.environ,SINET_GITHUB_PTY_HELPER='1',TERM='xterm-256color',NO_COLOR='1')
 proc=subprocess.Popen([sys.argv[1],'-test.run=^TestGitHubPTYCLIHelper$'],stdin=slave,stdout=slave,stderr=slave,env=env)
 os.close(slave)
 seen=b''

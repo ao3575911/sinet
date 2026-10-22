@@ -15,7 +15,7 @@ import urllib.request
 root = pathlib.Path(__file__).resolve().parents[1]
 run_id = secrets.token_hex(5)
 email = f"tui-{run_id}@example.test"
-env = dict(os.environ, SINET_CONFIG=str(root / "work" / f"tui-{run_id}.json"))
+env = dict(os.environ, TERM="xterm-256color", NO_COLOR="1", SINET_UI_CONFIG=str(root / "work" / f"ui-{run_id}.json"), SINET_CONFIG=str(root / "work" / f"tui-{run_id}.json"))
 master, slave = pty.openpty()
 proc = subprocess.Popen([str(root / "bin" / "SINet")], stdin=slave, stdout=slave, stderr=slave, env=env)
 os.close(slave)
@@ -77,7 +77,7 @@ try:
     send("Created in the built-in editor\n.\n")
     expect("Your network")
     send("8")
-    expect("\r\nWallet, email and services\r\n")
+    expect("Wallet, email and services")
     send("2")
     expect("Compose a draft")
     send("2")
@@ -92,7 +92,7 @@ try:
     drafts = json.loads(drafts_result.stdout)["items"]
     assert drafts[0]["subject"] == "TUI email draft" and drafts[0]["status"] == "draft"
     send("8")
-    expect("\r\nWallet, email and services\r\n")
+    expect("Wallet, email and services")
     send("2")
     expect("Review a draft in Gmail")
     send("3")
@@ -110,7 +110,11 @@ try:
     expect("operator must deploy and approve it first")
     expect("Your network")
     send("\x1b[B")
-    expect("> 2. Find people")
+    time.sleep(0.1)
+    send("\r")
+    expect("Find people:")
+    send("\n")
+    expect("Your network")
     send("q")
     proc.wait(timeout=5)
     assert proc.returncode == 0

@@ -9,79 +9,9 @@ import (
 	"sinet/internal/connectors"
 	"sinet/internal/githubpublic"
 	"strings"
-
-	"golang.org/x/term"
 )
 
-func (a *App) menu(title string, items []string) (int, error) {
-	if !a.TTY {
-		line, err := a.line(title + " (number, or q): ")
-		if err != nil {
-			return 0, err
-		}
-		if line == "q" || line == "" {
-			return len(items) - 1, nil
-		}
-		for i := range items {
-			if line == fmt.Sprint(i+1) {
-				return i, nil
-			}
-		}
-		return 0, errors.New("choose a listed number")
-	}
-	state, err := term.MakeRaw(int(a.Input.Fd()))
-	if err != nil {
-		return 0, err
-	}
-	defer term.Restore(int(a.Input.Fd()), state)
-	selected := 0
-	draw := func() {
-		_, _ = fmt.Fprintf(a.Out, "\r\n%s\r\n", title)
-		for i, item := range items {
-			marker := " "
-			if i == selected {
-				marker = ">"
-			}
-			_, _ = fmt.Fprintf(a.Out, "%s %d. %s\r\n", marker, i+1, item)
-		}
-		_, _ = fmt.Fprint(a.Out, "↑/↓ or j/k · Enter selects · number selects · ? help · Esc/q back\r\n")
-	}
-	draw()
-	buf := make([]byte, 8)
-	for {
-		n, err := a.Input.Read(buf)
-		if err != nil {
-			return 0, err
-		}
-		for i := 0; i < n; i++ {
-			key := string(buf[i])
-			if buf[i] == 27 && i+2 < n && buf[i+1] == '[' {
-				key = string(buf[i : i+3])
-				i += 2
-			}
-			switch key {
-			case "q", "\x1b", "\x03":
-				return len(items) - 1, nil
-			case "\r", "\n":
-				return selected, nil
-			case "k", "\x1b[A":
-				selected = (selected + len(items) - 1) % len(items)
-			case "j", "\x1b[B":
-				selected = (selected + 1) % len(items)
-			case "?":
-				_, _ = fmt.Fprint(a.Out, "\r\nChoose an action. Every action also has a plain command: SINet help.\r\n")
-			default:
-				if len(key) == 1 && key[0] >= '1' && int(key[0]-'1') < len(items) {
-					return int(key[0] - '1'), nil
-				}
-				continue
-			}
-			draw()
-		}
-	}
-}
 func (a *App) dashboard() error {
-	_, _ = fmt.Fprintln(a.Out, "SINet · Your terminal. Your network.")
 	if !a.C.Authenticated() {
 		choice, err := a.menu("Welcome", []string{"Sign in with email", "Help", "Exit"})
 		if err != nil {
@@ -112,7 +42,7 @@ func (a *App) dashboard() error {
 		}
 	}
 	for {
-		choice, err := a.menu("Your network", []string{"Profile and share card", "Find people", "Community lobby", "Notes editor", "Connectors", "Personal agent", "Settings", "Wallet, email and services", "Exit"})
+		choice, err := a.menu("Your network", []string{"Profile and share card", "Find people", "Community lobby", "Notes editor", "Connectors", "Personal agent", "Settings", "Wallet, Email and Services", "Exit"})
 		if err != nil {
 			return err
 		}
@@ -159,18 +89,7 @@ func (a *App) dashboard() error {
 				}
 			}
 		case 6:
-			err = a.run([]string{"settings"})
-			if err == nil {
-				var key string
-				key, err = a.line("Setting to edit (theme/public/notifications/display_name/bio, empty goes back): ")
-				if err == nil && key != "" {
-					var v string
-					v, err = a.line("New value: ")
-					if err == nil {
-						err = a.run([]string{"settings", "set", key, v})
-					}
-				}
-			}
+			err = a.settingsMenu()
 		case 7:
 			err = a.serviceMenu()
 		case 8:

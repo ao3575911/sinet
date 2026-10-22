@@ -1,10 +1,12 @@
 GO ?= go
 TEST_DATABASE_URL ?= postgres://sinet:local-development-only@127.0.0.1:5432/sinet?sslmode=disable
-.PHONY: build dev test integration check cross smoke smoke-tui
+.PHONY: build install dev test integration check cross smoke smoke-tui
 build:
 	mkdir -p bin
 	$(GO) build -trimpath -o bin/SINet ./cmd/SINet
 	$(GO) build -trimpath -o bin/server ./cmd/server
+install: build
+	python3 scripts/install_local.py
 dev:
 	docker compose up -d --build
 check:

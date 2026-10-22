@@ -204,3 +204,23 @@ All 13 Python version/publication guard tests and actionlint pass after the path
 See [the security review ledger](SECURITY_REVIEW_2026-10-22.md) for baseline failures,
 fixed regression coverage, full application checks and outstanding external gates.
 This supersedes older test-count summaries without changing their historical results.
+
+## Dashboard candidate — 2026-10-22
+
+Source 0.2.0-rc.2. Diagnosed PATH/pipx 0.1.1 versus repository bin 0.2.0-rc.1.
+Installed reviewed local build into the canonical user directory; PATH and existing
+pipx entry point now resolve to that binary, with prior launchers backed up.
+Root-owned original checkout/bin remains an explicit installation gate.
+
+Passed: make check integration cross (Go 1.27.3; isolated PostgreSQL 18.6),
+CLI/SMTP two-account smoke, PTY signup/notes/email/Gmail/unapproved-GitHub journey,
+wallet browser fixture, dashboard VT-screen assertions, Python script tests (17),
+Node checks, actionlint/ShellCheck and compiled semantic version check.
+The terminal tests cover stable rows over repeated/fragmented arrows, paste denial,
+resize, colour/NO_COLOR, persisted appearance and terminal restoration. Fixed the
+zero-size PTY fallback discovered by integration testing; rerun passed.
+Govulncheck: zero reachable or imported-package vulnerabilities; one existing
+module-only advisory for unused x/crypto/openpgp (GO-2026-5932).
+Fixtures are not live GitHub evidence. No real email or wallet transaction performed.
+No release, tag or registry package published. Public gateway/operator review and
+production operational gates remain open.
