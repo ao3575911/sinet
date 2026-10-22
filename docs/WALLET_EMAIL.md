@@ -1,6 +1,6 @@
 # Wallet and email sections
 
-Unreleased source feature targeting 0.2.0. The published npm/PyPI 0.1.1 CLI does
+Included in the 0.2.0-rc.1 source candidate; not yet published. The published npm/PyPI 0.1.1 CLI does
 not contain these commands yet. Build current source to try them. In the
 dashboard, choose **8. Wallet, email and services**. Every action also has a plain
 CLI command. [Design and security decision](ADR/0005-wallet-email-sections.md).

@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,6 +17,17 @@ import (
 )
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "healthcheck" {
+		if err := healthcheck(); err != nil {
+			log.Print("gateway healthcheck failed")
+			os.Exit(1)
+		}
+		fmt.Println("ok")
+		return
+	}
+	if len(os.Args) != 1 {
+		log.Fatal("usage: connector-github [healthcheck]")
+	}
 	address := os.Getenv("SINET_GITHUB_LISTEN")
 	if address == "" {
 		address = "127.0.0.1:8090"
@@ -41,4 +55,28 @@ func main() {
 			_ = server.Close()
 		}
 	}
+}
+
+// healthcheck is a local process probe, never a connector egress exception.
+func healthcheck() error {
+	address := os.Getenv("SINET_GITHUB_LISTEN")
+	if address == "" {
+		address = "127.0.0.1:8090"
+	}
+	_, port, err := net.SplitHostPort(address)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{Transport: &http.Transport{Proxy: nil}, Timeout: 2 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("redirect denied") }}
+	defer client.CloseIdleConnections()
+	resp, err := client.Get("http://" + net.JoinHostPort("127.0.0.1", port) + "/healthz")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 65))
+	if err != nil || resp.StatusCode != 200 || string(body) != "{\"status\":\"ok\"}\n" {
+		return errors.New("unhealthy gateway")
+	}
+	return nil
 }

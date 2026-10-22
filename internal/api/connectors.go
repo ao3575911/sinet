@@ -3,10 +3,12 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/url"
 	"strings"
 
 	"sinet/internal/connectors"
+	"sinet/internal/githubpublic"
 	"sinet/internal/model"
 	"sinet/prompts"
 )
@@ -205,6 +207,9 @@ func (c *call) authorizeTool(t toolRequest) (connectors.Manifest, connectors.Ope
 	if !granted {
 		return m, op, fail(403, "operation_grant_required")
 	}
+	if m.ID == "github-public" && !githubpublic.ValidInput(t.Arguments) {
+		return m, op, bad("invalid_tool_arguments")
+	}
 	if err = op.Validate(t.Arguments); err != nil {
 		return m, op, bad("invalid_tool_arguments")
 	}
@@ -235,12 +240,16 @@ func (c *call) consent() (any, error) {
 	if err = c.exec(`INSERT INTO consents(token_hash,account_id,fingerprint) VALUES($1,$2,$3)`, hash(token), c.user, in.Tool.fingerprint()); err != nil {
 		return nil, err
 	}
-	u, _ := url.Parse(m.EndpointURL)
+	disclosure := connectors.Disclosure(m, op, in.Tool.Arguments)
+	// Preserve the existing consent destination host field; recipients carry URLs.
 	destination := "builtin"
-	if u != nil {
+	if u, e := url.Parse(m.EndpointURL); e == nil && u.Host != "" {
 		destination = u.Host
 	}
-	return map[string]any{"consent": token, "expires_in": 300, "destination": destination, "operation": op.Name, "risk": op.Risk}, nil
+	disclosure["destination"] = destination
+	disclosure["consent"] = token
+	disclosure["expires_in"] = 300
+	return disclosure, nil
 }
 func (c *call) audit(t toolRequest, allowed bool, outcome string) error {
 	return c.exec(`INSERT INTO tool_audit(account_id,connector_id,version,operation,allowed,outcome) VALUES($1,$2,$3,$4,$5,$6)`, c.user, t.Connector, t.Version, t.Operation, allowed, outcome)
@@ -261,7 +270,7 @@ func (c *call) runTool(t toolRequest) (any, error) {
 	}
 	if needsConsent(m, op) {
 		var token string
-		err = c.tx.QueryRowContext(c.r.Context(), `UPDATE consents SET consumed=true WHERE token_hash=$1 AND account_id=$2 AND fingerprint=$3 AND NOT consumed AND expires_at>now() RETURNING token_hash`, hash(t.Consent), c.user, t.fingerprint()).Scan(&token)
+		err = c.tx.QueryRowContext(c.r.Context(), `UPDATE consents SET consumed=true WHERE token_hash=$1 AND account_id=$2 AND fingerprint=$3 AND NOT consumed AND expires_at>clock_timestamp() RETURNING token_hash`, hash(t.Consent), c.user, t.fingerprint()).Scan(&token)
 		if err == sql.ErrNoRows {
 			if e := c.audit(t, false, "consent_required"); e != nil {
 				return nil, e
@@ -272,10 +281,14 @@ func (c *call) runTool(t toolRequest) (any, error) {
 			return nil, err
 		}
 	}
-	result, err := connectors.Execute(c.r.Context(), m, op, t.Arguments)
+	result, err := c.s.executeTool(c.r.Context(), m, op, t.Arguments)
 	if err != nil {
 		if e := c.audit(t, true, "execution_failed"); e != nil {
 			return nil, e
+		}
+		var remote *connectors.RemoteFailure
+		if errors.As(err, &remote) {
+			return nil, fail(remote.Status, remote.Code)
 		}
 		return nil, fail(502, "connector_unavailable_or_destination_denied")
 	}

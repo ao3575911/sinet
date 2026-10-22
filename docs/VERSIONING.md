@@ -1,7 +1,8 @@
 # Semantic versions and signed releases
 
-VERSION is the source of truth. The current prototype release is **0.1.1**; the CLI reports
-it through `SINet version` and `SINet --version` without contacting the API. CHANGELOG.md
+VERSION is the source of truth. Source is **0.2.0-rc.1**; the published prototype and
+npm/PyPI packages remain **0.1.1**, immutable. No RC tag or release has been published.
+The CLI reports its compiled source version through `SINet version` and `SINet --version` without contacting the API. CHANGELOG.md
 records dated release behavior and limitations. Never label a prototype as production.
 
 Follow SemVer 2.0.0. During 0.x development, increment the minor component for features or
@@ -22,10 +23,11 @@ After the reviewed release commit is signed, verified and present on main, maint
 create and verify the annotated tag using their provisioned signing key:
 
 ```sh
-git tag -s v0.1.1 -m 'SINet 0.1.1 — production-oriented prototype'
-git verify-tag v0.1.1
-git verify-commit 'v0.1.1^{}'
-git push origin v0.1.1
+# Future reviewed publication only; not part of the current sprint.
+git tag -s v0.2.0-rc.1 -m 'SINet 0.2.0-rc.1 — source release candidate'
+git verify-tag v0.2.0-rc.1
+git verify-commit 'v0.2.0-rc.1^{}'
+git push origin v0.2.0-rc.1
 ```
 
 The semantic-version Action validates syntax, dated changelog and compiled CLI agreement.

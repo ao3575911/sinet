@@ -7,10 +7,12 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"mime"
 	"net"
 	"net/http"
 	"net/netip"
 	"net/url"
+	"sinet/internal/githubpublic"
 	"strings"
 	"time"
 )
@@ -89,6 +91,21 @@ func SafeClient() *http.Client {
 	return &http.Client{Transport: transport, Timeout: 8 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("connector redirects denied") }}
 }
 func Execute(ctx context.Context, m Manifest, op Operation, args json.RawMessage) (json.RawMessage, error) {
+	return Executor{}.Execute(ctx, m, op, args)
+}
+
+// Executor supports per-instance isolated transports in integration tests. Production uses
+// a nil Transport and always obtains SafeClient; there is no runtime configuration switch.
+type Executor struct{ Transport http.RoundTripper }
+
+func (e Executor) Execute(ctx context.Context, m Manifest, op Operation, args json.RawMessage) (json.RawMessage, error) {
+	client := SafeClient()
+	if e.Transport != nil {
+		client.Transport = e.Transport
+	}
+	if m.ID == "github-public" && (githubContract(m) != nil || op.Name != "repository_summary" || !githubpublic.ValidInput(args)) {
+		return nil, errors.New("invalid GitHub request")
+	}
 	if m.Runtime == "builtin" {
 		if m.ID != "echo" || m.Version != "1.0.0" || op.Name != "repeat" {
 			return nil, errors.New("builtin not implemented")
@@ -113,22 +130,63 @@ func Execute(ctx context.Context, m Manifest, op Operation, args json.RawMessage
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	client := SafeClient()
 	resp, err := client.Do(req)
 	if err != nil {
+		if m.ID == "github-public" {
+			return nil, &RemoteFailure{502, "github_gateway_unavailable_or_destination_denied"}
+		}
 		return nil, errors.New("remote connector unavailable or destination denied")
 	}
 	defer resp.Body.Close()
 	defer client.CloseIdleConnections()
 	if resp.StatusCode != 200 {
+		if m.ID == "github-public" {
+			return nil, githubFailure(resp)
+		}
 		return nil, errors.New("remote connector returned failure")
 	}
 	out, err := io.ReadAll(io.LimitReader(resp.Body, 65537))
 	if err != nil || len(out) > 65536 {
 		return nil, errors.New("connector output limit")
 	}
+	if m.ID == "github-public" {
+		media, _, e := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if e != nil || media != "application/json" {
+			return nil, &RemoteFailure{502, "github_invalid_gateway_response"}
+		}
+		summary, e := githubpublic.ParseOutput(out)
+		if e != nil {
+			return nil, &RemoteFailure{502, "github_invalid_gateway_response"}
+		}
+		return json.Marshal(summary)
+	}
 	if !json.Valid(out) {
 		return nil, errors.New("connector response must be JSON")
 	}
 	return out, nil
+}
+
+// RemoteFailure contains only locally selected codes, never remote error text.
+type RemoteFailure struct {
+	Status int
+	Code   string
+}
+
+func (e *RemoteFailure) Error() string { return e.Code }
+func githubFailure(resp *http.Response) error {
+	data, err := io.ReadAll(io.LimitReader(resp.Body, 1025))
+	if err != nil || len(data) > 1024 {
+		return &RemoteFailure{502, "github_gateway_failure"}
+	}
+	var body struct {
+		Error string `json:"error"`
+	}
+	if json.Unmarshal(data, &body) != nil {
+		return &RemoteFailure{502, "github_gateway_failure"}
+	}
+	expected := map[string]int{"repository_not_found": 404, "upstream_rate_limited": 503, "upstream_forbidden": 503, "upstream_timeout": 504, "upstream_unavailable": 502, "upstream_failure": 502, "invalid_upstream_response": 502, "upstream_response_limit": 502, "gateway_busy": 503, "gateway_rate_limited": 429}
+	if status, ok := expected[body.Error]; ok && resp.StatusCode == status {
+		return &RemoteFailure{status, "github_" + body.Error}
+	}
+	return &RemoteFailure{502, "github_gateway_failure"}
 }

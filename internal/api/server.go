@@ -19,17 +19,19 @@ import (
 	"time"
 
 	"github.com/lib/pq"
+	"sinet/internal/connectors"
 	"sinet/internal/mail"
 	"sinet/internal/model"
 )
 
 type Server struct {
-	DB        *sql.DB
-	Mail      mail.Sender
-	Model     model.Provider
-	PublicURL string
-	OTPKey    []byte
-	mux       *http.ServeMux
+	DB          *sql.DB
+	Mail        mail.Sender
+	Model       model.Provider
+	PublicURL   string
+	OTPKey      []byte
+	executeTool func(context.Context, connectors.Manifest, connectors.Operation, json.RawMessage) (json.RawMessage, error)
+	mux         *http.ServeMux
 }
 type call struct {
 	s    *Server
@@ -79,6 +81,7 @@ func output(w http.ResponseWriter, status int, v any) {
 }
 func New(db *sql.DB, sender mail.Sender, provider model.Provider, publicURL string) *Server {
 	s := &Server{DB: db, Mail: sender, Model: provider, PublicURL: strings.TrimRight(publicURL, "/"), OTPKey: []byte(random(32)), mux: http.NewServeMux()}
+	s.executeTool = connectors.Execute
 	s.routes()
 	return s
 }

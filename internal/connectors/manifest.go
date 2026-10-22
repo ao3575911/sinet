@@ -86,6 +86,9 @@ func Parse(raw []byte) (Manifest, error) {
 	if m.Runtime == "builtin" && m.EndpointURL != "" {
 		return m, errors.New("builtin cannot have endpoint")
 	}
+	if err := githubContract(m); err != nil {
+		return m, err
+	}
 	return m, nil
 }
 func (m Manifest) Operation(name string) (Operation, error) {
