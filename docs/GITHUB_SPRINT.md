@@ -17,7 +17,7 @@ are already incorporated. All five existing tags are preserved.
 - [x] Counted two-account integration: success and denial/isolation/revocation cases.
 - [x] Hardened gateway deployment, health/monitoring and rollback preparation.
 - [x] Run application checks, SMTP/PTY/browser journeys; record precise blockers.
-- [ ] Prepare 0.2.0-rc.1 notes/version, review diff, sign/verify, push branch and open PR.
+- [x] Prepare 0.2.0-rc.1 notes/version, review diff, sign/verify, push branch and open PR.
 
 ## Acceptance criteria
 
@@ -41,3 +41,13 @@ weaken public-IP checks. Live gateway/GitHub acceptance stays blocked until prov
 Docker socket is unavailable to this user; use isolated user-space development services
 if available. Original workspace sandbox fails before execution; approved commands run
 outside it, with no network-policy bypass. No release/tag/package publication allowed.
+
+## Signed delivery
+
+[PR #19](https://github.com/ao3575911/sinet/pull/19) is open from the requested branch;
+implementation commit 75a1e0f4cdaec6dba6eeca7725a6cce1a9e0c3e4 is SSH-signed,
+locally verified and GitHub verified/valid. The HTTPS OAuth credential lacked workflow
+scope; the existing configured SSH key successfully pushed the same signed commit.
+No tag/release/package was published; main is unchanged. See the candidate ledger for
+CI results and remaining external gates. Sprint services and isolated database/mail data
+were cleaned up after capturing migration state and confirming zero accounts/test schemas.
