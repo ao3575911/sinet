@@ -2,6 +2,20 @@
 
 Versions follow Semantic Versioning 2.0.0. This project is in its 0.x prototype phase.
 
+## [0.2.0-rc.2] - 2026-10-22
+
+Source candidate only; published 0.1.1 packages and historical tags are unchanged.
+Includes all wallet, email and reviewed public-connector work from rc.1.
+
+- Stable, coloured keyboard dashboard with responsive layout, decoded arrow keys,
+  paste-safe selection and terminal restoration. Wallet, Email and Services stays at 8.
+- Interactive appearance and account settings; local dark/light, colour and density
+  preferences, offline `SINet ui`, `NO_COLOR` and plain redirected-output support.
+- `make install` installs one canonical user binary with launcher backups;
+  `SINet doctor` identifies mismatched PATH copies without executing them.
+- Terminal-screen regression coverage for redraws, resizing and settings persistence.
+- Live GitHub deployment/operator review and production operational gates remain open.
+
 ## [0.2.0-rc.1] - 2026-10-22
 
 Release candidate source only; no release, tag or registry package published.

@@ -54,3 +54,10 @@ the new source features. Marketplace remains part of issue #14.
 - Business namespaces and verified-domain mail, local terminal/USB bridge, cloud sandbox, remote MCP adapters, wallet + ENS/DID integration, mobile/web companion, payments.
 
 **Release rule:** no progression by screenshots alone. Require command transcript, test output, migration state and identified known limitations.
+
+### Terminal candidate 0.2.0-rc.2
+
+Implemented stable responsive dashboard rendering, local graphical appearance settings,
+launcher diagnostics and a canonical user installation. Wallet, Email and Services
+remains option 8. See [terminal setup](TERMINAL_UI.md) and the validation record.
+Published 0.1.1 packages remain immutable; source and local installation are rc.2.

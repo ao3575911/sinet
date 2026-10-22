@@ -22,9 +22,11 @@ import (
 const Help = `SINet · Your terminal. Your network.
 Usage: SINet [command]
 No command opens guided onboarding and a keyboard dashboard in an interactive terminal.
-All responses are JSON except help/share cards. Errors go to stderr, exit code 1.
+Command responses are JSON except help/share cards and interactive setup. Errors go to stderr, exit code 1.
 
   version | --version                 Print local semantic version
+  doctor                              Show local version and launcher paths
+  ui [show|reset]                     Appearance setup (offline); SINET_UI_CONFIG
   health                              Check API health
   login                               Guided email and code sign-in
   login request EMAIL                 Send OTP (development: view in Mailpit)
@@ -88,7 +90,13 @@ type App struct {
 }
 
 func Run(c *client.Client, args []string, input *os.File, out io.Writer) error {
-	app := &App{C: c, In: bufio.NewReader(input), Out: out, TTY: term.IsTerminal(int(input.Fd())), Input: input}
+	app := &App{C: c, In: bufio.NewReader(input), Out: out, TTY: interactiveTerminal(input, out), Input: input}
+	if len(args) > 0 && args[0] == "ui" {
+		return app.uiCommand(args[1:])
+	}
+	if len(args) == 1 && args[0] == "doctor" {
+		return app.doctor()
+	}
 	if len(args) == 0 {
 		if app.TTY {
 			return app.dashboard()
@@ -119,7 +127,9 @@ func (a *App) do(method, path string, body any) error {
 	return a.print(out)
 }
 func (a *App) line(prompt string) (string, error) {
-	_, _ = fmt.Fprint(a.Out, prompt)
+	if _, err := fmt.Fprint(a.Out, prompt); err != nil {
+		return "", err
+	}
 	line, err := a.In.ReadString('\n')
 	if err != nil {
 		return "", err
@@ -607,4 +617,9 @@ func toolFailure(err error) error {
 		return err
 	}
 	return fmt.Errorf("%w. %s", err, hint)
+}
+
+func interactiveTerminal(input *os.File, out io.Writer) bool {
+	output, ok := out.(*os.File)
+	return ok && term.IsTerminal(int(input.Fd())) && term.IsTerminal(int(output.Fd()))
 }

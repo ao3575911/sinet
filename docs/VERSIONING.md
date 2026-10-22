@@ -1,6 +1,6 @@
 # Semantic versions and signed releases
 
-VERSION is the source of truth. Source is **0.2.0-rc.1**; the published prototype and
+VERSION is the source of truth. Source is **0.2.0-rc.2**; the published prototype and
 npm/PyPI packages remain **0.1.1**, immutable. No RC tag or release has been published.
 The CLI reports its compiled source version through `SINet version` and `SINet --version` without contacting the API. CHANGELOG.md
 records dated release behavior and limitations. Never label a prototype as production.
@@ -8,7 +8,7 @@ records dated release behavior and limitations. Never label a prototype as produ
 Follow SemVer 2.0.0. During 0.x development, increment the minor component for features or
 breaking public CLI/API/manifest changes; use patch increments for compatible fixes. After
 1.0.0, breaking public changes increment major, compatible additions minor and fixes patch.
-Prereleases use identifiers such as `0.2.0-rc.1`; build metadata does not change precedence.
+Prereleases use identifiers such as `0.2.0-rc.2`; build metadata does not change precedence.
 Numeric identifiers cannot have leading zeroes. Release tags are `v` plus VERSION.
 
 Prepare a release on a reviewed branch: update VERSION and the dated changelog entry,
@@ -24,10 +24,10 @@ create and verify the annotated tag using their provisioned signing key:
 
 ```sh
 # Future reviewed publication only; not part of the current sprint.
-git tag -s v0.2.0-rc.1 -m 'SINet 0.2.0-rc.1 — source release candidate'
-git verify-tag v0.2.0-rc.1
-git verify-commit 'v0.2.0-rc.1^{}'
-git push origin v0.2.0-rc.1
+git tag -s v0.2.0-rc.2 -m 'SINet 0.2.0-rc.2 — source release candidate'
+git verify-tag v0.2.0-rc.2
+git verify-commit 'v0.2.0-rc.2^{}'
+git push origin v0.2.0-rc.2
 ```
 
 The semantic-version Action validates syntax, dated changelog and compiled CLI agreement.

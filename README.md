@@ -1,12 +1,12 @@
 # SINet
 
-Current source: **0.2.0-rc.1**, prepared for review and not published. Existing npm/PyPI
+Current source: **0.2.0-rc.2**, prepared for review and not published. Existing npm/PyPI
 packages remain 0.1.1. The [GitHub connector journey](docs/GITHUB_CONNECTOR.md) is tested
-locally; live use needs owned HTTPS hosting and operator approval. See [candidate notes](docs/releases/0.2.0-rc.1.md).
+locally; live use needs owned HTTPS hosting and operator approval. See [candidate notes](docs/releases/0.2.0-rc.2.md).
 
 **Your terminal. Your network.** A Go social CLI and PostgreSQL API prototype.
 The project and executable are named **SINet** (case sensitive).
-Published prototype version: **0.1.1**; current source reports **0.2.0-rc.1** with `SINet version`. See [changelog](CHANGELOG.md)
+Published prototype version: **0.1.1**; current source reports **0.2.0-rc.2** with `SINet version`. See [changelog](CHANGELOG.md)
 and [signed release/version policy](docs/VERSIONING.md).
 Published prototype: [v0.1.1](https://github.com/ao3575911/sinet/releases/tag/v0.1.1).
 Portable packages and provenance verification: [release instructions](docs/RELEASE.md).
@@ -34,7 +34,7 @@ passed PostgreSQL integration/race tests, the real CLI/SMTP journey and a POSIX 
 See [evidence and limits](docs/IMPLEMENTATION.md) and [operating instructions](docs/OPERATIONS.md).
 A live model and real remote connector have not been provisioned.
 [Historical 0.1.1 CI](https://github.com/ao3575911/sinet/actions/runs/39364592136) passed its
-release checks. [Current candidate evidence](docs/releases/0.2.0-rc.1-validation.md) records
+release checks. [Current candidate evidence](docs/releases/0.2.0-rc.2-validation.md) records
 the new journeys and patched Go 1.27.3 scan: zero reachable findings, with one unused-package
 module advisory.
 
@@ -45,6 +45,10 @@ Requires a current patched Go compiler (validation target **Go 1.27.3**) and Doc
 ```sh
 docker compose up -d --build
 make build
+# Install this source version for the SINet command in every directory:
+make install
+hash -r
+SINet doctor
 ./bin/SINet health
 ./bin/SINet
 ```
@@ -108,3 +112,6 @@ verification passes; remote verification is recorded in docs/IMPLEMENTATION.md w
 - [Labelled release work](https://github.com/ao3575911/sinet/issues) and [Discussions](https://github.com/ao3575911/sinet/discussions)
 - [Contributing](CONTRIBUTING.md), [security reporting](SECURITY.md), [community expectations](CODE_OF_CONDUCT.md)
 - [Repository labels, workflows and signed publishing](docs/REPOSITORY.md)
+
+For dashboard appearance, launch `SINet ui` or choose **7 Settings → Appearance**.
+**8 Wallet, Email and Services** opens the service menu. See [terminal setup and launcher troubleshooting](docs/TERMINAL_UI.md).

@@ -52,7 +52,7 @@ jobs:
           test "$code" = 400
       - name: Install the tested browser fixture runner
         run: |
-          python3 -m pip install playwright==1.62.0
+          python3 -m pip install playwright==1.62.0 pyte==0.8.2
           python3 -m playwright install --with-deps chromium
       - name: Real CLI, SMTP and TUI journey
         run: |
@@ -66,5 +66,6 @@ jobs:
           done
           python3 tests/smoke.py
           python3 tests/tui_smoke.py
+          python3 tests/dashboard_pty.py
           python3 tests/wallet_browser.py
       - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 -show verbose ./...
