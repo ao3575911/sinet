@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
-"""POSIX PTY acceptance: guided signup, arrow navigation and persistent note editor."""
-import errno
+"""Native PTY acceptance: guided signup, arrow navigation and persistent notes."""
 import json
 import os
 import pathlib
-import pty
 import re
 import secrets
-import select
 import subprocess
 import time
 import urllib.request
+from terminal import Terminal
 
 root = pathlib.Path(__file__).resolve().parents[1]
 run_id = secrets.token_hex(5)
 email = f"tui-{run_id}@example.test"
 env = dict(os.environ, TERM="xterm-256color", NO_COLOR="1", SINET_UI_CONFIG=str(root / "work" / f"ui-{run_id}.json"), SINET_CONFIG=str(root / "work" / f"tui-{run_id}.json"))
-master, slave = pty.openpty()
-proc = subprocess.Popen([str(root / "bin" / "SINet")], stdin=slave, stdout=slave, stderr=slave, env=env)
-os.close(slave)
+binary = str(root / "bin" / ("SINet.exe" if os.name == "nt" else "SINet"))
+terminal = Terminal(binary, env)
 seen = b""
 
 
@@ -29,17 +26,12 @@ def expect(text):
     while target not in seen:
         if time.monotonic() > deadline:
             raise AssertionError(f"TUI timeout waiting for {text!r}")
-        ready, _, _ = select.select([master], [], [], 0.2)
-        if ready:
-            chunk = os.read(master, 8192)
-            if not chunk:
-                raise AssertionError("TUI ended early")
-            seen += chunk
+        seen += terminal.read()
     before, seen = seen.split(target, 1)
 
 
 def send(text):
-    os.write(master, text.encode())
+    terminal.send(text)
 
 
 def get_json(path):
@@ -88,7 +80,7 @@ try:
     expect("A single . saves")
     send("Private email draft from the terminal\n.\n")
     expect("Your network")
-    drafts_result = subprocess.run([str(root / "bin" / "SINet"), "email", "list"], env=env, text=True, capture_output=True, check=True)
+    drafts_result = subprocess.run([binary, "email", "list"], env=env, text=True, capture_output=True, check=True)
     drafts = json.loads(drafts_result.stdout)["items"]
     assert drafts[0]["subject"] == "TUI email draft" and drafts[0]["status"] == "draft"
     send("8")
@@ -116,20 +108,16 @@ try:
     send("\n")
     expect("Your network")
     send("q")
-    proc.wait(timeout=5)
-    assert proc.returncode == 0
-    result = subprocess.run([str(root / "bin" / "SINet"), "note", "list"], env=env, text=True, capture_output=True, check=True)
+    assert terminal.wait() == 0
+    result = subprocess.run([binary, "note", "list"], env=env, text=True, capture_output=True, check=True)
     notes = json.loads(result.stdout)["items"]
     assert notes[0]["title"] == "TUI note" and "built-in editor" in notes[0]["body"]
-    subprocess.run([str(root / "bin" / "SINet"), "delete-account", "--confirm-delete"], env=env, capture_output=True, check=True)
+    subprocess.run([binary, "delete-account", "--confirm-delete"], env=env, capture_output=True, check=True)
     print("PASS PTY: signup, handle, note editor, private email draft, explicit Gmail handoff, unapproved GitHub gate, arrow navigation, q/back")
 finally:
-    if proc.poll() is None:
-        proc.kill()
-        proc.wait()
-    os.close(master)
+    terminal.close()
     # Clean up this run even if a navigation assertion fails.
     if pathlib.Path(env["SINET_CONFIG"]).exists():
-        cleanup = subprocess.run([str(root / "bin" / "SINet"), "delete-account", "--confirm-delete"], env=env, capture_output=True)
+        cleanup = subprocess.run([binary, "delete-account", "--confirm-delete"], env=env, capture_output=True)
         if cleanup.returncode:
             raise AssertionError("PTY fixture account cleanup failed")

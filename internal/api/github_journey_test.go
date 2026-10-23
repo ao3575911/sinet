@@ -302,6 +302,7 @@ func TestGitHubCLIThroughPersonalAgent(t *testing.T) {
 	if err = c.Save(a); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { _ = c.Forget() })
 	input, err := os.Open(os.DevNull)
 	if err != nil {
 		t.Fatal(err)
@@ -475,6 +476,7 @@ func TestGitHubTUIThroughPersonalAgent(t *testing.T) {
 	if err = c.Save(a); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { _ = c.Forget() })
 	binary, err := os.Executable()
 	if err != nil {
 		t.Fatal(err)

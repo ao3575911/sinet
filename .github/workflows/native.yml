@@ -1,0 +1,60 @@
+name: native-runtime
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  native:
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.3'
+          cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: macOS PostgreSQL and disposable Keychain
+        if: runner.os == 'macOS'
+        run: |
+          brew install postgresql@17
+          echo "$(brew --prefix postgresql@17)/bin" >> "$GITHUB_PATH"
+          security create-keychain -p native-test-only "$RUNNER_TEMP/sinet-test.keychain-db"
+          security set-keychain-settings -lut 3600 "$RUNNER_TEMP/sinet-test.keychain-db"
+          security unlock-keychain -p native-test-only "$RUNNER_TEMP/sinet-test.keychain-db"
+          security default-keychain -s "$RUNNER_TEMP/sinet-test.keychain-db"
+          security list-keychains -d user -s "$RUNNER_TEMP/sinet-test.keychain-db"
+      - name: Windows PostgreSQL and ConPTY
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "$env:PGBIN" | Out-File -FilePath $env:GITHUB_PATH -Append
+          python -m pip install pywinpty==3.0.2
+          New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -Force | Out-Null
+          New-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -Name AllowDevelopmentWithoutDevLicense -Value 1 -PropertyType DWord -Force | Out-Null
+      - name: Build isolated SMTP fixture
+        run: python -c "import os, pathlib, subprocess; os.environ['GOBIN'] = str(pathlib.Path('bin').resolve()); subprocess.run(['go', 'install', 'github.com/axllent/mailpit@v1.27.10'], check=True)"
+      - name: Native database, credential, CLI and terminal acceptance
+        run: python tests/native_runtime.py
+      - name: Publish tested binaries and verified checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: SINet-native-${{ matrix.os }}-${{ github.sha }}
+          path: work/native-artifacts/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Remove disposable Keychain
+        if: always() && runner.os == 'macOS'
+        run: security delete-keychain "$RUNNER_TEMP/sinet-test.keychain-db"

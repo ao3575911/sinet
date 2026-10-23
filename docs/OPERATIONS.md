@@ -208,6 +208,10 @@ USB bridge, arbitrary shell or host filesystem agent capability is shipped.
 
 ## Signing
 
+For the current release-key custody, rotation, revocation and recovery procedure,
+see [native validation and signing lifecycle](NATIVE_CREDENTIALS.md#dedicated-release-signing-key-lifecycle).
+The following records the original prototype signing setup.
+
 All implementation commits use SSH signatures. Public fingerprint:
 `SHA256:DZbp/eHiq7txsnGklKuBtZ1XOotv927BpKkCIfS5ggw`.
 The owner registered this key as a GitHub signing key. GitHub API verification and exact

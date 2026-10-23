@@ -27,6 +27,7 @@ func TestCredentialStorageOriginAndPermissions(t *testing.T) {
 	if err = c.Save(token); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { _ = c.Forget() })
 	c, err = New()
 	if err != nil {
 		t.Fatal(err)

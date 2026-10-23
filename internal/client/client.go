@@ -13,15 +13,15 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"sinet/internal/strictjson"
 	"strings"
 	"time"
 )
 
 type Session struct {
-	API   string `json:"api"`
-	Token string `json:"token"`
+	API        string `json:"api"`
+	Token      string `json:"token,omitempty"`
+	Credential string `json:"credential,omitempty"`
 }
 type Client struct {
 	API, Config string
@@ -46,9 +46,6 @@ func New() (*Client, error) {
 		if info.Size() > 4096 {
 			return nil, errors.New("session file exceeds 4096 bytes")
 		}
-		if runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0 {
-			return nil, errors.New("session file permissions must be 0600")
-		}
 		f, err := os.Open(path)
 		if err != nil {
 			return nil, err
@@ -58,12 +55,28 @@ func New() (*Client, error) {
 			f.Close()
 			return nil, errors.New("session file changed while opening")
 		}
+		if err := checkSessionPermissions(f); err != nil {
+			f.Close()
+			return nil, err
+		}
 		raw, err := io.ReadAll(io.LimitReader(f, 4097))
 		f.Close()
 		if err != nil {
 			return nil, errors.New("session file could not be read")
 		}
-		if len(raw) > 4096 || json.Unmarshal(raw, &c.session) != nil || !validToken(c.session.Token) {
+		if len(raw) > 4096 || strictjson.Decode(raw, &c.session) != nil {
+			return nil, errors.New("invalid session file")
+		}
+		if c.session.Credential != "" {
+			if !nativeCredentials || !validToken(c.session.Credential) || c.session.Token != "" {
+				return nil, errors.New("invalid credential reference")
+			}
+			c.session.Token, err = readCredential(c.Config, c.session)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if !validToken(c.session.Token) {
 			return nil, errors.New("invalid session file")
 		}
 	} else if !os.IsNotExist(err) {
@@ -80,6 +93,13 @@ func New() (*Client, error) {
 	if err != nil || u.Host == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || u.Path != "" || (u.Scheme != "https" && !(u.Scheme == "http" && (u.Hostname() == "localhost" || u.Hostname() == "127.0.0.1" || u.Hostname() == "::1"))) {
 		return nil, errors.New("API must be HTTPS, or loopback HTTP")
 	}
+	// Migrate only a credential bound to the selected origin. Never rebind a
+	// legacy token when SINET_API points at a different server.
+	if nativeCredentials && c.Authenticated() && c.session.Credential == "" {
+		if err := c.Save(c.session.Token); err != nil {
+			return nil, err
+		}
+	}
 	return c, nil
 }
 func (c *Client) Authenticated() bool { return c.session.Token != "" && c.session.API == c.API }
@@ -91,20 +111,43 @@ func (c *Client) Save(token string) error {
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		return err
 	}
-	if info, err := os.Lstat(c.Config); err == nil && info.Mode()&os.ModeSymlink != 0 {
-		return errors.New("session file must not be a symlink")
+	if info, err := os.Lstat(c.Config); err == nil && !info.Mode().IsRegular() {
+		return errors.New("session file must be a regular file")
+	} else if err != nil && !os.IsNotExist(err) {
+		return err
 	}
 	f, err := os.CreateTemp(dir, ".session-*")
 	if err != nil {
 		return err
 	}
 	defer os.Remove(f.Name())
-	if err = f.Chmod(0600); err != nil {
+	if err = protectSessionFile(f); err != nil {
 		f.Close()
 		return err
 	}
-	next := Session{c.API, token}
-	if err = json.NewEncoder(f).Encode(next); err != nil {
+	next := Session{API: c.API, Token: token}
+	if nativeCredentials {
+		id := make([]byte, 32)
+		if _, err = rand.Read(id); err != nil {
+			f.Close()
+			return err
+		}
+		next.Credential = hex.EncodeToString(id)
+		if err = writeCredential(c.Config, next); err != nil {
+			f.Close()
+			return err
+		}
+		defer func() {
+			if c.session.Credential != next.Credential {
+				_ = deleteCredential(c.Config, next)
+			}
+		}()
+	}
+	disk := next
+	if nativeCredentials {
+		disk.Token = ""
+	}
+	if err = json.NewEncoder(f).Encode(disk); err != nil {
 		f.Close()
 		return err
 	}
@@ -118,11 +161,21 @@ func (c *Client) Save(token string) error {
 	if err = os.Rename(f.Name(), c.Config); err != nil {
 		return err
 	}
+	previous := c.session
 	c.session = next
+	if previous.Credential != "" {
+		_ = deleteCredential(c.Config, previous)
+	}
 	return nil
 }
 func (c *Client) Forget() error {
+	previous := c.session
 	c.session = Session{}
+	if previous.Credential != "" {
+		if err := deleteCredential(c.Config, previous); err != nil {
+			return err
+		}
+	}
 	err := os.Remove(c.Config)
 	if os.IsNotExist(err) {
 		return nil

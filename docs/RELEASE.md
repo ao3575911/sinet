@@ -30,7 +30,9 @@ verified OIDC/Sigstore attestations bind the bytes to the signed-tag build workf
 maintainer SSH key signs the annotated source tag and release commit; it never enters CI.
 BUILDINFO.json records source commit, compiler and build flags. Archives omit build paths,
 use fixed metadata and contain no credentials. They are not Apple-notarized or Windows
-Authenticode-signed applications. Native macOS/Windows runtime testing remains issue #6.
+Authenticode-signed applications. The published 0.1.1 bytes predate native credential
+storage. Current source has [native runtime and credential validation](NATIVE_CREDENTIALS.md);
+new signed releases must pass that workflow before publication.
 
 The CLI requires a running SINet API. To run the local development stack from source:
 

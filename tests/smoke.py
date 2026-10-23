@@ -10,6 +10,7 @@ import time
 import urllib.request
 
 root = pathlib.Path(__file__).resolve().parents[1]
+binary = str(root / "bin" / ("SINet.exe" if os.name == "nt" else "SINet"))
 run_id = secrets.token_hex(5)
 base = os.environ.get("SINET_API", "http://127.0.0.1:8080")
 mailpit = os.environ.get("MAILPIT_URL", "http://127.0.0.1:8025")
@@ -23,8 +24,13 @@ def get_json(url):
 def cli(who, *args, stdin=None, ok=True):
     env = dict(os.environ, SINET_API=base,
                SINET_CONFIG=str(root / "work" / f"smoke-{run_id}-{who}.json"))
-    result = subprocess.run([str(root / "bin" / "SINet"), *args],
-                            env=env, input=stdin, text=True, capture_output=True, timeout=35)
+    result = subprocess.run([binary, *args], env=env,
+                            input=stdin.encode("utf-8") if stdin is not None else None,
+                            capture_output=True, timeout=35)
+    # Preserve the exact stdin bytes on Windows as well as POSIX. Text-mode
+    # subprocess pipes translate LF to CRLF before the CLI receives the note.
+    result.stdout = result.stdout.decode("utf-8")
+    result.stderr = result.stderr.decode("utf-8")
     if (result.returncode == 0) != ok:
         raise AssertionError(f"command {args[0]} unexpected exit: {result.stderr}")
     print(f"PASS {args[0]} {' '.join(args[1:3])} ({'allowed' if ok else 'denied'})")
@@ -36,13 +42,16 @@ def cli(who, *args, stdin=None, ok=True):
         return result.stdout
 
 
-def signin(who):
+def signin(who, claim=True):
     email = f"{who}-{run_id}@example.test"
+    previous = {m["ID"] for m in get_json(mailpit + "/api/v1/messages")["messages"]}
     cli(who, "login", "request", email)
     code = None
     for _ in range(30):
         messages = get_json(mailpit + "/api/v1/messages")["messages"]
         for message in messages:
+            if message["ID"] in previous:
+                continue
             if any(address["Address"] == email for address in message["To"]):
                 detail = get_json(mailpit + "/api/v1/message/" + message["ID"])
                 match = re.search(r"Your code is (\d{8})", detail["Text"])
@@ -55,7 +64,8 @@ def signin(who):
     assert code, "OTP not delivered to actual Mailpit SMTP sink"
     cli(who, "login", "verify", email, stdin=code + "\n")
     cli(who, "login", "verify", email, stdin=code + "\n", ok=False)
-    cli(who, "claim", who + run_id)
+    if claim:
+        cli(who, "claim", who + run_id)
     return who + run_id
 
 
@@ -108,6 +118,10 @@ def main():
     exported = cli("alice", "export")
     assert exported["notes"]["items"][0]["id"] == note["id"]
     for who in ("alice", "bob"):
+        cli(who, "logout")
+        cli(who, "me", ok=False)
+        # Log back in to the same account before deleting its persisted data.
+        signin(who, claim=False)
         cli(who, "delete-account", "--confirm-delete")
         cli(who, "me", ok=False)
     print("PASS full CLI/SMTP/PostgreSQL hero journey; two accounts; no credentials printed")
